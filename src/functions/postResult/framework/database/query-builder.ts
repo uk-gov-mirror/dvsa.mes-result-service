@@ -4,7 +4,7 @@ import * as mysql from 'mysql2';
 import { IntegrationType } from '../../domain/result-integration';
 import { ProcessingStatus } from '../../domain/processing-status';
 
-export const buildTestResultInsert = (test: StandardCarTestCATBSchema): string => {
+export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: boolean = false): string => {
   const template = `
   INSERT INTO TEST_RESULT (
     application_reference,
@@ -36,7 +36,7 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema): string =
     testCentreId,
     driverNumber,
     driverSurname,
-    ResultStatus.ACCEPTED,
+    isError ? ResultStatus.ERROR : ResultStatus.ACCEPTED,
   ];
 
   return mysql.format(template, args);

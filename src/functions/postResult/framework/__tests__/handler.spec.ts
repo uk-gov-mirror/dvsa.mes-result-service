@@ -8,6 +8,8 @@ import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { HttpStatus } from '../../../../common/application/api/HttpStatus';
 import * as saveResultSvc from '../../application/save-result-service';
 import * as configSvc from '../../../../common/framework/config/config';
+import * as joiValidationSvc from '../../domain/mes-joi-schema-service';
+import { ValidationResult } from '@hapi/joi';
 
 describe('postResult handler', () => {
   let dummyApigwEvent: APIGatewayEvent;
@@ -15,11 +17,13 @@ describe('postResult handler', () => {
   const moqDecompressionSvc = Mock.ofInstance(decompressionService.decompressTestResult);
   const moqSaveResultSvc = Mock.ofInstance(saveResultSvc.saveTestResult);
   const moqBootstrapConfig = Mock.ofInstance(configSvc.bootstrapConfig);
+  const moqJoiValidationSvc = Mock.ofInstance(joiValidationSvc.validateMESJoiSchema);
 
   beforeEach(() => {
     moqDecompressionSvc.reset();
     moqSaveResultSvc.reset();
     moqBootstrapConfig.reset();
+    moqJoiValidationSvc.reset();
 
     dummyApigwEvent = lambdaTestUtils.mockEventCreator.createAPIGatewayEvent();
     dummyContext = lambdaTestUtils.mockContextCreator(() => null);
@@ -27,6 +31,7 @@ describe('postResult handler', () => {
     spyOn(decompressionService, 'decompressTestResult').and.callFake(moqDecompressionSvc.object);
     spyOn(saveResultSvc, 'saveTestResult').and.callFake(moqSaveResultSvc.object);
     spyOn(configSvc, 'bootstrapConfig').and.callFake(moqBootstrapConfig.object);
+    spyOn(joiValidationSvc, 'validateMESJoiSchema').and.callFake(moqJoiValidationSvc.object);
   });
 
   describe('invalid response body handling', () => {
@@ -62,8 +67,12 @@ describe('postResult handler', () => {
     it('should pass decompressed test result to saveTestResult', async () => {
       dummyApigwEvent.body = 'avalidcompressedresult';
       const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
-      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
+      const validationResult = Mock.ofType<ValidationResult<any>>();
 
+      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
+      moqJoiValidationSvc.setup(x => x(It.isAny())).returns(() => validationResult.object.value);
+
+      console.log(`the fake test result looks like ${fakeTestResult.object}`);
       const resp = await handler(dummyApigwEvent, dummyContext);
 
       moqDecompressionSvc.verify(x => x(It.isValue('avalidcompressedresult')), Times.once());

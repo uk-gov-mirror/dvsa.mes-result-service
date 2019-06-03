@@ -6,8 +6,10 @@ import { decompressTestResult } from '../application/decompression-service';
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { saveTestResult } from '../application/save-result-service';
 import { TestResultDecompressionError } from '../domain/errors/test-result-decompression-error';
+import { bootstrapConfig } from '../../../common/framework/config/config';
 
 export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Promise<Response> {
+  await bootstrapConfig();
   console.log(`Invoked with body ${event.body}`);
   const { body } = event;
 

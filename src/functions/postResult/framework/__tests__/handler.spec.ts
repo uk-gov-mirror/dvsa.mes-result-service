@@ -7,22 +7,26 @@ import { TestResultDecompressionError } from '../../domain/errors/test-result-de
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { HttpStatus } from '../../../../common/application/api/HttpStatus';
 import * as saveResultSvc from '../../application/save-result-service';
+import * as configSvc from '../../../../common/framework/config/config';
 
 describe('postResult handler', () => {
   let dummyApigwEvent: APIGatewayEvent;
   let dummyContext: Context;
   const moqDecompressionSvc = Mock.ofInstance(decompressionService.decompressTestResult);
   const moqSaveResultSvc = Mock.ofInstance(saveResultSvc.saveTestResult);
+  const moqBootstrapConfig = Mock.ofInstance(configSvc.bootstrapConfig);
 
   beforeEach(() => {
     moqDecompressionSvc.reset();
     moqSaveResultSvc.reset();
+    moqBootstrapConfig.reset();
 
     dummyApigwEvent = lambdaTestUtils.mockEventCreator.createAPIGatewayEvent();
     dummyContext = lambdaTestUtils.mockContextCreator(() => null);
 
     spyOn(decompressionService, 'decompressTestResult').and.callFake(moqDecompressionSvc.object);
     spyOn(saveResultSvc, 'saveTestResult').and.callFake(moqSaveResultSvc.object);
+    spyOn(configSvc, 'bootstrapConfig').and.callFake(moqBootstrapConfig.object);
   });
 
   describe('invalid response body handling', () => {
@@ -75,6 +79,14 @@ describe('postResult handler', () => {
       const resp = await handler(dummyApigwEvent, dummyContext);
 
       expect(resp.statusCode).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+  });
+
+  describe('configuration initialisation', () => {
+    it('should always bootstrap the config', async () => {
+      await handler(dummyApigwEvent, dummyContext);
+
+      moqBootstrapConfig.verify(x => x(), Times.once());
     });
   });
 });

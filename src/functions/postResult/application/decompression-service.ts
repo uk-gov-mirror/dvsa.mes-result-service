@@ -1,33 +1,13 @@
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { gunzipSync } from 'zlib';
+import { TestResultDecompressionError } from '../domain/errors/test-result-decompression-error';
 
 export const decompressTestResult = (compressedTestResult: string): StandardCarTestCATBSchema => {
-  // Just return anything that the compiler will allow for now, we're not persisting it yet...
-  return {
-    id: 'dummy',
-    activityCode: '1',
-    category: 'dummy',
-    journalData: {
-      applicationReference: {
-        applicationId: 123,
-        bookingSequence: 1,
-        checkDigit: 1,
-      },
-      candidate: {},
-      examiner: {
-        staffNumber: '123',
-      },
-      testCentre: {
-        costCode: '123',
-      },
-      testSlotAttributes: {
-        slotId: 123,
-        start: 'abc',
-        vehicleSlotType: 'dummy',
-        welshTest: false,
-        extendedTest: false,
-        specialNeeds: false,
-      },
-    },
-
-  };
+  try {
+    const decodedBuffer = Buffer.from(compressedTestResult, 'base64');
+    const unzippedJson = gunzipSync(decodedBuffer).toString();
+    return JSON.parse(unzippedJson) as StandardCarTestCATBSchema;
+  } catch (err) {
+    throw new TestResultDecompressionError();
+  }
 };

@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
+      "baseUrl": ".",
+      "paths": { "*": ["types/*"] },
     "outDir": "./build",
+    "strict": false,
     "allowJs": false,
     "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "lib": [
       "es2017",
       "dom"

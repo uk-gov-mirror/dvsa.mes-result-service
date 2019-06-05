@@ -10,6 +10,9 @@
     "url": "git+https://github.com/dvsa/mes-result-service.git"
   },
   "dependencies": {
+    "@hapi/joi": "^15.0.3",
+    "@types/hapi__joi": "^15.0.1",
+    "enjoi": "^6.0.0",
     "moment": "^2.23.0",
     "mysql2": "^1.6.5"
   },

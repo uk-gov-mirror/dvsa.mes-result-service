@@ -4,11 +4,12 @@ import { IntegrationType } from '../domain/result-integration';
 import { getConnection } from '../../../common/framework/mysql/database';
 import { buildTestResultInsert, buildUploadQueueInsert } from '../framework/database/query-builder';
 
-export const saveTestResult = async (testResult: StandardCarTestCATBSchema): Promise<void> => {
+export const saveTestResult = async (testResult: StandardCarTestCATBSchema,
+                                     hasValidationError: boolean = false): Promise<void> => {
   const connection: mysql.Connection = getConnection();
 
   try {
-    await connection.promise().query(buildTestResultInsert(testResult));
+    await connection.promise().query(buildTestResultInsert(testResult, hasValidationError));
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.TARS));
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.RSIS));
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));

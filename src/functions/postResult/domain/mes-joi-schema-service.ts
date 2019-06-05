@@ -1,7 +1,6 @@
 import * as mesSchema from '@dvsa/mes-test-schema/categories/B/index.json';
 import joi, { ValidationResult } from '@hapi/joi';
 import enjoi from 'enjoi';
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 
 /**
  * Converts the MES schema into a Joi schema which will then be validated

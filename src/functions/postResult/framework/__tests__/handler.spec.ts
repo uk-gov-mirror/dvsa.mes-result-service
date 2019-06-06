@@ -1,10 +1,10 @@
 import { APIGatewayEvent, Context } from 'aws-lambda';
-import { 
+import {
   handler,
   getStaffNumber,
   getEmployeeIdFromToken,
   getEmployeeIdFromArray,
-  getEmployeeIdStringProperty
+  getEmployeeIdStringProperty,
 } from '../handler';
 const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, It, Times } from 'typemoq';

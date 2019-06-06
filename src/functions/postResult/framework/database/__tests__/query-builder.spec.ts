@@ -7,9 +7,9 @@ describe('QueryBuilder', () => {
       const result = buildTestResultInsert(dummyTestResult, false);
       expect(result).toMatch(/INSERT INTO TEST_RESULT/);
     });
-    it('should have the correct date in the INSERT', () => {
+    it('should have the correct date as UTC in the INSERT', () => {
       const result = buildTestResultInsert(dummyTestResult, false);
-      expect(result).toMatch(/2019-06-05 12:38:00.000/);
+      expect(result).toMatch(/2019-06-05 11:38:00.000/);
     });
     it('should have the staff number in the INSERT', () => {
       const result = buildTestResultInsert(dummyTestResult, false);

@@ -39,7 +39,8 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
     isError ? ResultStatus.ERROR : ResultStatus.ACCEPTED,
   ];
 
-  return mysql.format(template, args);
+  // Specify that dates should be serialised in UTC.
+  return mysql.format(template, args, false, 'UTC');
 };
 
 export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integration: IntegrationType): string => {

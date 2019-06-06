@@ -32,7 +32,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
   await bootstrapConfig();
   console.log(`Invoked with body ${event.body}`);
   const { body } = event;
-  const hasValidationError: boolean = true;
+  const hasValidationError: boolean = false;
 
   if (isNullOrBlank(body)) {
     return createResponse({}, HttpStatus.BAD_REQUEST);
@@ -43,10 +43,11 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
     const validationResult = validateMESJoiSchema(testResult);
 
     if (validationResult.error) {
-      // Validation error thrown with no action possible by examiner - save results in error state - return HTTP 500
+      // Validation error thrown with no action possible by examiner - save results in error state - return HTTP 201
+      // to prevent app stalling at 'upload pending'.
       console.error(`Could not validate the test result body ${validationResult.error}`);
       await saveTestResult(testResult, hasValidationError);
-      return createResponse({ message: 'Test result body could not be validated' }, HttpStatus.INTERNAL_SERVER_ERROR);
+      return createResponse({ }, HttpStatus.CREATED);
     }
 
     await saveTestResult(testResult);

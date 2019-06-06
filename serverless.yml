@@ -11,6 +11,13 @@ functions:
       - http:
           path: test-result
           method: post
+  
+  getNextUpdateBatch:
+    handler: src/functions/getNextUpdateBatch/framework/handler.handler
+    events:
+      - http:
+          path: test-result/upload?interface={interface}&batch_size={batch_size}
+          method: get
 
 custom:
   dynamodb:

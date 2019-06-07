@@ -12,11 +12,11 @@ functions:
           path: test-result
           method: post
 
-  getNextUpdateBatch:
-    handler: src/functions/getNextUpdateBatch/framework/handler.handler
+  getNextUploadBatch:
+    handler: src/functions/getNextUploadBatch/framework/handler.handler
     events:
       - http:
-          path: test-result/upload?interface={interface}&batch_size={batch_size}
+          path: test-result/upload
           method: get
 
   updateUploadStatus:

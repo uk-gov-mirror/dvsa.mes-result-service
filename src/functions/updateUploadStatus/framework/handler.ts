@@ -30,7 +30,6 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
     console.log(err);
     return createResponse(
         { message: `Error updating the status in UUS of Reference Number: ${id}` }, HttpStatus.INTERNAL_SERVER_ERROR);
-  } 
+  }
   return createResponse({}, HttpStatus.CREATED);
 }
-

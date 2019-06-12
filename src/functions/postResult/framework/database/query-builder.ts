@@ -70,6 +70,6 @@ export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integrat
   return mysql.format(template, args);
 };
 
-export const formatApplicationReference = (appRef: ApplicationReference) => {
+const formatApplicationReference = (appRef: ApplicationReference) => {
   return `${appRef.applicationId}${appRef.bookingSequence}${appRef.checkDigit}`;
 };

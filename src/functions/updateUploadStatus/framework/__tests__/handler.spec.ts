@@ -49,7 +49,9 @@ describe('updateUploadStatus handler', () => {
 
   it('should send a BAD_REQUEST response when the {id} path param is blank', async () => {
     dummyApigwEvent.pathParameters.id = '';
-    dummyApigwEvent.body = '';
+    dummyApigwEvent.body = JSON.stringify({
+      upload_status: 'ACCEPTED'
+    });
     const res = await handler(dummyApigwEvent, dummyContext);
     expect(res.statusCode).toEqual(400);
     expect(JSON.parse(res.body).message).toBe('Empty path id or request body');

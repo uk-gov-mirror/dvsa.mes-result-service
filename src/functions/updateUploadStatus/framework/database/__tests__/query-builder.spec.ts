@@ -2,11 +2,11 @@ import { updateUploadStatus } from '../query-builder';
 
 describe('updateUploadStatus query builder', () => {
 
-  let dummyAppRef: string;
+  let dummyAppRef: number;
   let dummyRequestBody: any;
 
   beforeEach(() => {
-    dummyAppRef = 'abcdef12345678';
+    dummyAppRef = 1234567890;
     dummyRequestBody = {
       upload_status: 'ACCEPTED',
       retry_count: 15,
@@ -19,9 +19,9 @@ describe('updateUploadStatus query builder', () => {
     const res = updateUploadStatus(dummyAppRef, dummyRequestBody);
     expect(res).toMatch(/UPDATE UPLOAD_QUEUE/);
   });
-  it('should contain the correct upload status', () => {
+  it('should contain the correct processing status', () => {
     const res = updateUploadStatus(dummyAppRef, dummyRequestBody);
-    expect(res).toMatch(/upload_status = 'ACCEPTED'/);
+    expect(res).toMatch(/processing_status_name = 'ACCEPTED'/);
   });
   it('should contain the correct retry count', () => {
     const res = updateUploadStatus(dummyAppRef, dummyRequestBody);
@@ -37,10 +37,10 @@ describe('updateUploadStatus query builder', () => {
   });
   it('should contain the correct application referenence', () => {
     const res = updateUploadStatus(dummyAppRef, dummyRequestBody);
-    expect(res).toMatch(/application_reference = 'abcdef12345678'/);
+    expect(res).toMatch(/application_reference = 1234567890/);
   });
   it('should contain the correct interface', () => {
     const res = updateUploadStatus(dummyAppRef, dummyRequestBody);
-    expect(res).toMatch(/interface = 'TARS'/);
+    expect(res).toMatch(/interface_type_name = 'TARS'/);
   });
 });

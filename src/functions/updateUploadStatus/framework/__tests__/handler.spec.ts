@@ -65,10 +65,21 @@ describe('updateUploadStatus handler', () => {
     expect(JSON.parse(res.body).message).toBe('Error parsing request body into JSON');
   });
 
+  it('should send a BAD_REQUEST response when the application reference isnt a parsable string', async () => {
+    dummyApigwEvent.pathParameters.id = 'an invalid number';
+    dummyApigwEvent.body = dummyApigwEvent.body = JSON.stringify({
+      retry_count: 1,
+    });
+    const res = await handler(dummyApigwEvent, dummyContext);
+    expect(res.statusCode).toEqual(400);
+    expect(JSON.parse(res.body).message)
+    .toBe(`Error application reference is NaN: ${dummyApigwEvent.pathParameters.id}`);
+  });
+
   it('should send a INTERNAL_SERVER_ERROR response if missing a field', async () => {
     dummyApigwEvent.pathParameters.id = '1234';
     dummyApigwEvent.body = JSON.stringify({
-      application_reference: 'abc123',
+      retry_count: 15,
     });
     const res = await handler(dummyApigwEvent, dummyContext);
     expect(res.statusCode).toEqual(500);

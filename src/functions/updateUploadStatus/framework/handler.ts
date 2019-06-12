@@ -11,10 +11,16 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
   await bootstrapConfig();
 
   let body: string;
-  const id = event.pathParameters.id;
+  let id: number;
 
-  if (isNullOrBlank(event.body) || isNullOrBlank(id)) {
+  if (isNullOrBlank(event.body) || isNullOrBlank(event.pathParameters.id)) {
     return createResponse({ message: 'Empty path id or request body' }, HttpStatus.BAD_REQUEST);
+  }
+
+  id = parseInt(event.pathParameters.id, 10);
+  if (isNaN(id)) {
+    return createResponse(
+      { message: `Error application reference is NaN: ${event.pathParameters.id}` }, HttpStatus.BAD_REQUEST);
   }
 
   try {

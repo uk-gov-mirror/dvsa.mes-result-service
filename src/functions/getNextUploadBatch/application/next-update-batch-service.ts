@@ -1,4 +1,3 @@
-import { InterfaceTypes } from '../domain/interface-types';
 import { BatchRepository } from '../framework/repositories/batch-repository';
 import { TestResultRecord } from '../domain/test-results';
 

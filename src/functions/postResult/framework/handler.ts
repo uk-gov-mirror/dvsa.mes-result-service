@@ -64,7 +64,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
 }
 
 export const isNullOrBlank = (body: string | null): boolean => {
-  return body === null || body.trim().length === 0;
+  return body === null || body === undefined || body.trim().length === 0;
 };
 
 export function getStaffNumber(pathParams: { [key: string]: string } | null): string | null {

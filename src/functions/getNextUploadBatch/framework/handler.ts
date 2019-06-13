@@ -6,6 +6,7 @@ import Response from '../../../common/application/api/Response';
 import { InterfaceTypes } from '../domain/interface-types';
 import { gzipSync } from 'zlib';
 import joi from '@hapi/joi';
+import { bootstrapConfig } from '../../../common/framework/config/config';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   let nextBatchData;
@@ -25,6 +26,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
   }
 
+  await bootstrapConfig();
   const batchPromise = getNextUploadBatch(batchSize, interfaceType);
   await batchPromise.then((response) => {
     // compress response

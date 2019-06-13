@@ -1,3 +1,3 @@
 export interface TestResultRecord {
-  testResult: string;
+  test_result: any; // We persist objects that aren't necessarily conformant to our test schema
 }

@@ -6,11 +6,12 @@ import { TestResultRecord } from '../../domain/test-results';
 
 export class BatchRepository implements IBatchRepository {
 
-  getUploadQueueData(batchSize: number, interfaceType: string): Promise<TestResultRecord[]> {
+  async getUploadQueueData(batchSize: number, interfaceType: string): Promise<TestResultRecord[]> {
     const connection: mysql.Connection = getConnection();
     let batch;
     try {
-      batch = connection.promise().query(buildTarsNextBatchQuery(batchSize, interfaceType));
+      const [rows, fields] = await connection.promise().query(buildTarsNextBatchQuery(batchSize, interfaceType));
+      batch = rows;
     } catch (err) {
       connection.rollback();
       throw err;

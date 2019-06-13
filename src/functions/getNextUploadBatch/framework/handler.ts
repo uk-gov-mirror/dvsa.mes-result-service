@@ -20,7 +20,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
   });
 
   const validationResult =
-  joi.validate({ interfaceTypeParam: interfaceType.toString(), batchSizeParam: batchSize }, batchSizeSchema);
+    joi.validate({ interfaceTypeParam: interfaceType.toString(), batchSizeParam: batchSize }, batchSizeSchema);
 
   if (validationResult.error) {
     return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
@@ -30,11 +30,14 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
   const batchPromise = getNextUploadBatch(batchSize, interfaceType);
   await batchPromise.then((response) => {
     // compress response
-    nextBatchData = gzipSync(JSON.stringify(response)).toString('base64');
+    nextBatchData = [
+      ...response.map(((row) => {
+        return gzipSync(JSON.stringify(row.test_result)).toString('base64');
+      })),
+    ];
   }).catch((err) => {
     console.error(err);
   });
-
   return createResponse(nextBatchData, HttpStatus.CREATED);
 }
 

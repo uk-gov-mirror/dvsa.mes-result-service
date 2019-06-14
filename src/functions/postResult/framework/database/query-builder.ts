@@ -64,7 +64,7 @@ export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integrat
     staffNumber,
     timestamp,
     integration,
-    ProcessingStatus.ACCEPTED,
+    ProcessingStatus.PROCESSING,
     retryCount,
   ];
   return mysql.format(template, args);

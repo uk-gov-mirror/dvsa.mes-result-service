@@ -3,14 +3,13 @@ import { validateMESJoiSchema } from '../../domain/mes-joi-schema-service';
 describe('Joi schema validation service', () => {
   const validationErrorName = 'ValidationError';
   const startValidationErrorMessage = 'child "journalData" fails because' +
-  ' [child "testSlotAttributes" fails because [child "start" fails because ["start" length' +
-  ' must be less than or equal to 25 characters long]]]';
+    ' [child "testSlotAttributes" fails because [child "start" fails because ["start" length' +
+    ' must be less than or equal to 25 characters long]]]';
   const requiredFieldMissingErrorMessage = 'child "journalData" fails because ' +
-  '[child "applicationReference" fails because ["applicationReference" is required]]';
+    '[child "applicationReference" fails because ["applicationReference" is required]]';
 
   it('should return a validation error if \'testSlotAttributes.start\' schema validation fails', () => {
     const invalidSchema = {
-      id: '1',
       activityCode: '1',
       category: 'B',
       journalData: {
@@ -44,7 +43,6 @@ describe('Joi schema validation service', () => {
 
   it('should not return a validation error if \'testSlotAttributes.start\' is valid', () => {
     const invalidSchema = {
-      id: '1',
       activityCode: '1',
       category: 'B',
       journalData: {
@@ -61,7 +59,7 @@ describe('Joi schema validation service', () => {
           welshTest: false,
           extendedTest: false,
         },
-        candidate: { },
+        candidate: {},
         applicationReference: {
           applicationId: 12,
           bookingSequence: 222,
@@ -75,7 +73,6 @@ describe('Joi schema validation service', () => {
 
   it('should return a validation error if required property is missing from schema', () => {
     const invalidSchema = {
-      id: '1',
       activityCode: '1',
       category: 'B',
       journalData: {
@@ -92,7 +89,7 @@ describe('Joi schema validation service', () => {
           welshTest: false,
           extendedTest: false,
         },
-        candidate: { },
+        candidate: {},
         // missing required property 'applicationReference'
       },
     };

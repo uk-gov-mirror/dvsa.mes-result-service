@@ -40,7 +40,6 @@ sKbh_w';
 
 export const sampleTest_12345678: StandardCarTestCATBSchema = {
   category: null,
-  id: null,
   journalData: {
     applicationReference: null,
     examiner: {
@@ -55,7 +54,6 @@ export const sampleTest_12345678: StandardCarTestCATBSchema = {
 
 export const sampleTest_87654321: StandardCarTestCATBSchema = {
   category: null,
-  id: null,
   journalData: {
     applicationReference: null,
     examiner: {
@@ -70,7 +68,6 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
 
 export const sampleTest_empty: StandardCarTestCATBSchema = {
   category: null,
-  id: null,
   journalData: {
     applicationReference: null,
     examiner: {

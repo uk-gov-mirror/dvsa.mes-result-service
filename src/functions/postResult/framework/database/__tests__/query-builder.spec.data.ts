@@ -2,7 +2,6 @@ import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 
 export const dummyTestResult: StandardCarTestCATBSchema = {
   category: 'B',
-  id: '123',
   journalData: {
     examiner: {
       staffNumber: '999',

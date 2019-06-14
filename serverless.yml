@@ -23,7 +23,7 @@ functions:
     handler: src/functions/updateUploadStatus/framework/handler.handler
     events:
       - http:
-          path: test-result/{id}/upload
+          path: test-result/{app-ref}/upload
           method: put
 
 custom:

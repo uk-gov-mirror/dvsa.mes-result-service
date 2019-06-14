@@ -11,16 +11,17 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
   await bootstrapConfig();
 
   let body: string;
-  let id: number;
+  let appRef: number;
+  const appRefPathParam = event.pathParameters['app-ref'];
 
-  if (isNullOrBlank(event.body) || isNullOrBlank(event.pathParameters.id)) {
-    return createResponse({ message: 'Empty path id or request body' }, HttpStatus.BAD_REQUEST);
+  if (isNullOrBlank(event.body) || isNullOrBlank(appRefPathParam)) {
+    return createResponse({ message: 'Empty path app-ref or request body' }, HttpStatus.BAD_REQUEST);
   }
 
-  id = parseInt(event.pathParameters.id, 10);
-  if (isNaN(id)) {
+  appRef = parseInt(appRefPathParam, 10);
+  if (isNaN(appRef)) {
     return createResponse(
-      { message: `Error application reference is NaN: ${event.pathParameters.id}` }, HttpStatus.BAD_REQUEST);
+      { message: `Error application reference is NaN: ${appRefPathParam}` }, HttpStatus.BAD_REQUEST);
   }
 
   try {
@@ -31,11 +32,11 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
   }
 
   try {
-    await updateUpload(id, body);
+    await updateUpload(appRef, body);
   } catch (err) {
     console.log(err);
     return createResponse(
-        { message: `Error updating the status in UUS of Reference Number: ${id}` }, HttpStatus.INTERNAL_SERVER_ERROR);
+      { message: `Error updating the status in UUS of Reference Number: ${appRef}` }, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   return createResponse({}, HttpStatus.CREATED);
 }

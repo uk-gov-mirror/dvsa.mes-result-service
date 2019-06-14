@@ -8,38 +8,35 @@ import { saveTestResult } from '../application/save-result-service';
 import { TestResultDecompressionError } from '../domain/errors/test-result-decompression-error';
 import { bootstrapConfig } from '../../../common/framework/config/config';
 import { validateMESJoiSchema } from '../domain/mes-joi-schema-service';
+import { verifyRequest } from '../application/jwt-verification-service';
 import * as logger from '../../../common/application/utils/logger';
-import jwtDecode from 'jwt-decode';
 
 export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Promise<Response> {
 
-  const staffNumber = getStaffNumber(event.pathParameters);
-  if (staffNumber === null) {
-    return createResponse('No staffNumber provided', HttpStatus.BAD_REQUEST);
-  }
-
-  if (process.env.EMPLOYEE_ID_VERIFICATION_DISABLED !== 'true') {
-    const employeeId = getEmployeeIdFromToken(event.headers.Authorization);
-    if (employeeId === null) {
-      return createResponse('Invalid authorisation token', HttpStatus.UNAUTHORIZED);
-    }
-    if (employeeId !== staffNumber) {
-      logger.warn(`Invalid staff number (${staffNumber}) requested by employeeId ${employeeId}`);
-      return createResponse('Invalid staffNumber', HttpStatus.FORBIDDEN);
-    }
-  }
+  let testResult: StandardCarTestCATBSchema;
 
   await bootstrapConfig();
-  console.log(`Invoked with body ${event.body}`);
-  const { body } = event;
-  const hasValidationError: boolean = false;
 
-  if (isNullOrBlank(body)) {
-    return createResponse({}, HttpStatus.BAD_REQUEST);
+  try {
+    if (isNullOrBlank(event.body)) {
+      return createResponse({ message: `Error: Null or blank request body` }, HttpStatus.BAD_REQUEST);
+    }
+    testResult = decompressTestResult(event.body as string);
+  } catch (err) {
+    if (err instanceof TestResultDecompressionError) {
+      console.error(`Could not decompress test result body ${event.body}`);
+      return createResponse({ message: 'The test result body could not be decompressed' }, HttpStatus.BAD_REQUEST);
+    }
+    console.error(err);
+    return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  if (!verifyRequest(event.headers, getStaffIdFromTest(testResult))) {
+    return createResponse({ message: 'EmployeeId and staffId do not match' }, HttpStatus.UNAUTHORIZED);
   }
 
   try {
-    const testResult: StandardCarTestCATBSchema = decompressTestResult(body as string);
+    const hasValidationError: boolean = false;
     const validationResult = validateMESJoiSchema(testResult);
 
     if (validationResult.error) {
@@ -47,19 +44,14 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
       // to prevent app stalling at 'upload pending'.
       console.error(`Could not validate the test result body ${validationResult.error}`);
       await saveTestResult(testResult, hasValidationError);
-      return createResponse({ }, HttpStatus.CREATED);
+      return createResponse({}, HttpStatus.CREATED);
     }
 
     await saveTestResult(testResult);
   } catch (err) {
-    if (err instanceof TestResultDecompressionError) {
-      console.error(`Could not decompress test result body ${body}`);
-      return createResponse({ message: 'The test result body could not be decompressed' }, HttpStatus.BAD_REQUEST);
-    }
     console.error(err);
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
   }
-
   return createResponse({}, HttpStatus.CREATED);
 }
 
@@ -67,56 +59,10 @@ export const isNullOrBlank = (body: string | null): boolean => {
   return body === null || body === undefined || body.trim().length === 0;
 };
 
-export function getStaffNumber(pathParams: { [key: string]: string } | null): string | null {
-  if (pathParams === null
-    || typeof pathParams.staffNumber !== 'string'
-    || pathParams.staffNumber.trim().length === 0) {
-    logger.warn('No staffNumber path parameter found');
-    return null;
+export const getStaffIdFromTest = (test: StandardCarTestCATBSchema) => {
+  if (test && test.journalData && test.journalData.examiner && test.journalData.examiner.staffNumber) {
+    return test.journalData.examiner.staffNumber;
   }
-  return pathParams.staffNumber;
-}
-
-export function getEmployeeIdFromToken(token: string): string | null {
-  if (token === null) {
-    logger.warn('No authorisation token in request');
-    return null;
-  }
-
-  try {
-    const decodedToken: any = jwtDecode(token);
-    const employeeIdKey = process.env.EMPLOYEE_ID_EXT_KEY || '';
-    if (employeeIdKey.length === 0) {
-      logger.error('No key specified to find employee ID from JWT');
-      return null;
-    }
-
-    const employeeIdFromJwt = decodedToken[employeeIdKey];
-    if (!employeeIdFromJwt) {
-      logger.warn('No employeeId found in authorisation token');
-      return null;
-    }
-
-    return Array.isArray(employeeIdFromJwt) ?
-      getEmployeeIdFromArray(employeeIdFromJwt) : getEmployeeIdStringProperty(employeeIdFromJwt);
-  } catch (err) {
-    logger.error(err);
-    return null;
-  }
-}
-
-export function getEmployeeIdFromArray(attributeArr: string[]): string | null {
-  if (attributeArr.length === 0) {
-    logger.warn('No employeeId found in authorisation token');
-    return null;
-  }
-  return attributeArr[0];
-}
-
-export function getEmployeeIdStringProperty(employeeId: any): string | null {
-  if (typeof employeeId !== 'string' || employeeId.trim().length === 0) {
-    logger.warn('No employeeId found in authorisation token');
-    return null;
-  }
-  return employeeId;
-}
+  logger.warn('No staffId found in the test data');
+  return null;
+};

@@ -6,6 +6,7 @@ import {
     sampleTest_87654321,
     sampleTest_empty,
 } from '../../framework/__tests__/handler.spec.data';
+import { getStaffIdFromTest } from '../../framework/handler';
 const lambdaTestUtils = require('aws-lambda-test-utils');
 
 describe('JWTVerificationService', () => {
@@ -23,20 +24,20 @@ describe('JWTVerificationService', () => {
 
   describe('verifyRequest', () => {
     it('should return true if valid employeeId from JWT and staffId from body match', () => {
-      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_12345678);
+      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, getStaffIdFromTest(sampleTest_12345678));
       expect(res).toEqual(true);
     });
     it('should return false if employeeId and JWT dont match', () => {
-      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_87654321);
+      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, getStaffIdFromTest(sampleTest_87654321));
       expect(res).toEqual(false);
     });
     it('should return false if missing employeeId from JWT', () => {
       dummyApigwEvent.headers.Authorization = null;
-      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_87654321);
+      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, getStaffIdFromTest(sampleTest_87654321));
       expect(res).toEqual(false);
     });
     it('should return false if missing staffId from body', () => {
-      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_empty);
+      const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, getStaffIdFromTest(sampleTest_empty));
       expect(res).toEqual(false);
     });
   });
@@ -82,17 +83,6 @@ describe('JWTVerificationService', () => {
       const exampleArr = [];
       const rtn = jwtVerificationSvc.getEmployeeIdFromArray(exampleArr);
       expect(rtn).toBeNull();
-    });
-  });
-
-  describe('getStaffIdFromTest', () => {
-    it('should return null if there is no staffId', () => {
-      const resp = jwtVerificationSvc.getStaffIdFromTest(sampleTest_empty);
-      expect(resp).toEqual(null);
-    });
-    it('should return the correct staffId if available', () => {
-      const resp = jwtVerificationSvc.getStaffIdFromTest(sampleTest_12345678);
-      expect(resp).toEqual('12345678');
     });
   });
 });

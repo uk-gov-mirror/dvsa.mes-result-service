@@ -1,5 +1,5 @@
 import { APIGatewayEvent, Context } from 'aws-lambda';
-import { handler } from '../handler';
+import { handler, getStaffIdFromTest } from '../handler';
 const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, It, Times } from 'typemoq';
 import * as decompressionService from '../../application/decompression-service';
@@ -11,8 +11,7 @@ import * as configSvc from '../../../../common/framework/config/config';
 import * as joiValidationSvc from '../../domain/mes-joi-schema-service';
 import * as jwtVerificationSvc from '../../application/jwt-verification-service';
 import { ValidationResult } from '@hapi/joi';
-import { sampleToken_12345678, sampleToken_01234567, sampleTest_12345678 } from '../__tests__/handler.spec.data';
-import { decompressionServiceTestData } from '../../application/__tests__/data/decompression-service.spec.data';
+import { sampleToken_12345678, sampleTest_12345678, sampleTest_empty } from '../__tests__/handler.spec.data';
 
 describe('postResult handler', () => {
   let dummyApigwEvent: APIGatewayEvent;
@@ -116,6 +115,16 @@ describe('postResult handler', () => {
       const resp = await handler(dummyApigwEvent, dummyContext);
 
       expect(resp.statusCode).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+  });
+  describe('getStaffIdFromTest', () => {
+    it('should return null if there is no staffId', () => {
+      const resp = getStaffIdFromTest(sampleTest_empty);
+      expect(resp).toEqual(null);
+    });
+    it('should return the correct staffId if available', () => {
+      const resp = getStaffIdFromTest(sampleTest_12345678);
+      expect(resp).toEqual('12345678');
     });
   });
 });

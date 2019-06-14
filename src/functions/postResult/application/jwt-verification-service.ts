@@ -2,16 +2,15 @@ import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import * as logger from '../../../common/application/utils/logger';
 import jwtDecode = require('jwt-decode');
 
-export const verifyRequest = (headers: { [key: string]: string }, test: StandardCarTestCATBSchema): boolean => {
+export const verifyRequest = (headers: { [key: string]: string }, staffId: string): boolean => {
 
+  if (staffId === null) {
+    logger.warn('No staffId found in the test data');
+    return false;
+  }
   const employeeId = getEmployeeIdFromToken(headers.Authorization);
   if (employeeId === null) {
     logger.warn(`No valid authorisation token in request ${employeeId}`);
-    return false;
-  }
-  const staffId = getStaffIdFromTest(test);
-  if (staffId === null) {
-    logger.warn('No staffId found in the test data');
     return false;
   }
   if (employeeId === staffId) {
@@ -63,12 +62,4 @@ export const getEmployeeIdFromArray = (attributeArr: string[]): string | null =>
     return null;
   }
   return attributeArr[0];
-};
-
-export const getStaffIdFromTest = (test: StandardCarTestCATBSchema) => {
-  if (test && test.journalData && test.journalData.examiner && test.journalData.examiner.staffNumber) {
-    return test.journalData.examiner.staffNumber;
-  }
-  logger.warn('No staffId found in the test data');
-  return null;
 };

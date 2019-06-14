@@ -9,6 +9,7 @@ import { TestResultDecompressionError } from '../domain/errors/test-result-decom
 import { bootstrapConfig } from '../../../common/framework/config/config';
 import { validateMESJoiSchema } from '../domain/mes-joi-schema-service';
 import { verifyRequest } from '../application/jwt-verification-service';
+import * as logger from '../../../common/application/utils/logger';
 
 export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Promise<Response> {
 
@@ -30,13 +31,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  const isValidRequest = verifyRequest(event.headers, testResult);
-  console.log(isValidRequest);
-
-  if (isValidRequest === null || isValidRequest === undefined) {
-    return createResponse({ message: 'Missing employeeId or staffId' }, HttpStatus.BAD_REQUEST);
-  }
-  if (!isValidRequest) {
+  if (!verifyRequest(event.headers, testResult)) {
     return createResponse({ message: 'EmployeeId and staffId do not match' }, HttpStatus.UNAUTHORIZED);
   }
 
@@ -62,4 +57,12 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
 
 export const isNullOrBlank = (body: string | null): boolean => {
   return body === null || body === undefined || body.trim().length === 0;
+};
+
+export const getStaffIdFromTest = (test: StandardCarTestCATBSchema) => {
+  if (test && test.journalData && test.journalData.examiner && test.journalData.examiner.staffNumber) {
+    return test.journalData.examiner.staffNumber;
+  }
+  logger.warn('No staffId found in the test data');
+  return null;
 };

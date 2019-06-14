@@ -30,14 +30,14 @@ describe('JWTVerificationService', () => {
       const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_87654321);
       expect(res).toEqual(false);
     });
-    it('should return null if missing employeeId from JWT', () => {
+    it('should return false if missing employeeId from JWT', () => {
       dummyApigwEvent.headers.Authorization = null;
       const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_87654321);
-      expect(res).toEqual(null);
+      expect(res).toEqual(false);
     });
-    it('should return null if missing staffId from body', () => {
+    it('should return false if missing staffId from body', () => {
       const res = jwtVerificationSvc.verifyRequest(dummyApigwEvent.headers, sampleTest_empty);
-      expect(res).toEqual(null);
+      expect(res).toEqual(false);
     });
   });
 

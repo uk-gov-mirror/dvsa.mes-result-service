@@ -7,12 +7,12 @@ export const verifyRequest = (headers: { [key: string]: string }, test: Standard
   const employeeId = getEmployeeIdFromToken(headers.Authorization);
   if (employeeId === null) {
     logger.warn(`No valid authorisation token in request ${employeeId}`);
-    return null;
+    return false;
   }
   const staffId = getStaffIdFromTest(test);
   if (staffId === null) {
     logger.warn('No staffId found in the test data');
-    return null;
+    return false;
   }
   if (employeeId === staffId) {
     return true;

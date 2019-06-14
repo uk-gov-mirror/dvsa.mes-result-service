@@ -78,15 +78,8 @@ describe('postResult handler', () => {
   });
 
   describe('JWT verification', () => {
-    it('should respond with error 400 if missing JWT token', async () => {
+    it('should respond with error 401 if fails JWT verification', async () => {
       dummyApigwEvent.headers.Authorization = null;
-      const resp = await handler(dummyApigwEvent, dummyContext);
-      expect(resp.statusCode).toEqual(400);
-      expect(JSON.parse(resp.body).message).toBe('Missing employeeId or staffId');
-    });
-    it('should respond with error 401 if JWT and test staffId dont match', async () => {
-      dummyApigwEvent.headers.Authorization = sampleToken_01234567;
-      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => sampleTest_12345678);
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toEqual(401);
       expect(JSON.parse(resp.body).message).toBe('EmployeeId and staffId do not match');

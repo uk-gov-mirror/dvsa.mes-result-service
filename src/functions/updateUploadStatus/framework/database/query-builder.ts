@@ -20,7 +20,7 @@ export const updateUploadStatus = (appReference: number, body: any): string => {
   AND staff_number = ?
   AND interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = ?)`;
 
-  uploadStatus = body.upload_status;
+  uploadStatus = body.state;
   retryCount = body.retry_count;
   errorMessage = body.error_message;
   applicationReference = appReference;

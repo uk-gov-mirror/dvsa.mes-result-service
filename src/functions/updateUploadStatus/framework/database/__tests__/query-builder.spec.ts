@@ -8,7 +8,7 @@ describe('updateUploadStatus query builder', () => {
   beforeEach(() => {
     dummyAppRef = 1234567890;
     dummyRequestBody = {
-      upload_status: 'ACCEPTED',
+      state: 'ACCEPTED',
       retry_count: 15,
       error_message: '500 Internal Server Error',
       staff_number: '12345',

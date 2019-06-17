@@ -12,7 +12,7 @@ export const buildTarsNextBatchQuery = (batchSize: number, interfaceType: string
   FROM TEST_RESULT JOIN UPLOAD_QUEUE
   WHERE TEST_RESULT.application_reference = UPLOAD_QUEUE.application_reference
   AND UPLOAD_QUEUE.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = ?)
-  AND UPLOAD_QUEUE.upload_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSING')
+  AND UPLOAD_QUEUE.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING')
   ORDER BY UPLOAD_QUEUE.timestamp ASC
   LIMIT ?;
  `;

@@ -12,10 +12,10 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
 
   let body: string;
   let appRef: number;
-  const appRefPathParam = event.pathParameters['appRef'];
+  const appRefPathParam = event.pathParameters['app-ref'];
 
   if (isNullOrBlank(event.body) || isNullOrBlank(appRefPathParam)) {
-    return createResponse({ message: 'Empty path appRef or request body' }, HttpStatus.BAD_REQUEST);
+    return createResponse({ message: 'Empty path app-ref or request body' }, HttpStatus.BAD_REQUEST);
   }
 
   appRef = parseInt(appRefPathParam, 10);

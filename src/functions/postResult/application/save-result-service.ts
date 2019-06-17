@@ -19,9 +19,9 @@ export const saveTestResult = async (testResult: StandardCarTestCATBSchema,
       isCompletedTest(activityCode) &&
       hasCandidateCommunicationPermission(communicationPreferences.communicationMethod)
     ) {
-      await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.RSIS));
+      await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));
     }
-    await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));
+    await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.RSIS));
   } catch (err) {
     connection.rollback();
     throw err;

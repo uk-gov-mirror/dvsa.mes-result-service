@@ -2,7 +2,7 @@ import { IBatchRepository } from './batch-repository-interface';
 import { getConnection } from '../../../../common/framework/mysql/database';
 import * as mysql from 'mysql2';
 import { buildTarsNextBatchQuery } from '../database/query-builder';
-import { TestResultRecord } from '../../domain/test-results';
+import { TestResultRecord } from '../../../../common/domain/test-results';
 
 export class BatchRepository implements IBatchRepository {
 

@@ -26,6 +26,13 @@ functions:
           path: test-result/{app-ref}/upload
           method: put
 
+  searchResults:
+    handler: src/functions/searchResults/framework/handler.handler
+    events:
+      - http:
+          path: test-result
+          method: get
+
 custom:
   dynamodb:
     start:

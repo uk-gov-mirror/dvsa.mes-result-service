@@ -4,10 +4,12 @@ import { HttpStatus } from '../../../common/application/api/HttpStatus';
 import Response from '../../../common/application/api/Response';
 import { SearchRepository } from './repositories/search-repository';
 import { DriverDetail } from './database/query-builder';
+import { bootstrapConfig } from '../../../common/framework/config/config';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   // TODO: Retrieve isLDTM value from fnCtx for LDTM searches
   const { filter, value } = event.queryStringParameters;
+  await bootstrapConfig();
   try {
     // TODO: Add some joi validation to the url params
     // TODO: Retrieve staffNumber from JWT in event.headers.Authorization

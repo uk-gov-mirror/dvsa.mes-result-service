@@ -64,10 +64,10 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     // }
 
     const ldtmPermittedQueries = [
-      'startDate', 'staffNumber', 'endDate', 'driverNumber', 
-      'dtcCode', 'applicationReference'
+      'startDate', 'staffNumber', 'endDate', 'driverNumber',
+      'dtcCode', 'applicationReference',
     ];
-    
+
     const dePermittedQueries = ['driverNumber', 'applicationReference'];
 
     // This is to be safe, incase new parameters are added for DE only in the future

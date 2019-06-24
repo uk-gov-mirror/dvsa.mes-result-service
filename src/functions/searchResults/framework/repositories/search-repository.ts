@@ -16,7 +16,7 @@ export class SearchRepository {
         buildDriverDetailsSearchQuery(queryParameters),
       );
     } catch (err) {
-      connection.rollback();
+      console.log(err);
       throw err;
     } finally {
       connection.end();

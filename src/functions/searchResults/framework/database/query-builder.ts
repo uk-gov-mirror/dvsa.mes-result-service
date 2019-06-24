@@ -2,8 +2,8 @@ import * as mysql from 'mysql2';
 import { QueryParameters } from '../../domain/query_parameters';
 
 export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters): string => {
-  const parameterArray = [];
-  let queries = [];
+  const parameterArray : string[] = [];
+  let queries : string[] = [];
 
   if (queryParameters.startDate && queryParameters.endDate) {
     queries.push('test_date >= ? AND test_date <= ?');
@@ -32,10 +32,12 @@ export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters)
 
   // Stringify the array, leaving spaces between
   let queryString = 'SELECT * FROM TEST_RESULT WHERE ';
-  for (const query of queries) {
-    queryString += `${query} `;
-  }
 
-  queryString += 'ORDER BY test_date DESC LIMIT 200;';
+  queries.forEach((query) => {
+    queryString = queryString.concat(`${query} `);
+  });
+
+  queryString = queryString.concat('ORDER BY test_date DESC LIMIT 200;');
+
   return mysql.format(queryString, parameterArray);
 };

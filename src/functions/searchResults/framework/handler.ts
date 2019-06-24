@@ -6,7 +6,6 @@ import { SearchRepository } from './repositories/search-repository';
 import { bootstrapConfig } from '../../../common/framework/config/config';
 import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
-import { bool } from 'aws-sdk/clients/signer';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();

@@ -3,8 +3,8 @@ export class QueryParameters {
   startDate : string;
   staffNumber: string;
   endDate: string;
-  driverId: string;
+  driverNumber: string;
   dtcCode: string;
-  appRef: string;
+  applicationReference: string;
 
 }

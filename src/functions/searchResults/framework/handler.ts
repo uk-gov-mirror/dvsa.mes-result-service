@@ -28,8 +28,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     if (event.queryStringParameters.endDate) {
       queryParameters.endDate = event.queryStringParameters.endDate;
     }
-    if (event.queryStringParameters.driverId) {
-      queryParameters.driverId = event.queryStringParameters.driverId;
+    if (event.queryStringParameters.driverNumber) {
+      queryParameters.driverNumber = event.queryStringParameters.driverNumber;
     }
     if (event.queryStringParameters.staffNumber) {
       queryParameters.staffNumber = event.queryStringParameters.staffNumber;
@@ -37,8 +37,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     if (event.queryStringParameters.dtcCode) {
       queryParameters.dtcCode = event.queryStringParameters.dtcCode;
     }
-    if (event.queryStringParameters.appRef) {
-      queryParameters.appRef = event.queryStringParameters.appRef;
+    if (event.queryStringParameters.applicationReference) {
+      queryParameters.applicationReference = event.queryStringParameters.applicationReference;
     }
 
     // TODO: Update the validation, not working at the moment, seems to fail for every request
@@ -63,8 +63,12 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     //   return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
     // }
 
-    const ldtmPermittedQueries = ['startDate', 'staffNumber', 'endDate', 'driverId', 'dtcCode', 'appRef'];
-    const dePermittedQueries = ['driverId', 'appRef'];
+    const ldtmPermittedQueries = [
+      'startDate', 'staffNumber', 'endDate', 'driverNumber', 
+      'dtcCode', 'applicationReference'
+    ];
+    
+    const dePermittedQueries = ['driverNumber', 'applicationReference'];
 
     // This is to be safe, incase new parameters are added for DE only in the future
     if (isLDTM) {

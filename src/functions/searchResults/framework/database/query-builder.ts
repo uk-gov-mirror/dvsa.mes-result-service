@@ -10,9 +10,9 @@ export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters)
     parameterArray.push(queryParameters.startDate);
     parameterArray.push(queryParameters.endDate);
   }
-  if (queryParameters.driverId) {
+  if (queryParameters.driverNumber) {
     queries.push('driver_number = ?');
-    parameterArray.push(queryParameters.driverId);
+    parameterArray.push(queryParameters.driverNumber);
   }
   if (queryParameters.dtcCode) {
     queries.push('json_extract(test_result, \'$.journalData.testCentre.costCode\') = ?');
@@ -22,9 +22,9 @@ export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters)
     queries.push('staff_number = ?');
     parameterArray.push(queryParameters.staffNumber);
   }
-  if (queryParameters.appRef) {
+  if (queryParameters.applicationReference) {
     queries.push('application_reference = ?');
-    parameterArray.push(queryParameters.appRef);
+    parameterArray.push(queryParameters.applicationReference);
   }
 
   // Add AND between all statements

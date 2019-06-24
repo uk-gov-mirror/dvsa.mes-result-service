@@ -15,7 +15,7 @@ export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters)
     parameterArray.push(queryParameters.driverNumber);
   }
   if (queryParameters.dtcCode) {
-    queries.push('json_extract(test_result, \'$.journalData.testCentre.costCode\') = ?');
+    queries.push('tc_cc = ?');
     parameterArray.push(queryParameters.dtcCode);
   }
   if (queryParameters.staffNumber) {

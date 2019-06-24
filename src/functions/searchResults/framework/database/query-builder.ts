@@ -31,7 +31,7 @@ export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters)
   queries = [...queries].map((e, i) => i < queries.length - 1 ? [e, 'AND'] : [e]).reduce((a, b) => a.concat(b));
 
   // Stringify the array, leaving spaces between
-  let queryString = 'SELECT * FROM TEST_RESULT WHERE ';
+  let queryString = 'SELECT test_result FROM TEST_RESULT WHERE ';
 
   queries.forEach((query) => {
     queryString = queryString.concat(`${query} `);

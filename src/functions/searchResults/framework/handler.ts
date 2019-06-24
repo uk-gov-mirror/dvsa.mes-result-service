@@ -90,7 +90,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     }
 
     const result = await new SearchRepository().searchForTestResultWithDriverDetails(queryParameters);
-    return createResponse(result, HttpStatus.OK);
+    const results = result[0].map(row => row.test_result);
+    return createResponse(results, HttpStatus.OK);
   } catch (err) {
     return createResponse(err, HttpStatus.BAD_REQUEST);
   }

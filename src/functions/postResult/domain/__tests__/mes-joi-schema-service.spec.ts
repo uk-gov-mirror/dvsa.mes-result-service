@@ -4,7 +4,7 @@ describe('Joi schema validation service', () => {
   const validationErrorName = 'ValidationError';
   const startValidationErrorMessage = 'child "journalData" fails because' +
     ' [child "testSlotAttributes" fails because [child "start" fails because ["start" length' +
-    ' must be less than or equal to 25 characters long]]]';
+    ' must be less than or equal to 19 characters long]]]';
   const requiredFieldMissingErrorMessage = 'child "journalData" fails because ' +
     '[child "applicationReference" fails because ["applicationReference" is required]]';
 
@@ -20,7 +20,7 @@ describe('Joi schema validation service', () => {
         },
         testSlotAttributes: {
           slotId: 1,
-          start: '123451234512345123451234512345', // start exceeds max-length (25 characters)
+          start: '12345123451234512345', // start exceeds max-length (19 characters)
           vehicleSlotType: 'mock',
           specialNeeds: false,
           welshTest: false,
@@ -53,7 +53,7 @@ describe('Joi schema validation service', () => {
         },
         testSlotAttributes: {
           slotId: 1,
-          start: '1234512345123451234512345', // start does not exceed max-length (25 characters)
+          start: '1234512345123451234', // start does not exceed max-length (19 characters)
           vehicleSlotType: 'mock',
           specialNeeds: false,
           welshTest: false,
@@ -83,7 +83,7 @@ describe('Joi schema validation service', () => {
         },
         testSlotAttributes: {
           slotId: 1,
-          start: '1234512345123451234512345',
+          start: '1234512345123451234',
           vehicleSlotType: 'mock',
           specialNeeds: false,
           welshTest: false,

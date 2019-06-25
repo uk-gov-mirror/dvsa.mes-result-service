@@ -12,11 +12,12 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
     test_result,
     test_date,
     tc_id,
+    tc_cc,
     driver_number,
     driver_surname,
     result_status
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const { journalData } = test;
@@ -25,6 +26,7 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
   const testResult = JSON.stringify(test);
   const testDate = new Date(journalData.testSlotAttributes.start);
   const testCentreId = journalData.testCentre.centreId;
+  const testCentreCostCode = journalData.testCentre.costCode;
   const { driverNumber } = journalData.candidate;
   const driverSurname = journalData.candidate.candidateName.lastName;
 
@@ -34,6 +36,7 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
     testResult,
     testDate,
     testCentreId,
+    testCentreCostCode,
     driverNumber,
     driverSurname,
     isError ? ResultStatus.ERROR : ResultStatus.ACCEPTED,

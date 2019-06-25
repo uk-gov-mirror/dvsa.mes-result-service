@@ -6,6 +6,7 @@ import { SearchRepository } from './repositories/search-repository';
 import { bootstrapConfig } from '../../../common/framework/config/config';
 import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
+import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
@@ -91,8 +92,25 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     }
 
     const result = await new SearchRepository().searchForTestResultWithDriverDetails(queryParameters);
+    
     const results = result[0].map(row => row.test_result);
-    return createResponse(results, HttpStatus.OK);
+    const condensedTestResult : SearchResultTestSchema [] = [];
+
+    for (let testResultRow of results) {
+      condensedTestResult.push(
+        {
+          "costCode": testResultRow.journalData.testCentre.costCode,
+          "testDate": testResultRow.journalData.testSlotAttributes.start,
+          "staffNumber": testResultRow.journalData.examiner.staffNumber,
+          "candidateName": testResultRow.journalData.candidate.candidate,
+          "applicationReference": testResultRow.journalData.applicationReference.applicationId,
+          "category": testResultRow.category,
+          "activityCode": testResultRow.activityCode
+        }
+      )
+    }
+
+    return createResponse(condensedTestResult, HttpStatus.OK);
   } catch (err) {
     return createResponse(err, HttpStatus.BAD_REQUEST);
   }

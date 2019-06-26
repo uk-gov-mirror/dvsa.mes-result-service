@@ -7,6 +7,7 @@ import { bootstrapConfig } from '../../../common/framework/config/config';
 import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
+import { getEmployeeIdFromToken } from '../../../common/application/utils/getEmployeeId';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
@@ -43,27 +44,30 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       queryParameters.applicationReference = event.queryStringParameters.applicationReference;
     }
 
-    // TODO: Update the validation, not working at the moment, seems to fail for every request
-    // const parametersSchema = joi.object().keys({
-    //   startDate: joi.date().format('YYYY-MM-DD').optional(),
-    //   endDate: joi.date().format('YYYY-MM-DD').optional(),
-    //   driverId: joi.string().alphanum().max(16).optional(),
-    //   staffNumber: joi.string().alphanum().optional(),
-    //   dtcCode: joi.string().alphanum().optional(),
-    //   appRef: joi.number().max(1000000000000).optional(),
-    // });
+    const parametersSchema = joi.object().keys({
+      startDate: joi.string().regex(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/).optional()
+          .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
+      endDate: joi.string().regex(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/).optional()
+          .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
+      driverId: joi.string().alphanum().max(16).optional(),
+      staffNumber: joi.string().alphanum().optional(),
+      dtcCode: joi.string().alphanum().optional(),
+      appRef: joi.number().max(1000000000000).optional(),
+    });
 
-    // const validationResult =
-    //   joi.validate({
-    //     driverId: queryParameters.driverId,
-    //     staffNumber: queryParameters.staffNumber,
-    //     dtcCode: queryParameters.dtcCode,
-    //     appRef: queryParameters.appRef
-    //    }, parametersSchema);
+    const validationResult =
+      joi.validate({
+        driverId: queryParameters.driverNumber,
+        staffNumber: queryParameters.staffNumber,
+        dtcCode: queryParameters.dtcCode,
+        appRef: queryParameters.applicationReference,
+        startDate: queryParameters.startDate,
+        endDate: queryParameters.endDate,
+      },           parametersSchema);
 
-    // if (validationResult.error) {
-    //   return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
-    // }
+    if (validationResult.error) {
+      return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
+    }
 
     const ldtmPermittedQueries = [
       'startDate', 'staffNumber', 'endDate', 'driverNumber',
@@ -87,8 +91,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
           return createResponse(`DE is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
         }
       }
-      // TODO: Attach individuals staffNumber as a queryParameter
-      // Retrieve staffNumber from JWT in event.headers.Authorization
+      const staffNumber = getEmployeeIdFromToken(event.headers.Authorization);
+      queryParameters.staffNumber = staffNumber;
     }
 
     const result = await new SearchRepository().searchForTestResultWithDriverDetails(queryParameters);

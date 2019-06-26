@@ -1,6 +1,12 @@
 import * as jwtVerificationSvc from '../jwt-verification-service';
 import { APIGatewayEvent } from 'aws-lambda';
 import {
+  getEmployeeIdFromToken,
+  getEmployeeIdStringProperty,
+  getEmployeeIdFromArray,
+} from '../../../../common/application/utils/getEmployeeId';
+
+import {
     sampleToken_12345678,
     sampleTest_12345678,
     sampleTest_87654321,
@@ -44,31 +50,31 @@ describe('JWTVerificationService', () => {
 
   describe('getEmployeeIdFromToken', () => {
     it('should return null if token is null', () => {
-      const res = jwtVerificationSvc.getEmployeeIdFromToken(null);
+      const res = getEmployeeIdFromToken(null);
       expect(res).toEqual(null);
     });
     it('should return null if EMPLOYEE_ID_EXT_KEY is null', () => {
       process.env.EMPLOYEE_ID_EXT_KEY = null;
-      const res = jwtVerificationSvc.getEmployeeIdFromToken(sampleToken_12345678);
+      const res = getEmployeeIdFromToken(sampleToken_12345678);
       expect(res).toEqual(null);
     });
   });
 
   describe('getEmployeeIdStringProperty', () => {
     it('should return null if employeeId is null', () => {
-      const res = jwtVerificationSvc.getEmployeeIdStringProperty(null);
+      const res = getEmployeeIdStringProperty(null);
       expect(res).toEqual(null);
     });
     it('should return null if employeeId is a number', () => {
-      const res = jwtVerificationSvc.getEmployeeIdStringProperty(1234567890);
+      const res = getEmployeeIdStringProperty(1234567890);
       expect(res).toEqual(null);
     });
     it('should return null if employeeId is an empty string', () => {
-      const res = jwtVerificationSvc.getEmployeeIdStringProperty(' ');
+      const res = getEmployeeIdStringProperty(' ');
       expect(res).toEqual(null);
     });
     it('should return the employeeId if it is valid', () => {
-      const res = jwtVerificationSvc.getEmployeeIdStringProperty('1234567890');
+      const res = getEmployeeIdStringProperty('1234567890');
       expect(res).toEqual('1234567890');
     });
   });
@@ -76,12 +82,12 @@ describe('JWTVerificationService', () => {
   describe('getEmployeeIdFromArray', () => {
     it('should return the first value of the array', () => {
       const exampleArr = ['first', 'second', 'third'];
-      const resp = jwtVerificationSvc.getEmployeeIdFromArray(exampleArr);
+      const resp = getEmployeeIdFromArray(exampleArr);
       expect(resp).toEqual('first');
     });
     it('should return null if empty array', () => {
       const exampleArr = [];
-      const rtn = jwtVerificationSvc.getEmployeeIdFromArray(exampleArr);
+      const rtn = getEmployeeIdFromArray(exampleArr);
       expect(rtn).toBeNull();
     });
   });

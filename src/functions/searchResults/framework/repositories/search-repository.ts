@@ -1,20 +1,22 @@
 import { getConnection } from '../../../../common/framework/mysql/database';
 import * as mysql from 'mysql2';
 import { TestResultRecord } from '../../../../common/domain/test-results';
-import { buildDriverDetailsSearchQuery, DriverDetail } from '../database/query-builder';
+import { buildDriverDetailsSearchQuery } from '../database/query-builder';
+import { QueryParameters } from '../../domain/query_parameters';
 
 export class SearchRepository {
 
   async searchForTestResultWithDriverDetails(
-    driverDetailsKey: DriverDetail, driverDetailsValue: string,
+    queryParameters : QueryParameters,
   ): Promise<TestResultRecord> {
     const connection: mysql.Connection = getConnection();
     let result: TestResultRecord;
     try {
       result = await connection.promise().query(
-        buildDriverDetailsSearchQuery(driverDetailsKey, driverDetailsValue),
+        buildDriverDetailsSearchQuery(queryParameters),
       );
     } catch (err) {
+      console.log(err);
       throw err;
     } finally {
       connection.end();

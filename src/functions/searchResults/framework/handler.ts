@@ -101,13 +101,14 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     const condensedTestResult : SearchResultTestSchema [] = [];
 
     for (const testResultRow of results) {
+      const appRef = testResultRow.journalData.applicationReference;
       condensedTestResult.push(
         {
           costCode: testResultRow.journalData.testCentre.costCode,
           testDate: testResultRow.journalData.testSlotAttributes.start,
-          staffNumber: testResultRow.journalData.examiner.staffNumber,
+          driverNumber: testResultRow.journalData.candidate.driverNumber,
           candidateName: testResultRow.journalData.candidate.candidate,
-          applicationReference: testResultRow.journalData.applicationReference.applicationId,
+          applicationReference: `${appRef.applicationId}${appRef.bookingSequence}${appRef.checkDigit}`,
           category: testResultRow.category,
           activityCode: testResultRow.activityCode,
         },

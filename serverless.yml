@@ -33,6 +33,13 @@ functions:
           path: test-result
           method: get
 
+  getResult:
+    handler: src/functions/getResult/framework/handler.handler
+    events:
+      - http:
+          path: test-result/{app-ref}/{staff-number}
+          method: get
+
 custom:
   dynamodb:
     start:

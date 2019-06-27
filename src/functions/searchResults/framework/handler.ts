@@ -13,7 +13,6 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
   await bootstrapConfig();
   try {
     // TODO: Retrieve isLDTM value from fnCtx for LDTM searches
-    // TODO: Create index for searchable columns
     // Temporary workaround having isLDTM as a parameter
 
     if (!event.queryStringParameters) {

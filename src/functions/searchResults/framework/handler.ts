@@ -16,13 +16,13 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     // Temporary workaround having isLDTM as a parameter
 
     const queryParameters : QueryParameters = new QueryParameters();
-    
+
     if (!event.queryStringParameters) {
       return createResponse('Query parameters have to be supplied', HttpStatus.BAD_REQUEST);
     }
 
     let isLDTM = false;
-    if (event.queryStringParameters.isLDTM === "true") {
+    if (event.queryStringParameters.isLDTM === 'true') {
       isLDTM = true;
     }
 

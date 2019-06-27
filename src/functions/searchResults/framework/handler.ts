@@ -15,12 +15,16 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     // TODO: Retrieve isLDTM value from fnCtx for LDTM searches
     // Temporary workaround having isLDTM as a parameter
 
+    const queryParameters : QueryParameters = new QueryParameters();
+    
     if (!event.queryStringParameters) {
       return createResponse('Query parameters have to be supplied', HttpStatus.BAD_REQUEST);
     }
 
-    const queryParameters : QueryParameters = new QueryParameters();
-    const isLDTM = event.queryStringParameters.isLDTM;
+    let isLDTM = false;
+    if (event.queryStringParameters.isLDTM === "true") {
+      isLDTM = true;
+    }
 
     // Set the parameters from the event to the queryParameter holder object
     // Todo move all IF statements to a common shared method
@@ -41,6 +45,10 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     }
     if (event.queryStringParameters.applicationReference) {
       queryParameters.applicationReference = event.queryStringParameters.applicationReference;
+    }
+
+    if (Object.keys(queryParameters).length === 0) {
+      return createResponse('Query parameters have to be supplied', HttpStatus.BAD_REQUEST);
     }
 
     const parametersSchema = joi.object().keys({

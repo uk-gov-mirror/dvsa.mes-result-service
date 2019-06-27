@@ -108,7 +108,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
           testDate: testResultRow.journalData.testSlotAttributes.start,
           driverNumber: testResultRow.journalData.candidate.driverNumber,
           candidateName: testResultRow.journalData.candidate.candidate,
-          applicationReference: appRef.applicationId + appRef.bookingSequence + appRef.checkDigit,
+          applicationReference: `${appRef.applicationId}${appRef.bookingSequence}${appRef.checkDigit}`,
           category: testResultRow.category,
           activityCode: testResultRow.activityCode,
         },

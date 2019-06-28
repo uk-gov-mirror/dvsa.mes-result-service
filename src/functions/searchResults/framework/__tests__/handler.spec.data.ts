@@ -47,4 +47,3 @@ export const queryParameter: QueryParameters = {
   applicationReference: '1234570231',
   dtcCode: 'EXTC1',
 };
-

@@ -3,9 +3,8 @@ import { handler } from '../handler';
 const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, It, Times } from 'typemoq';
 import * as configSvc from '../../../../common/framework/config/config';
-import { queryParameter, sampleToken_12345678 } from '../__tests__/handler.spec.data';
+import { queryParameter, sampleToken_12345678, testResult, testResultResponse } from '../__tests__/handler.spec.data';
 import * as searchResultsSvc from '../repositories/search-repository';
-import { TestResultRecord } from '../../../../common/domain/test-results';
 
 describe('searchResults handler', () => {
   let dummyApigwEvent: APIGatewayEvent;
@@ -78,15 +77,15 @@ describe('searchResults handler', () => {
       dummyApigwEvent.queryStringParameters['isLDTM'] = 'true';
       dummyApigwEvent.queryStringParameters['startDate'] = queryParameter.startDate;
       dummyApigwEvent.queryStringParameters['endDate'] = queryParameter.endDate;
-      const testResult : TestResultRecord = {
-        test_result: 'Nothing',
-      };
-      const fakeTestResult = Mock.ofType<Promise<TestResultRecord>>();
-      fakeTestResult.setup((x: any) => x.then).returns(() => testResult);
-      moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(fakeTestResult.object));
+      dummyApigwEvent.queryStringParameters['driverNumber'] = queryParameter.driverNumber;
+      dummyApigwEvent.queryStringParameters['dtcCode'] = queryParameter.dtcCode;
+      dummyApigwEvent.queryStringParameters['staffNumber'] = queryParameter.staffNumber;
+      dummyApigwEvent.queryStringParameters['applicationReference'] = queryParameter.applicationReference;
+      moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
       const resp = await handler(dummyApigwEvent, dummyContext);
-      // expect(resp.statusCode).toBe(400);
-      // expect(JSON.parse(resp.body)).toBe('Query parameters have to be supplied');
+      expect(resp.statusCode).toBe(200);
+      expect(JSON.parse(resp.body)).toEqual(testResultResponse);
+      moqSearchResults.verify(x => x(It.isObjectWith(queryParameter)), Times.once());
     });
   });
 });

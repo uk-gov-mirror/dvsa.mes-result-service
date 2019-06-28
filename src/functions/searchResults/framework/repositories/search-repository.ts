@@ -6,18 +6,19 @@ import { QueryParameters } from '../../domain/query_parameters';
 
 export const getConciseSearchResults = async (
     queryParameters : QueryParameters,
-  ): Promise<TestResultRecord> => {
+  ): Promise<TestResultRecord[]> => {
   const connection: mysql.Connection = getConnection();
-  let result: TestResultRecord;
+  let batch;
   try {
-    result = await connection.promise().query(
+    const [rows, fields] = await connection.promise().query(
       getConciseSearchResultsFromSearchQuery(queryParameters),
     );
+    batch = rows;
   } catch (err) {
     console.log(err);
     throw err;
   } finally {
     connection.end();
   }
-  return result;
+  return batch;
 };

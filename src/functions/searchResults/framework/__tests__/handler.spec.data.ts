@@ -1,5 +1,7 @@
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { QueryParameters } from '../../domain/query_parameters';
+import { TestResultRecord } from '../../../../common/domain/test-results';
+import { SearchResultTestSchema } from '@dvsa/mes-search-schema';
 
 // tslint:disable: variable-name
 export const sampleToken_12345678 =
@@ -47,3 +49,75 @@ export const queryParameter: QueryParameters = {
   applicationReference: '1234570231',
   dtcCode: 'EXTC1',
 };
+
+export const testResultResponse = [
+  { costCode:'EXTC1',
+    testDate:'2019-06-26T09:07:00',
+    driverNumber:'DOEXX625220A99HC',
+    applicationReference:'123456919',
+    category:'B',
+    activityCode:'2',
+  },
+];
+
+export const testResult : TestResultRecord [] = [{
+  test_result: { category: 'B',
+    testData:
+    { ETA: { physical: true },
+      eco: { completed: true },
+      manoeuvres: { reverseRight: [Object] },
+      drivingFaults: { moveOffSafety: 2, controlsAccelerator: 1 },
+      seriousFaults: { controlsAccelerator: true },
+      vehicleChecks: { showMeQuestion: [Object], tellMeQuestion: [Object] },
+      controlledStop: { fault: 'DF', selected: true },
+      dangerousFaults: { useOfSpeed: true },
+      testRequirements:
+      { hillStart: true,
+        angledStart: true,
+        normalStart1: true,
+        normalStart2: true } },
+    journalData:
+    { examiner: { staffNumber: '01234567', individualId: 9000001 },
+      candidate:
+      { gender: 'F',
+        candidateId: 103,
+        dateOfBirth: '1989-05-13',
+        driverNumber: 'DOEXX625220A99HC',
+        emailAddress: 'jane.doe@example.com',
+        candidateName: [Object],
+        mobileTelephone: '07654 123456',
+        candidateAddress: [Object],
+        ethnicOriginCode: 1272 },
+      testCentre: { centreId: 54321, costCode: 'EXTC1' },
+      testSlotAttributes:
+      { start: '2019-06-26T09:07:00',
+        slotId: 1003,
+        welshTest: false,
+        extendedTest: false,
+        specialNeeds: true,
+        vehicleSlotType: 'B57mins',
+        examinerVisiting: false },
+      applicationReference: { checkDigit: 9, applicationId: 1234569, bookingSequence: 1 } },
+    testSummary:
+    { D255: true,
+      identification: 'Licence',
+      debriefWitnessed: true,
+      weatherConditions: ['Bright / wet roads', 'Showers'],
+      independentDriving: 'Sat nav' },
+    activityCode: '2',
+    accompaniment: {},
+    vehicleDetails: { gearboxCategory: 'Manual', registrationNumber: 'ABC' },
+    instructorDetails: {},
+    eyesightTestResult: 'P',
+    preTestDeclarations:
+    { preTestSignature: 'data:image/svg+xml;base64,hY2siPjwvY2lyY2xlPjwvc3ZnPg==',
+      insuranceDeclarationAccepted: true,
+      residencyDeclarationAccepted: true },
+    postTestDeclarations:
+    { postTestSignature: '',
+      healthDeclarationAccepted: false,
+      passCertificateNumberReceived: false },
+    communicationPreferences:
+    { updatedEmail: 'jane.doe@example.com',
+      communicationMethod: 'Email' } },
+}];

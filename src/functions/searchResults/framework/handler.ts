@@ -8,6 +8,7 @@ import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
 import { getEmployeeIdFromToken } from '../../../common/application/utils/getEmployeeId';
+import { TestResultRecord } from '../../../common/domain/test-results';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
@@ -102,10 +103,9 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       queryParameters.staffNumber = staffNumber;
     }
 
-    const result = await getConciseSearchResults(queryParameters);
-    console.log('The result is');
-    console.log(result);
-    const results = result[0].map(row => row.test_result);
+    const result : TestResultRecord[] = await getConciseSearchResults(queryParameters);
+
+    const results = result.map(row => row.test_result);
     const condensedTestResult : SearchResultTestSchema [] = [];
 
     for (const testResultRow of results) {

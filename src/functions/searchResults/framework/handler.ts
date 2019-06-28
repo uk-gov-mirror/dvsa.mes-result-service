@@ -2,7 +2,7 @@ import { APIGatewayEvent, Context } from 'aws-lambda';
 import createResponse from '../../../common/application/utils/createResponse';
 import { HttpStatus } from '../../../common/application/api/HttpStatus';
 import Response from '../../../common/application/api/Response';
-import { SearchRepository } from './repositories/search-repository';
+import { getConciseSearchResults } from './repositories/search-repository';
 import { bootstrapConfig } from '../../../common/framework/config/config';
 import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
@@ -102,8 +102,9 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       queryParameters.staffNumber = staffNumber;
     }
 
-    const result = await new SearchRepository().searchForTestResultWithDriverDetails(queryParameters);
-
+    const result = await getConciseSearchResults(queryParameters);
+    console.log('The result is');
+    console.log(result);
     const results = result[0].map(row => row.test_result);
     const condensedTestResult : SearchResultTestSchema [] = [];
 

@@ -8,6 +8,7 @@ import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
 import { getEmployeeIdFromToken } from '../../../common/application/utils/getEmployeeId';
+import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { TestResultRecord } from '../../../common/domain/test-results';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
@@ -105,8 +106,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const result : TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
-    const results = result.map(row => row.test_result);
-    const condensedTestResult : SearchResultTestSchema [] = [];
+    const results: StandardCarTestCATBSchema[] = result.map(row => row.test_result);
+    const condensedTestResult: SearchResultTestSchema [] = [];
 
     for (const testResultRow of results) {
       const appRef = testResultRow.journalData.applicationReference;
@@ -115,7 +116,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
           costCode: testResultRow.journalData.testCentre.costCode,
           testDate: testResultRow.journalData.testSlotAttributes.start,
           driverNumber: testResultRow.journalData.candidate.driverNumber,
-          candidateName: testResultRow.journalData.candidate.candidate,
+          candidateName: testResultRow.journalData.candidate.candidateName,
           applicationReference: `${appRef.applicationId}${appRef.bookingSequence}${appRef.checkDigit}`,
           category: testResultRow.category,
           activityCode: testResultRow.activityCode,

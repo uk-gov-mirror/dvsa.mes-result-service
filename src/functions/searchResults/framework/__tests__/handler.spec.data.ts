@@ -57,6 +57,7 @@ export const testResultResponse = [
     applicationReference:'123456919',
     category:'B',
     activityCode:'2',
+    candidateName:'candidatename'
   },
 ];
 
@@ -84,7 +85,7 @@ export const testResult : TestResultRecord [] = [{
         dateOfBirth: '1989-05-13',
         driverNumber: 'DOEXX625220A99HC',
         emailAddress: 'jane.doe@example.com',
-        candidateName: [Object],
+        candidateName: 'candidatename',
         mobileTelephone: '07654 123456',
         candidateAddress: [Object],
         ethnicOriginCode: 1272 },

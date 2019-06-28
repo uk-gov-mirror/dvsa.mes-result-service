@@ -6,5 +6,5 @@ export const queryParameter: QueryParameters = {
   staffNumber: '00123456',
   driverNumber: 'SHAWX885220A99HC',
   applicationReference: '1234570231',
-  dtcCode: 'EXTC1',
+  dtcCode: 'EXTC1'
 };

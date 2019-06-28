@@ -57,7 +57,7 @@ export const testResultResponse = [
     applicationReference:'123456919',
     category:'B',
     activityCode:'2',
-    candidateName:'candidatename'
+    candidateName:'candidatename',
   },
 ];
 

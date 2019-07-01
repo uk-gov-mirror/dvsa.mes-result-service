@@ -63,15 +63,6 @@ describe('searchResults handler', () => {
     });
   });
 
-  describe('using invalid query parameters', () => {
-    it('should fail with bad request and give an error message', async () => {
-      dummyApigwEvent.queryStringParameters['whatever'] = 'randomvalue';
-      const resp = await handler(dummyApigwEvent, dummyContext);
-      expect(resp.statusCode).toBe(400);
-      expect(JSON.parse(resp.body)).toBe('Query parameters have to be supplied');
-    });
-  });
-
   describe('using valid query parameters as LDTM', () => {
     it('gets the relevant results', async () => {
       dummyApigwEvent.queryStringParameters['isLDTM'] = 'true';

@@ -4,7 +4,7 @@ export const buildGetResultQuery = (appRef: string, staffNumber: string): string
   const template = `
   SELECT TEST_RESULT.test_result
   FROM TEST_RESULT
-  WHERE application_ref = ?
+  WHERE application_reference = ?
   AND staff_number = ?;
  `;
 

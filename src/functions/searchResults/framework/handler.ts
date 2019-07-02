@@ -2,13 +2,14 @@ import { APIGatewayEvent, Context } from 'aws-lambda';
 import createResponse from '../../../common/application/utils/createResponse';
 import { HttpStatus } from '../../../common/application/api/HttpStatus';
 import Response from '../../../common/application/api/Response';
-import { SearchRepository } from './repositories/search-repository';
+import { getConciseSearchResults } from './repositories/search-repository';
 import { bootstrapConfig } from '../../../common/framework/config/config';
 import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
 import { getEmployeeIdFromToken } from '../../../common/application/utils/getEmployeeId';
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultRecord } from '../../../common/domain/test-results';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
@@ -103,9 +104,9 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       queryParameters.staffNumber = staffNumber;
     }
 
-    const result = await new SearchRepository().searchForTestResultWithDriverDetails(queryParameters);
+    const result : TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
-    const results: StandardCarTestCATBSchema[] = result[0].map(row => row.test_result);
+    const results: StandardCarTestCATBSchema[] = result.map(row => row.test_result);
     const condensedTestResult: SearchResultTestSchema [] = [];
 
     for (const testResultRow of results) {

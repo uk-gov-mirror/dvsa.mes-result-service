@@ -1,7 +1,7 @@
 import * as mysql from 'mysql2';
 import { QueryParameters } from '../../domain/query_parameters';
 
-export const buildDriverDetailsSearchQuery = (queryParameters : QueryParameters): string => {
+export const getConciseSearchResultsFromSearchQuery = (queryParameters : QueryParameters): string => {
   const parameterArray : string[] = [];
   let queries : string[] = [];
 

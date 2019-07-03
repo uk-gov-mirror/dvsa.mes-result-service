@@ -96,7 +96,7 @@ describe('searchResults handler', () => {
   });
 
   describe('correct applicationReference and staffNumber', () => {
-    it('should fail with bad request', async () => {
+    it('should return a compressed test result matching the URL parameters', async () => {
       dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
       moqGetResult.setup(x => x(It.isAny(), It.isAny())).returns(() => Promise.resolve(testResult));

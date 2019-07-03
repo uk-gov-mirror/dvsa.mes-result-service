@@ -39,6 +39,13 @@ functions:
       - http:
           path: test-result/{app-ref}/{staff-number}
           method: get
+        
+  retryProcessing:
+    handler: src/functions/retryProcessing/framework/handler.handler
+    events:
+      - http:
+          path: test-result/retry
+          method: get
 
 custom:
   dynamodb:

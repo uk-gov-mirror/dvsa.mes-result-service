@@ -50,6 +50,7 @@ export const sampleTest_12345678: StandardCarTestCATBSchema = {
     candidate: null,
   },
   activityCode: null,
+  rekey: false,
 };
 
 export const sampleTest_87654321: StandardCarTestCATBSchema = {
@@ -64,6 +65,7 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
     candidate: null,
   },
   activityCode: null,
+  rekey: false,
 };
 
 export const sampleTest_empty: StandardCarTestCATBSchema = {
@@ -78,4 +80,5 @@ export const sampleTest_empty: StandardCarTestCATBSchema = {
     candidate: null,
   },
   activityCode: null,
+  rekey: false,
 };

@@ -14,7 +14,7 @@ export const dummyTestResult: StandardCarTestCATBSchema = {
       welshTest: false,
       slotId: 1005,
       start: '2019-06-05T12:38:00+01:00',
-      vehicleSlotType: 'B57mins',
+      vehicleTypeCode: 'C',
       extendedTest: false,
       specialNeeds: false,
     },
@@ -86,4 +86,5 @@ export const dummyTestResult: StandardCarTestCATBSchema = {
   },
   activityCode: '51',
   eyesightTestResult: null,
+  rekey: false,
 };

@@ -31,7 +31,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
     }
 
-    const result: TestResultRecord[] = await getResult(appRefPathParam, staffNumberParam);
+    const result: TestResultRecord[] = await getResult(appRefPathParam);
 
     const results: StandardCarTestCATBSchema[] = result.map(row => row.test_result);
 

@@ -25,13 +25,13 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       joi.validate({
         staffNumber: appRefPathParam,
         appRef: staffNumberParam,
-      },           parametersSchema);
+      }, parametersSchema);
 
     if (validationResult.error) {
       return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
     }
 
-    const result: TestResultRecord[] = await getResult(appRefPathParam, staffNumberParam);
+    const result: TestResultRecord[] = await getResult(appRefPathParam);
 
     const results: StandardCarTestCATBSchema[] = result.map(row => row.test_result);
 

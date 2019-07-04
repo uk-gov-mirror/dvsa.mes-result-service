@@ -73,11 +73,11 @@ describe('searchResults handler', () => {
     it('should fail with bad request', async () => {
       dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
-      moqGetResult.setup(x => x(It.isAny(), It.isAny())).returns(() => Promise.resolve(noTestResults));
+      moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(noTestResults));
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toBe(400);
       expect(JSON.parse(resp.body)).toEqual('No records found matching criteria');
-      moqGetResult.verify(x => x(It.isValue(applicationReference), It.isValue(staffNumber)), Times.once());
+      moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
     });
   });
 
@@ -87,11 +87,11 @@ describe('searchResults handler', () => {
     it('should fail with bad request', async () => {
       dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
-      moqGetResult.setup(x => x(It.isAny(), It.isAny())).returns(() => Promise.resolve(moreThanOneTestResult));
+      moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(moreThanOneTestResult));
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toBe(400);
       expect(JSON.parse(resp.body)).toEqual('More than one record found, internal error');
-      moqGetResult.verify(x => x(It.isValue(applicationReference), It.isValue(staffNumber)), Times.once());
+      moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
     });
   });
 
@@ -99,7 +99,7 @@ describe('searchResults handler', () => {
     it('should return a compressed test result matching the URL parameters', async () => {
       dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
-      moqGetResult.setup(x => x(It.isAny(), It.isAny())).returns(() => Promise.resolve(testResult));
+      moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toBe(200);
       // Check that the compressed data matches the original test_result from the DB
@@ -107,7 +107,7 @@ describe('searchResults handler', () => {
       const categoryBTest: StandardCarTestCATBSchema = JSON
         .parse(decompressedData.toString('utf8')) as StandardCarTestCATBSchema;
       expect(categoryBTest).toEqual(testResult[0].test_result);
-      moqGetResult.verify(x => x(It.isValue(applicationReference), It.isValue(staffNumber)), Times.once());
+      moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
     });
   });
 });

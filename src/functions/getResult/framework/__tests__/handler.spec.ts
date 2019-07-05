@@ -12,7 +12,7 @@ import {
   moreThanOneTestResult,
 } from '../__tests__/handler.spec.data';
 import * as getResultSvc from '../repositories/get-result-repository';
-import { inflateSync } from 'zlib';
+import { gunzipSync } from 'zlib';
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 
 describe('searchResults handler', () => {
@@ -103,9 +103,10 @@ describe('searchResults handler', () => {
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toBe(200);
       // Check that the compressed data matches the original test_result from the DB
-      const decompressedData = inflateSync(new Buffer(resp.body, 'base64'));
+
+      const decompressedData = gunzipSync(Buffer.from(resp.body, 'base64'))
       const categoryBTest: StandardCarTestCATBSchema = JSON
-        .parse(decompressedData.toString('utf8')) as StandardCarTestCATBSchema;
+        .parse(decompressedData.toString()) as StandardCarTestCATBSchema;
       expect(categoryBTest).toEqual(testResult[0].test_result);
       moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
     });

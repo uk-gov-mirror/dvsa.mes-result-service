@@ -8,7 +8,7 @@ import createResponse from '../../../common/application/utils/createResponse';
 import joi from '@hapi/joi';
 import { TestResultRecord } from '../../../common/domain/test-results';
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
-import { deflateSync } from 'zlib';
+import { gzipSync } from 'zlib';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
@@ -25,7 +25,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       joi.validate({
         staffNumber: appRefPathParam,
         appRef: staffNumberParam,
-      },           parametersSchema);
+      }, parametersSchema);
 
     if (validationResult.error) {
       return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
@@ -44,7 +44,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       return createResponse('More than one record found, internal error', HttpStatus.BAD_REQUEST);
     }
 
-    const compressedPayload = deflateSync(new Buffer(JSON.stringify(results[0]), 'utf8')).toString('base64');
+    const compressedPayload = gzipSync(JSON.stringify(results[0])).toString('base64')
     return createResponse(compressedPayload, HttpStatus.OK);
   } catch (err) {
     console.log(err);

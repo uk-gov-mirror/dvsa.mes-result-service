@@ -104,7 +104,7 @@ describe('searchResults handler', () => {
       expect(resp.statusCode).toBe(200);
       // Check that the compressed data matches the original test_result from the DB
 
-      const decompressedData = gunzipSync(Buffer.from(resp.body, 'base64'))
+      const decompressedData = gunzipSync(Buffer.from(resp.body, 'base64'));
       const categoryBTest: StandardCarTestCATBSchema = JSON
         .parse(decompressedData.toString()) as StandardCarTestCATBSchema;
       expect(categoryBTest).toEqual(testResult[0].test_result);

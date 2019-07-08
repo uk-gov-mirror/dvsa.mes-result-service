@@ -15,7 +15,7 @@ import * as getResultSvc from '../repositories/get-result-repository';
 import { gunzipSync } from 'zlib';
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 
-describe('searchResults handler', () => {
+describe('getResult handler', () => {
   let dummyApigwEvent: APIGatewayEvent;
   let dummyContext: Context;
   const moqGetResult = Mock.ofInstance(getResultSvc.getResult);

@@ -31,7 +31,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  if (!verifyRequest(event.headers, getStaffIdFromTest(testResult))) {
+  if (!verifyRequest(event, getStaffIdFromTest(testResult))) {
     return createResponse({ message: 'EmployeeId and staffId do not match' }, HttpStatus.UNAUTHORIZED);
   }
 

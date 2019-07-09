@@ -7,7 +7,7 @@ import { bootstrapConfig } from '../../../common/framework/config/config';
 import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
-import { getEmployeeIdFromToken } from '../../../common/application/utils/getEmployeeId';
+import { getEmployeeIdFromRequestContext } from '../../../common/application/utils/getEmployeeId';
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { TestResultRecord } from '../../../common/domain/test-results';
 
@@ -17,7 +17,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     // TODO: Retrieve isLDTM value from fnCtx for LDTM searches
     // Temporary workaround having isLDTM as a parameter
 
-    const queryParameters : QueryParameters = new QueryParameters();
+    const queryParameters: QueryParameters = new QueryParameters();
 
     if (!event.queryStringParameters) {
       return createResponse('Query parameters have to be supplied', HttpStatus.BAD_REQUEST);
@@ -55,9 +55,9 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const parametersSchema = joi.object().keys({
       startDate: joi.string().regex(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/).optional()
-          .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
+        .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
       endDate: joi.string().regex(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/).optional()
-          .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
+        .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
       driverId: joi.string().alphanum().max(16).optional(),
       staffNumber: joi.string().alphanum().optional(),
       dtcCode: joi.string().alphanum().optional(),
@@ -100,14 +100,14 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
           return createResponse(`DE is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
         }
       }
-      const staffNumber = getEmployeeIdFromToken(event.headers.Authorization);
+      const staffNumber = getEmployeeIdFromRequestContext(event.requestContext);
       queryParameters.staffNumber = staffNumber;
     }
 
-    const result : TestResultRecord[] = await getConciseSearchResults(queryParameters);
+    const result: TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
     const results: StandardCarTestCATBSchema[] = result.map(row => row.test_result);
-    const condensedTestResult: SearchResultTestSchema [] = [];
+    const condensedTestResult: SearchResultTestSchema[] = [];
 
     for (const testResultRow of results) {
       const appRef = testResultRow.journalData.applicationReference;

@@ -1,21 +1,12 @@
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import * as logger from '../../../common/application/utils/logger';
-import jwtDecode = require('jwt-decode');
-import { getEmployeeIdFromToken } from '../../../common/application/utils/getEmployeeId';
+import { getEmployeeIdFromRequestContext } from '../../../common/application/utils/getEmployeeId';
+import { APIGatewayProxyEvent } from 'aws-lambda';
 
-export const verifyRequest = (headers: { [key: string]: string }, staffId: string): boolean => {
-
-  if (staffId === null) {
-    logger.warn('No staffId found in the test data');
-    return false;
-  }
-  const employeeId = getEmployeeIdFromToken(headers.Authorization);
+export const verifyRequest = (request: APIGatewayProxyEvent, staffId: string): boolean => {
+  const employeeId = getEmployeeIdFromRequestContext(request.requestContext);
   if (employeeId === null) {
-    logger.warn(`No valid authorisation token in request ${employeeId}`);
+    logger.warn('No employee ID found in request context');
     return false;
   }
-  if (employeeId === staffId) {
-    return true;
-  }
-  return false;
+  return employeeId === staffId;
 };

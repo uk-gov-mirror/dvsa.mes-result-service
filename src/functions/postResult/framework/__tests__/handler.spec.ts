@@ -37,6 +37,7 @@ describe('postResult handler', () => {
 
     dummyContext = lambdaTestUtils.mockContextCreator(() => null);
     process.env.EMPLOYEE_ID_EXT_KEY = 'extn.employeeId';
+    process.env.EMPLOYEE_ID_VERIFICATION_DISABLED = undefined;
 
     spyOn(decompressionService, 'decompressTestResult').and.callFake(moqDecompressionSvc.object);
     spyOn(saveResultSvc, 'saveTestResult').and.callFake(moqSaveResultSvc.object);
@@ -82,6 +83,19 @@ describe('postResult handler', () => {
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toEqual(401);
       expect(JSON.parse(resp.body).message).toBe('EmployeeId and staffId do not match');
+    });
+    it('should ignore an invalid token EMPLOYEE_ID_VERIFICATION_DISABLED is true', async() => {
+      process.env.EMPLOYEE_ID_VERIFICATION_DISABLED = 'true';
+      dummyApigwEvent.body = 'avalidcompressedresult';
+      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const validationResult = Mock.ofType<ValidationResult<any>>();
+
+      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
+      moqJoiValidationSvc.setup(x => x(It.isAny())).returns(() => validationResult.object.value);
+
+      const resp = await handler(dummyApigwEvent, dummyContext);
+
+      expect(resp.statusCode).toBe(HttpStatus.CREATED);
     });
   });
 

@@ -1,1 +1,2 @@
 .npmrc
+spec/infra/schema.sql

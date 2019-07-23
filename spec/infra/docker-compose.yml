@@ -1,0 +1,13 @@
+version: '3'
+services:
+  des-result-service-result-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: results
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+      MYSQL_USER: results_user
+      MYSQL_PASSWORD: Pa55word1
+    volumes:
+      - './schema.sql:/docker-entrypoint-initdb.d/schema.sql'
+    ports:
+      - '3306:3306'

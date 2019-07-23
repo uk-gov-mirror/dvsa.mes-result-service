@@ -41,8 +41,34 @@ npm run package -- get,set
 
 ## Test
 
+### Unit tests
+
 To run the unit tests, simply run:
 
 ```shell
 npm test
+```
+
+### Integration tests
+
+There are some integration tests, each of which can be found in the `__tests__` directory of the source tree with the `.int.ts` extension.
+
+A pre-requisite for running these integration tests is that you have a Docker container running MySQL locally.
+
+```shell
+cd spec/infra
+docker-compose up
+```
+
+The integration tests can then be run with:
+
+```shell
+npm run test:int
+```
+
+Note, the database container should be destroyed after each test run to ensure the state is clean:
+
+```shell
+cd spec/infra
+docker-compose down
 ```

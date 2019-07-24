@@ -1,20 +1,20 @@
 
 export interface IRetryProcessor {
-  processSuccessful(): Promise<void>;
+  processSuccessful(): Promise<number>;
 
   processErrorsToRetry(
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
-  ): Promise<void>;
+  ): Promise<number>;
 
   processErrorsToAbort(
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
-  ): Promise<void>;
+  ): Promise<number>;
 
-  processSupportInterventions(): Promise<void>;
+  processSupportInterventions(): Promise<number>;
 
-  processOldEntryCleanup(cutOffPointInDays: number): Promise<void>;
+  processOldEntryCleanup(cutOffPointInDays: number): Promise<number>;
 }

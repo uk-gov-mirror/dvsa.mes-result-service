@@ -6,7 +6,7 @@ describe('RetryProcessor database test', () => {
   let db: mysql.Connection;
   let retryProcessor: IRetryProcessor;
 
-  beforeEach(() => {
+  beforeAll(() => {
     db = mysql.createConnection({
       host: 'localhost',
       user: 'results_user',
@@ -16,162 +16,186 @@ describe('RetryProcessor database test', () => {
     retryProcessor = new RetryProcessor(db);
   });
 
+  /**
+   * See the test data scripts in /spec/infra for the scenarios being tested here.
+   */
   describe('Query correctness', () => {
     it('should move TEST_RESULTs with all successful UPLOAD_QUEUE records to PROCESSED', async () => {
-      await retryProcessor.processSuccessful();
-      await checkProcessSuccessfulUpdatedTestResult();
-      await checkProcessSuccessfulUpdatedTerminatedTestResult();
+      const changedRowCount = await retryProcessor.processSuccessful();
+      const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus('PROCESSED');
+      expect(changedRowCount).toBe(2);
+      expect(acceptedTestAppRefs).toContain(9);
+      expect(acceptedTestAppRefs).toContain(10);
     });
 
-    it('should mark UPLOAD_QUEUE for reprocessing when they have failed but not exceeded the retry limit', async () => {
-      await retryProcessor.processErrorsToRetry(3, 3, 3);
-      await checkErrorsToRetryUpdatedUpLoadQueues();
+    it('should mark UPLOAD_QUEUE for reprocessing when they failed but not exceeded the retry limit', async () => {
+      const changedRowCount = await retryProcessor.processErrorsToRetry(3, 3, 3);
+      const appRefInterfaces = await getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred();
+
+      expect(changedRowCount).toBe(12);
+      // TARS
+      expect(appRefInterfaces).toContain({ application_reference: 11, interface: 0 });
+      expect(appRefInterfaces).toContain({ application_reference: 14, interface: 0 });
+      expect(appRefInterfaces).toContain({ application_reference: 15, interface: 0 });
+      expect(appRefInterfaces).toContain({ application_reference: 17, interface: 0 });
+      // NOTIFY
+      expect(appRefInterfaces).toContain({ application_reference: 13, interface: 1 });
+      expect(appRefInterfaces).toContain({ application_reference: 15, interface: 1 });
+      expect(appRefInterfaces).toContain({ application_reference: 16, interface: 1 });
+      expect(appRefInterfaces).toContain({ application_reference: 17, interface: 1 });
+      // RSIS
+      expect(appRefInterfaces).toContain({ application_reference: 12, interface: 2 });
+      expect(appRefInterfaces).toContain({ application_reference: 14, interface: 2 });
+      expect(appRefInterfaces).toContain({ application_reference: 16, interface: 2 });
+      expect(appRefInterfaces).toContain({ application_reference: 17, interface: 2 });
     });
 
-    it('should abort UPLOAD_QUEUE records that have exceeded the retry count for that interface', async () => {
-      await retryProcessor.processErrorsToAbort(3, 3, 3);
-      await checkErrorsToAbortUpdatedTestResult();
+    it('should abort TEST_RESULT records that have exceeded the retry count for any interface', async () => {
+      const changedRowCount = await retryProcessor.processErrorsToAbort(3, 3, 3);
+      const erroredTestAppRefs = await getErroredTestAppRefs();
+
+      expect(changedRowCount).toBe(7);
+      expect(erroredTestAppRefs).toContain(25); // Failed TARS
+      expect(erroredTestAppRefs).toContain(26); // Failed RSIS
+      expect(erroredTestAppRefs).toContain(27); // Failed Notify
+      expect(erroredTestAppRefs).toContain(28); // Failed TARS+RSIS
+      expect(erroredTestAppRefs).toContain(29); // Failed TARS+Notify
+      expect(erroredTestAppRefs).toContain(30); // Failed RSIS+Notify
+      expect(erroredTestAppRefs).toContain(31); // Failed TARS+RSIS+Notify
     });
 
-    it('should update TEST_RESULT and UPLOAD_QUEUE to make them ready for reprocessing', async () => {
-      await retryProcessor.processSupportInterventions();
-      await checkSupportInterventionUpdatedUploadQueues();
-      await checkSupportInterventionUpdatedTestResult();
+    it('should update TEST_RESULT and UPLOAD_QUEUE to make them ready for reprocessing post intervention', async () => {
+      const changedRowCount = await retryProcessor.processSupportInterventions();
+      const processingAppRefs = await getTestResultAppRefsForResultStatus('PROCESSING');
+      const unretriedUploadQueueRecords = await getUnretriedProcessingUploadQueueRecords();
+
+      expect(changedRowCount).toBe(19);
+      // TEST_RESULT test_status PENDING -> PROCESSING
+      expect(processingAppRefs).toContain(39);
+      expect(processingAppRefs).toContain(40);
+      expect(processingAppRefs).toContain(41);
+      expect(processingAppRefs).toContain(42);
+      expect(processingAppRefs).toContain(43);
+      expect(processingAppRefs).toContain(44);
+      expect(processingAppRefs).toContain(45);
+      // UPLOAD_QUEUE upload_status ERROR -> PROCESSING
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 39, interface: 0 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 40, interface: 2 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 41, interface: 1 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 42, interface: 0 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 42, interface: 2 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 43, interface: 0 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 43, interface: 1 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 44, interface: 1 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 44, interface: 2 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 45, interface: 0 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 45, interface: 1 });
+      expect(unretriedUploadQueueRecords).toContain({ application_reference: 45, interface: 2 });
     });
 
     it('should clean out old UPLOAD_QUEUE records', async () => {
-      await retryProcessor.processOldEntryCleanup(30);
-      await checkOldEntryCleanupDeleteUploadQueues();
+      const deletedRowCount = await retryProcessor.processOldEntryCleanup(30);
+      const allUploadQueueRecords = await getAllUploadQueueRecords();
+
+      expect(deletedRowCount).toBe(3);
+      expect(allUploadQueueRecords.some(record => record.application_reference === 53)).toBe(false);
     });
   });
 
-  const checkProcessSuccessfulUpdatedTestResult = (): Promise<void> => {
+  const getTestResultAppRefsForResultStatus = (resultStatus: string): Promise<number[]> => {
     return new Promise((resolve, reject) => {
       db.query(
         `
-        SELECT * FROM TEST_RESULT WHERE application_reference = 1
-        and staff_number = '1234' and result_status = 2
+        SELECT application_reference FROM TEST_RESULT
+        WHERE result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = '${resultStatus}')
         `,
         [],
         (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
+          if (err) {
+            reject(err);
           }
-          resolve();
+          resolve(results.map(row => row.application_reference));
         });
     });
   };
 
-  const checkProcessSuccessfulUpdatedTerminatedTestResult = (): Promise<void> => {
+  interface AppRefInterface {
+    application_reference: number;
+    interface: number;
+  }
+
+  const getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred = (): Promise<AppRefInterface[]> => {
     return new Promise((resolve, reject) => {
       db.query(
         `
-        SELECT * FROM TEST_RESULT WHERE application_reference = 6
-        and staff_number = '1234' and result_status = 2
+        SELECT application_reference, interface
+        FROM UPLOAD_QUEUE
+        WHERE
+          retry_count > 0
+          AND upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING');
         `,
         [],
         (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
+          if (err) {
+            reject(err);
           }
-          resolve();
+          resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
         });
     });
   };
 
-  const checkErrorsToRetryUpdatedUpLoadQueues = (): Promise<void> => {
+  const getErroredTestAppRefs = (): Promise<number[]> => {
     return new Promise((resolve, reject) => {
       db.query(
         `
-        SELECT COUNT(*) as rowcount FROM UPLOAD_QUEUE WHERE application_reference = 2
-        and staff_number = '1234' and upload_status = 0
+        SELECT DISTINCT tr.application_reference
+        FROM TEST_RESULT tr
+        JOIN UPLOAD_QUEUE uq
+          ON tr.application_reference = uq.application_reference
+          AND result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'ERROR')
         `,
         [],
         (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
+          if (err) {
+            reject(err);
           }
-          if (results.rowcount && results.rowcount !== 3) {
-            reject('Row count does not match expected (3)');
-          }
-          resolve();
+          resolve(results.map(row => row.application_reference));
         });
     });
   };
 
-  const checkErrorsToAbortUpdatedTestResult = (): Promise<void> => {
+  const getUnretriedProcessingUploadQueueRecords = (): Promise<AppRefInterface[]> => {
     return new Promise((resolve, reject) => {
       db.query(
         `
-        SELECT *  FROM TEST_RESULT WHERE application_reference = 3
-        and staff_number = '1234'
+        SELECT application_reference, interface FROM UPLOAD_QUEUE
+        WHERE
+          upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING')
+          AND retry_count = 0
+          AND error_message IS NULL
         `,
         [],
         (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
+          if (err) {
+            reject(err);
           }
-          if (results.result_status && results.result_status !== 4) {
-            reject('result status Row count does not match expected (4)');
-          }
-          resolve();
+          resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
         });
     });
   };
 
-  const checkSupportInterventionUpdatedUploadQueues = (): Promise<void> => {
+  const getAllUploadQueueRecords = (): Promise<AppRefInterface[]> => {
     return new Promise((resolve, reject) => {
       db.query(
         `
-        SELECT COUNT(*) as rowcount FROM UPLOAD_QUEUE WHERE application_reference = 4
-        and staff_number = '1234' and upload_status = 0
+        SELECT application_reference, interface FROM UPLOAD_QUEUE
         `,
         [],
         (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
+          if (err) {
+            reject(err);
           }
-          if (results.rowcount && results.rowcount !== 3) {
-            reject('Row count does not match expected (3)');
-          }
-          resolve();
-        });
-    });
-  };
-
-  const checkSupportInterventionUpdatedTestResult = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT * FROM TEST_RESULT WHERE application_reference = 4
-        and staff_number = '1234' and result_status = 1
-        `,
-        [],
-        (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
-          }
-          resolve();
-        });
-    });
-  };
-
-  const checkOldEntryCleanupDeleteUploadQueues = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT COUNT(*) as rowcount FROM UPLOAD_QUEUE WHERE application_reference = 5
-        and staff_number = '1234'
-        `,
-        [],
-        (err, results, fields) => {
-          if (err || !results.length) {
-            reject('Row not found or incorrect state');
-          }
-          if (results.rowcount && results.rowcount !== 0) {
-            reject('Row count does not match expected (0)');
-          }
-          resolve();
+          resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
         });
     });
   };

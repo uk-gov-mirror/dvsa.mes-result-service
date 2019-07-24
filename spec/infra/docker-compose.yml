@@ -8,6 +8,8 @@ services:
       MYSQL_USER: results_user
       MYSQL_PASSWORD: Pa55word1
     volumes:
-      - './schema.sql:/docker-entrypoint-initdb.d/schema.sql'
+      - './010-schema.sql:/docker-entrypoint-initdb.d/010-schema.sql'
+      - './020-test-data-sproc.sql:/docker-entrypoint-initdb.d/020-test-data-sproc.sql'
+      - './030-test-data.sql:/docker-entrypoint-initdb.d/030-test-data.sql'
     ports:
       - '3306:3306'

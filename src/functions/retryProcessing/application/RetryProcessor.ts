@@ -16,16 +16,18 @@ export class RetryProcessor implements IRetryProcessor {
     this.connection = connection;
   }
 
-  async processSuccessful(): Promise<void> {
+  async processSuccessful(): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().query(buildMarkTestProcessedQuery());
+      const changedRowCount = rows.changedRows;
       customMetric(
         'ResultsSuccessfullyProcessedRowsChanged',
         'The amount of TEST_RESULT records updated to SUCCESSFUL status',
-        rows.changedRows,
+        changedRowCount,
       );
       await this.connection.promise().commit();
+      return changedRowCount;
     } catch (err) {
       this.connection.rollback();
       warn('Error caught marking test results as successfully submitted', err.messsage);
@@ -35,7 +37,7 @@ export class RetryProcessor implements IRetryProcessor {
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
-  ): Promise<void> {
+  ): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().
@@ -44,12 +46,14 @@ export class RetryProcessor implements IRetryProcessor {
           notifyRetryCount,
           tarsRetryCount,
         ));
+      const changedRowCount = rows.changedRows;
       customMetric(
         'InterfacesQueuedForRetryRowsChanged',
         'The amount of UPLOAD_QUEUE records updated back to PROCESSING status for retry',
-        rows.changedRows,
+        changedRowCount,
       );
       await this.connection.promise().commit();
+      return changedRowCount;
     } catch (err) {
       this.connection.rollback();
       warn('Error caught marking interfaces as ready for retry', err.message);
@@ -59,7 +63,7 @@ export class RetryProcessor implements IRetryProcessor {
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
-  ): Promise<void> {
+  ): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().query(buildAbortTestsExceeingRetryQuery(
@@ -67,44 +71,50 @@ export class RetryProcessor implements IRetryProcessor {
         notifyRetryCount,
         tarsRetryCount,
       ));
+      const changedRowCount = rows.changedRows;
       customMetric(
         'ResultsAbortedRowsChanged',
         'The amount of TEST_RESULT records moved to the ERROR status',
-        rows.changedRows,
+        changedRowCount,
       );
       await this.connection.promise().commit();
+      return changedRowCount;
     } catch (err) {
       this.connection.rollback();
       warn('Error caught marking interfaces as aborted', err.message);
     }
   }
 
-  async processSupportInterventions(): Promise<void> {
+  async processSupportInterventions(): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().query(buildManualInterventionUpdateQuery());
+      const changedRowCount = rows.changedRows;
       customMetric(
         'InterventionRequeueRowsChanged',
         'The number of TEST_RESULT+UPLOAD_QUEUE records updated as part of reprocessing manual intervention',
-        rows.changedRows,
+        changedRowCount,
       );
       await this.connection.promise().commit();
+      return changedRowCount;
     } catch (err) {
       this.connection.rollback();
       warn('Error caught updating records marked for reprocess by manual intervention', err.message);
     }
   }
 
-  async processOldEntryCleanup(cutOffPointInDays: number): Promise<void> {
+  async processOldEntryCleanup(cutOffPointInDays: number): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().query(buildDeleteAcceptedQueueRowsQuery(cutOffPointInDays));
+      const deletedRowCount = rows.affectedRows;
       customMetric(
         'UploadQueueCleanupRowsChanged',
         'The number of UPLOAD_QUEUE records deleted due to being successful and older than the threshold',
-        rows.changedRows,
+        deletedRowCount,
       );
       await this.connection.promise().commit();
+      return deletedRowCount;
     } catch (err) {
       this.connection.rollback();
       warn('Error caught processing old upload queue record cleanup', err.message);

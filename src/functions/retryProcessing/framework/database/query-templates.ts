@@ -78,7 +78,9 @@ export const updateManuallyIntervenedForReprocessQuery = `
     AND tr.staff_number = uq.staff_number
   SET
     tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSING'),
-    uq.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING')
+    uq.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING'),
+    uq.retry_count = 0,
+    uq.error_message = NULL
   WHERE
     tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
     AND uq.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'FAILED')

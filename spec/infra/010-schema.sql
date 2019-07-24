@@ -39,13 +39,6 @@ CREATE TABLE TEST_RESULT (
   PRIMARY KEY (application_reference,staff_number),
   FOREIGN KEY (result_status) REFERENCES RESULT_STATUS(id)
 );
-INSERT INTO TEST_RESULT VALUES
-  (1,'1234','{}',CURRENT_DATE,1,2,'11111','Pearson',1),
-  (2,'1234','{}',CURRENT_DATE,1,2,'11111','Pearson',1),
-  (3,'1234','{}',CURRENT_DATE,1,2,'11111','Pearson',1),
-  (4,'1234','{}',CURRENT_DATE,1,2,'11111','Pearson',3),
-  (5,'1234','{}',CURRENT_DATE - INTERVAL 35 DAY,1,2,'11111','Pearson',0),
-  (6,'1234','{}',CURRENT_DATE,1,2,'11111','Pearson',1);
 CREATE INDEX staff_number ON TEST_RESULT(staff_number);
 CREATE INDEX tc_cc ON TEST_RESULT(tc_cc);
 CREATE INDEX driver_number ON TEST_RESULT(driver_number);
@@ -63,26 +56,3 @@ CREATE TABLE UPLOAD_QUEUE (
   FOREIGN KEY (interface) REFERENCES INTERFACE_TYPE(id),
   FOREIGN KEY (upload_status) REFERENCES PROCESSING_STATUS(id)
 );
-INSERT INTO UPLOAD_QUEUE VALUES
-  (1,'1234',NOW(),0,1,0,''),
-  (1,'1234',NOW(),1,1,0,''),
-  (1,'1234',NOW(),2,1,0,'');
-INSERT INTO UPLOAD_QUEUE VALUES
-  (6,'1234',NOW(),0,1,0,''),
-  (6,'1234',NOW(),1,1,0,'');
-INSERT INTO UPLOAD_QUEUE VALUES
-  (2,'1234',NOW(),0,2,1,''),
-  (2,'1234',NOW(),1,2,0,''),
-  (2,'1234',NOW(),2,2,0,'');
-INSERT INTO UPLOAD_QUEUE VALUES
-  (3,'1234',NOW(),0,2,10,''),
-  (3,'1234',NOW(),1,2,10,''),
-  (3,'1234',NOW(),2,2,10,'');
-INSERT INTO UPLOAD_QUEUE VALUES
-  (4,'1234',NOW(),0,2,1,''),
-  (4,'1234',NOW(),1,2,10,''),
-  (4,'1234',NOW(),2,2,10,'');
-INSERT INTO UPLOAD_QUEUE VALUES
-  (5,'1234',NOW() - INTERVAL 35 DAY,0,1,1,''),
-  (5,'1234',NOW() - INTERVAL 35 DAY,1,1,10,''),
-  (5,'1234',NOW() - INTERVAL 35 DAY,2,1,10,'');

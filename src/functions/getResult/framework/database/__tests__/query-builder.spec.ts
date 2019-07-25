@@ -10,7 +10,7 @@ describe('QueryBuilder', () => {
     });
     it('should have the correct applicationReference in the SELECT', () => {
       const result = buildGetResultQuery(applicationReference);
-      expect(result).toMatch(new RegExp(applicationReference, 'g'));
+      expect(result).toMatch(new RegExp(applicationReference.toString(), 'g'));
     });
   });
 });

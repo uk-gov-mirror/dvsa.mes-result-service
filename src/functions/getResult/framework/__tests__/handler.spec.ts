@@ -71,7 +71,7 @@ describe('getResult handler', () => {
 
   describe('no test results found', () => {
     it('should fail with bad request', async () => {
-      dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
+      dummyApigwEvent.pathParameters['app-ref'] = applicationReference.toString();
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
       moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(noTestResults));
       const resp = await handler(dummyApigwEvent, dummyContext);
@@ -85,7 +85,7 @@ describe('getResult handler', () => {
   // This is put in place as the service is supposed to return only one record at a time
   describe('more than one test result found', () => {
     it('should fail with bad request', async () => {
-      dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
+      dummyApigwEvent.pathParameters['app-ref'] = applicationReference.toString();
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
       moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(moreThanOneTestResult));
       const resp = await handler(dummyApigwEvent, dummyContext);
@@ -97,7 +97,7 @@ describe('getResult handler', () => {
 
   describe('correct applicationReference and staffNumber', () => {
     it('should return a compressed test result matching the URL parameters', async () => {
-      dummyApigwEvent.pathParameters['app-ref'] = applicationReference;
+      dummyApigwEvent.pathParameters['app-ref'] = applicationReference.toString();
       dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
       moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
       const resp = await handler(dummyApigwEvent, dummyContext);

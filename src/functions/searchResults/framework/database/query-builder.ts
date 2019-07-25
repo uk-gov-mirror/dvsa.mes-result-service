@@ -24,7 +24,7 @@ export const getConciseSearchResultsFromSearchQuery = (queryParameters : QueryPa
   }
   if (queryParameters.applicationReference) {
     queries.push('application_reference = ?');
-    parameterArray.push(queryParameters.applicationReference);
+    parameterArray.push(queryParameters.applicationReference.toString());
   }
 
   // Add AND between all statements

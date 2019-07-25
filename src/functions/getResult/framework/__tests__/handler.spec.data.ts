@@ -141,5 +141,5 @@ export const moreThanOneTestResult: TestResultRecord[] = [
   testResult[0],
 ];
 
-export const applicationReference = '1234570231';
+export const applicationReference: number = 1234570231;
 export const staffNumber = '1234570231';

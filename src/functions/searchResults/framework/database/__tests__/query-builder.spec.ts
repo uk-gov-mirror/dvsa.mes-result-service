@@ -33,7 +33,7 @@ describe('QueryBuilder', () => {
     });
     it('should have the correct applicationReference in the SELECT', () => {
       const result = getConciseSearchResultsFromSearchQuery(queryParameter);
-      expect(result).toMatch(new RegExp(queryParameter.applicationReference, 'g'));
+      expect(result).toMatch(new RegExp(queryParameter.applicationReference.toString(), 'g'));
     });
     it('should have the correct DTCCode in the SELECT', () => {
       const result = getConciseSearchResultsFromSearchQuery(queryParameter);

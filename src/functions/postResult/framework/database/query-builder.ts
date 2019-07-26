@@ -3,6 +3,7 @@ import { ResultStatus } from '../../domain/result-status';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../../domain/result-integration';
 import { ProcessingStatus } from '../../domain/processing-status';
+import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
 export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: boolean = false): string => {
   const template = `
@@ -71,8 +72,4 @@ export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integrat
     retryCount,
   ];
   return mysql.format(template, args);
-};
-
-const formatApplicationReference = (appRef: ApplicationReference) => {
-  return `${appRef.applicationId}${appRef.bookingSequence}${appRef.checkDigit}`;
 };

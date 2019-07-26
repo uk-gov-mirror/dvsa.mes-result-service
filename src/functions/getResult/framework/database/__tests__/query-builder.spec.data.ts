@@ -1,1 +1,1 @@
-export const applicationReference = '1234570231';
+export const applicationReference = 1234570231;

@@ -13,7 +13,7 @@ import { gzipSync } from 'zlib';
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
   try {
-    const appRefPathParam = event.pathParameters['app-ref'];
+    const appRefPathParam = parseInt(event.pathParameters['app-ref'], 10);
     const staffNumberParam = event.pathParameters['staff-number'];
 
     const parametersSchema = joi.object().keys({
@@ -23,8 +23,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const validationResult =
       joi.validate({
-        staffNumber: appRefPathParam,
-        appRef: staffNumberParam,
+        staffNumber: staffNumberParam,
+        appRef: appRefPathParam,
       },           parametersSchema);
 
     if (validationResult.error) {

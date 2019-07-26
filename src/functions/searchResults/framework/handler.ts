@@ -11,6 +11,7 @@ import { getEmployeeIdFromRequestContext } from '../../../common/application/uti
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { TestResultRecord } from '../../../common/domain/test-results';
 import { UserRole } from '../../../common/domain/user-role';
+import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
   await bootstrapConfig();
@@ -112,7 +113,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
           testDate: testResultRow.journalData.testSlotAttributes.start,
           driverNumber: testResultRow.journalData.candidate.driverNumber,
           candidateName: testResultRow.journalData.candidate.candidateName,
-          applicationReference: `${appRef.applicationId}${appRef.bookingSequence}${appRef.checkDigit}`,
+          applicationReference: formatApplicationReference(appRef),
           category: testResultRow.category,
           activityCode: testResultRow.activityCode,
         },

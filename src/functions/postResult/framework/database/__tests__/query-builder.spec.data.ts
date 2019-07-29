@@ -61,6 +61,7 @@ export const dummyTestResult: StandardCarTestCATBSchema = {
     ETA: {},
     eco: {},
     controlledStop: {},
+    eyesightTest: {},
     vehicleChecks: {
       tellMeQuestion: {},
       showMeQuestion: {},
@@ -85,6 +86,5 @@ export const dummyTestResult: StandardCarTestCATBSchema = {
     updatedEmail: '',
   },
   activityCode: '51',
-  eyesightTestResult: null,
   rekey: false,
 };

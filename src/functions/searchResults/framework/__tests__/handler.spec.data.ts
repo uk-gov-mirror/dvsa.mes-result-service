@@ -71,6 +71,7 @@ export const testResult : TestResultRecord [] = [{
       seriousFaults: { controlsAccelerator: true },
       vehicleChecks: { showMeQuestion: [Object], tellMeQuestion: [Object] },
       controlledStop: { fault: 'DF', selected: true },
+      eyesightTest: { complete: true, seriousFault: false },
       dangerousFaults: { useOfSpeed: true },
       testRequirements:
       { hillStart: true,
@@ -109,7 +110,6 @@ export const testResult : TestResultRecord [] = [{
     accompaniment: {},
     vehicleDetails: { gearboxCategory: 'Manual', registrationNumber: 'ABC' },
     instructorDetails: {},
-    eyesightTestResult: 'P',
     preTestDeclarations:
     { preTestSignature: 'data:image/svg+xml;base64,hY2siPjwvY2lyY2xlPjwvc3ZnPg==',
       insuranceDeclarationAccepted: true,

@@ -62,7 +62,6 @@ export const decompressionServiceTestData: { [caseName: string]: DecompressionTe
         residencyDeclarationAccepted: false,
         preTestSignature: '',
       },
-      eyesightTestResult: null,
       accompaniment: {},
       vehicleDetails: {
         registrationNumber: '',
@@ -77,6 +76,7 @@ export const decompressionServiceTestData: { [caseName: string]: DecompressionTe
         ETA: {},
         eco: {},
         controlledStop: {},
+        eyesightTest: {},
         vehicleChecks: {
           tellMeQuestion: {},
           showMeQuestion: {},

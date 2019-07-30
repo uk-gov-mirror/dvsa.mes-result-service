@@ -7,11 +7,17 @@ import { InterfaceTypes } from '../domain/interface-types';
 import { gzipSync } from 'zlib';
 import joi from '@hapi/joi';
 import { bootstrapConfig } from '../../../common/framework/config/config';
+import { bootstrapLogging, customMetric } from '@dvsa/mes-microservice-common/application/utils/logger';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
+
+  bootstrapLogging('get-next-upload-batch', event);
+
   let nextBatchData;
   const interfaceType = convertToInterfaceType(event.queryStringParameters.interface);
   const batchSize = Number(event.queryStringParameters.batch_size);
+
+  customMetric('UploadBatchSize', 'Number of test records selected for uploading', batchSize);
 
   // Joi schema to handle validation of queryStringParameters
   const batchSizeSchema = joi.object().keys({

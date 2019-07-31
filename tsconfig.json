@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+      "baseUrl": ".",
+      "paths": { "*": ["types/*"] },
+    "outDir": "./build",
+    "strict": false,
+    "allowJs": false,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "target": "es5",
+    "types": [
+      "node",
+      "jasmine",
+    ],
+    "experimentalDecorators": true
+  },
+  "include": [
+    "./src/**/*",
+    "./spec/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

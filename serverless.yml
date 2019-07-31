@@ -1,0 +1,26 @@
+service: mes-microservices-starter-template
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+functions:
+  postResult:
+    handler: src/functions/postResult/framework/handler.handler
+    events:
+      - http:
+          path: test-result
+          method: post
+
+custom:
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+  webpack:
+    webpackConfig: 'webpack-sls-offline.config.js'
+
+plugins:
+  - serverless-webpack
+  - serverless-offline

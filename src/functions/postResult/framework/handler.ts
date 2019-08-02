@@ -37,14 +37,13 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
   }
 
   try {
-    const hasValidationError: boolean = false;
     const validationResult = validateMESJoiSchema(testResult);
 
     if (validationResult.error) {
       // Validation error thrown with no action possible by examiner - save results in error state - return HTTP 201
       // to prevent app stalling at 'upload pending'.
       console.error(`Could not validate the test result body ${validationResult.error}`);
-      await saveTestResult(testResult, hasValidationError);
+      await saveTestResult(testResult, true);
       return createResponse({}, HttpStatus.CREATED);
     }
 

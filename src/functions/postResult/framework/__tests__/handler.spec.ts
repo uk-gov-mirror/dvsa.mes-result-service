@@ -10,7 +10,7 @@ import * as saveResultSvc from '../../application/save-result-service';
 import * as configSvc from '../../../../common/framework/config/config';
 import * as joiValidationSvc from '../../domain/mes-joi-schema-service';
 import * as jwtVerificationSvc from '../../application/jwt-verification-service';
-import { ValidationResult } from '@hapi/joi';
+import { ValidationResult, ValidationError } from '@hapi/joi';
 import { sampleToken_12345678, sampleTest_12345678, sampleTest_empty } from '../__tests__/handler.spec.data';
 
 describe('postResult handler', () => {
@@ -84,7 +84,7 @@ describe('postResult handler', () => {
       expect(resp.statusCode).toEqual(401);
       expect(JSON.parse(resp.body).message).toBe('EmployeeId and staffId do not match');
     });
-    it('should ignore an invalid token EMPLOYEE_ID_VERIFICATION_DISABLED is true', async() => {
+    it('should ignore an invalid token EMPLOYEE_ID_VERIFICATION_DISABLED is true', async () => {
       process.env.EMPLOYEE_ID_VERIFICATION_DISABLED = 'true';
       dummyApigwEvent.body = 'avalidcompressedresult';
       const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
@@ -110,11 +110,29 @@ describe('postResult handler', () => {
       spyOn(jwtVerificationSvc, 'verifyRequest').and.callFake(moqJWTVerificationSvc.object);
       moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
 
-      console.log(`the fake test result looks like ${fakeTestResult.object}`);
       const resp = await handler(dummyApigwEvent, dummyContext);
 
       moqDecompressionSvc.verify(x => x(It.isValue('avalidcompressedresult')), Times.once());
       moqSaveResultSvc.verify(x => x(It.isAny()), Times.once());
+      expect(resp.statusCode).toBe(HttpStatus.CREATED);
+    });
+    it('should indicate to saveTestResult when the test result could not be validated', async () => {
+      dummyApigwEvent.body = '{"this": "JSON wont validate"}';
+      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const validationError = Mock.ofType<ValidationError>();
+      // @ts-ignore
+      const validationResult: ValidationResult<any> = {
+        error: validationError.object,
+        value: {},
+      };
+      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
+      moqJoiValidationSvc.setup(x => x(It.isAny())).returns(() => validationResult);
+      spyOn(jwtVerificationSvc, 'verifyRequest').and.callFake(moqJWTVerificationSvc.object);
+      moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
+
+      const resp = await handler(dummyApigwEvent, dummyContext);
+
+      moqSaveResultSvc.verify(x => x(It.isAny(), It.isValue(true)), Times.once());
       expect(resp.statusCode).toBe(HttpStatus.CREATED);
     });
     it('should return a 500 response when saveTestResult fails', async () => {

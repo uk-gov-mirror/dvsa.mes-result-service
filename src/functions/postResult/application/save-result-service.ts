@@ -6,14 +6,30 @@ import { buildTestResultInsert, buildUploadQueueInsert } from '../framework/data
 import { isCompletedTest } from './isCompletedTest';
 import { hasCandidateCommunicationPermission } from './hasCandidateCommunicationPermission';
 
-export const saveTestResult = async (testResult: StandardCarTestCATBSchema,
-                                     hasValidationError: boolean = false): Promise<void> => {
+export const saveTestResult = async (
+  testResult: StandardCarTestCATBSchema,
+  hasValidationError: boolean = false,
+): Promise<void> => {
   const connection: mysql.Connection = getConnection();
-
-  const { activityCode, communicationPreferences } = testResult;
 
   try {
     await connection.promise().query(buildTestResultInsert(testResult, hasValidationError));
+    await trySaveUploadQueueRecords(connection, testResult, hasValidationError);
+  } catch (err) {
+    connection.rollback();
+    throw err;
+  } finally {
+    connection.end();
+  }
+};
+
+const trySaveUploadQueueRecords = async (
+  connection: mysql.Connection,
+  testResult: StandardCarTestCATBSchema,
+  hasValidationError: boolean,
+): Promise<void> => {
+  const { activityCode, communicationPreferences } = testResult;
+  if (!hasValidationError) {
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.TARS));
     if (
       isCompletedTest(activityCode) &&
@@ -22,10 +38,5 @@ export const saveTestResult = async (testResult: StandardCarTestCATBSchema,
       await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));
     }
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.RSIS));
-  } catch (err) {
-    connection.rollback();
-    throw err;
-  } finally {
-    connection.end();
   }
 };

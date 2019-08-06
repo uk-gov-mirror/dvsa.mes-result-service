@@ -3,11 +3,10 @@ CREATE TABLE RESULT_STATUS (
   result_status_name VARCHAR(10) NOT NULL
 );
 INSERT INTO RESULT_STATUS (id, result_status_name) VALUES
-  (0,'ACCEPTED'),
-  (1,'PROCESSING'),
-  (2,'PROCESSED'),
-  (3,'PENDING'),
-  (4,'ERROR');
+  (0,'PROCESSING'),
+  (1,'PROCESSED'),
+  (2,'PENDING'),
+  (3,'ERROR');
 CREATE TABLE PROCESSING_STATUS (
   id TINYINT PRIMARY KEY,
   processing_status_name VARCHAR(10) NOT NULL

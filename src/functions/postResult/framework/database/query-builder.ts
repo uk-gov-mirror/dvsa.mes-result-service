@@ -40,7 +40,7 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
     testCentreCostCode,
     driverNumber,
     driverSurname,
-    isError ? ResultStatus.ERROR : ResultStatus.ACCEPTED,
+    isError ? ResultStatus.ERROR : ResultStatus.PROCESSING,
   ];
 
   // Specify that dates should be serialised in UTC.

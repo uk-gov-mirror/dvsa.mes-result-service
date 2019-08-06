@@ -71,30 +71,60 @@ export const updateErrorsToAbortQueryTemplate = `
   SET tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'ERROR')
 `;
 
-export const updateManuallyIntervenedForReprocessQuery = `
-  UPDATE TEST_RESULT tr
-  JOIN UPLOAD_QUEUE uq
+export const manualInterventionReprocessUploadQueueQuery = `
+  UPDATE UPLOAD_QUEUE uq
+  JOIN TEST_RESULT tr
     ON tr.application_reference = uq.application_reference
     AND tr.staff_number = uq.staff_number
+    AND tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
+    AND uq.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'FAILED')
   SET
-    tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSING'),
     uq.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING'),
     uq.retry_count = 0,
     uq.error_message = NULL
-  WHERE
-    tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
-    AND uq.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'FAILED')
+`;
+
+// NOTICE - Regarding changed row count: As the operation of this query has changed from
+// INSERT IGNORE to ON DUPLICATE KEY UPDATE. This will now return a count of 2 for each row
+// that is edited as a result of this query, unlike it's previous counterpart which returned 1.
+// This has been accepted as a better alternative to INSERT IGNORE due to the risk of errors
+// being disgarded.
+export const manualInterventionUploadQueueReplacementQuery = `
+  INSERT INTO UPLOAD_QUEUE (
+    SELECT
+      tr.application_reference,
+      tr.staff_number,
+      NOW() as timestamp,
+      it.id as interface,
+      (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING') as upload_status,
+      0 as retry_count,
+      NULL as error_message
+  FROM TEST_RESULT tr, INTERFACE_TYPE it
+  WHERE tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
+) ON DUPLICATE KEY UPDATE
+	UPLOAD_QUEUE.application_reference = UPLOAD_QUEUE.application_reference
+`;
+
+export const manualInterventionReprocessTestResultQuery = `
+  UPDATE TEST_RESULT
+  SET result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSING')
+  WHERE result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
 `;
 
 export const deleteAccepetedUploadsQuery = `
-  DELETE UPLOAD_QUEUE FROM UPLOAD_QUEUE
+  DELETE uq
+  FROM UPLOAD_QUEUE uq
+  JOIN TEST_RESULT tr
+    ON uq.application_reference = tr.application_reference
+    AND uq.staff_number = tr.staff_number
+    AND tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSED')
   JOIN (
     SELECT application_reference, staff_number, interface
     FROM UPLOAD_QUEUE
     WHERE upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'ACCEPTED')
     AND timestamp < ?
   ) to_delete
-    ON UPLOAD_QUEUE.application_reference = to_delete.application_reference
-    AND UPLOAD_QUEUE.staff_number = to_delete.staff_number
-    AND UPLOAD_QUEUE.interface = to_delete.interface
+    ON uq.application_reference = to_delete.application_reference
+    AND uq.staff_number = to_delete.staff_number
+    AND uq.interface = to_delete.interface
 `;

@@ -3,11 +3,15 @@ import {
   buildMarkTestProcessedQuery,
   buildUpdateErrorsToRetryQuery,
   buildAbortTestsExceeingRetryQuery,
-  buildManualInterventionUpdateQuery,
   buildDeleteAcceptedQueueRowsQuery,
 } from '../framework/database/query-builder';
 import { IRetryProcessor } from './IRetryProcessor';
 import { warn, customMetric } from '@dvsa/mes-microservice-common/application/utils/logger';
+import {
+  manualInterventionReprocessUploadQueueQuery,
+  manualInterventionUploadQueueReplacementQuery,
+  manualInterventionReprocessTestResultQuery,
+} from '../framework/database/query-templates';
 
 export class RetryProcessor implements IRetryProcessor {
   private connection: mysql.Connection;
@@ -88,8 +92,21 @@ export class RetryProcessor implements IRetryProcessor {
   async processSupportInterventions(): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
-      const [rows] = await this.connection.promise().query(buildManualInterventionUpdateQuery());
-      const changedRowCount = rows.changedRows;
+
+      // Move UPLOAD_QUEUE rows in ERROR and against a PENDING TEST_RESULT back to PROCESSING
+      const [uploadQueueStatusRows] = await this.connection.promise()
+        .query(manualInterventionReprocessUploadQueueQuery);
+
+      // Recreate potentially missing UPLOAD_QUEUE records for PENDING TEST_RESULTs
+      const [uploadQueueNewRows] = await this.connection.promise()
+        .query(manualInterventionUploadQueueReplacementQuery);
+
+      // Move PENDING TEST_RESULTs back to PROCESSING
+      const [testResultStatusRows] = await this.connection.promise()
+        .query(manualInterventionReprocessTestResultQuery);
+
+      const changedRowCount = uploadQueueStatusRows.changedRows
+        + uploadQueueNewRows.affectedRows + testResultStatusRows.changedRows;
       customMetric(
         'InterventionRequeueRowsChanged',
         'The number of TEST_RESULT+UPLOAD_QUEUE records updated as part of reprocessing manual intervention',

@@ -27,5 +27,10 @@ describe('QueryBuilder', () => {
       const result = buildTestResultInsert(dummyTestResult, false);
       expect(result).toMatch(/Campbell/);
     });
+    it('should have processing status as the last argument in the INSERT', () => {
+      const result = buildTestResultInsert(dummyTestResult, false);
+      console.log(result);
+      expect(result).toMatch(/0\)/);
+    });
   });
 });

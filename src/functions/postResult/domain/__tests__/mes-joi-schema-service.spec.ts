@@ -20,7 +20,7 @@ describe('Joi schema validation service', () => {
         },
         testSlotAttributes: {
           slotId: 1,
-          start: '12345123451234512345', // start exceeds max-length (19 characters)
+          start: '1'.repeat(20), // start exceeds max-length (19 characters)
           vehicleSlotType: 'mock',
           specialNeeds: false,
           welshTest: false,
@@ -36,6 +36,10 @@ describe('Joi schema validation service', () => {
         },
       },
       rekey: false,
+      changeMarker: false,
+      examinerBooked: 12345678,
+      examinerConducted: 12345678,
+      examinerKeyed: 12345678,
     };
     const validationResult = validateMESJoiSchema(invalidSchema);
     expect(validationResult.error.message).toEqual(startValidationErrorMessage);
@@ -54,7 +58,7 @@ describe('Joi schema validation service', () => {
         },
         testSlotAttributes: {
           slotId: 1,
-          start: '1234512345123451234', // start does not exceed max-length (19 characters)
+          start: '1'.repeat(19), // start does not exceed max-length (19 characters)
           vehicleTypeCode: 'C',
           specialNeeds: false,
           welshTest: false,
@@ -68,6 +72,10 @@ describe('Joi schema validation service', () => {
         },
       },
       rekey: false,
+      changeMarker: false,
+      examinerBooked: 12345678,
+      examinerConducted: 12345678,
+      examinerKeyed: 12345678,
     };
     const validationResult = validateMESJoiSchema(invalidSchema);
     expect(validationResult.error).toBeNull();
@@ -85,7 +93,7 @@ describe('Joi schema validation service', () => {
         },
         testSlotAttributes: {
           slotId: 1,
-          start: '1234512345123451234',
+          start: 'ABCDEFGHIJKLMNOPQRS',
           vehicleTypeCode: 'C',
           specialNeeds: false,
           welshTest: false,
@@ -95,6 +103,10 @@ describe('Joi schema validation service', () => {
         // missing required property 'applicationReference'
       },
       rekey: false,
+      changeMarker: false,
+      examinerBooked: 12345678,
+      examinerConducted: 12345678,
+      examinerKeyed: 12345678,
     };
 
     const validationResult = validateMESJoiSchema(invalidSchema);

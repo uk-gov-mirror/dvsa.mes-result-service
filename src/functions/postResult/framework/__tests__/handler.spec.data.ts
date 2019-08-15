@@ -51,6 +51,10 @@ export const sampleTest_12345678: StandardCarTestCATBSchema = {
   },
   activityCode: null,
   rekey: false,
+  changeMarker: false,
+  examinerBooked: 12345678,
+  examinerConducted: 12345678,
+  examinerKeyed: 12345678,
 };
 
 export const sampleTest_87654321: StandardCarTestCATBSchema = {
@@ -66,6 +70,10 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
   },
   activityCode: null,
   rekey: false,
+  changeMarker: false,
+  examinerBooked: 12345678,
+  examinerConducted: 12345678,
+  examinerKeyed: 12345678,
 };
 
 export const sampleTest_empty: StandardCarTestCATBSchema = {
@@ -81,4 +89,8 @@ export const sampleTest_empty: StandardCarTestCATBSchema = {
   },
   activityCode: null,
   rekey: false,
+  changeMarker: false,
+  examinerBooked: 12345678,
+  examinerConducted: 12345678,
+  examinerKeyed: 12345678,
 };

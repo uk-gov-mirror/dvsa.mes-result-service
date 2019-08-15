@@ -53,7 +53,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       endDate: joi.string().regex(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/).optional()
         .label('Please provide a valid date with the format \'YYYY-MM-DD\''),
       driverId: joi.string().alphanum().max(16).optional(),
-      staffNumber: joi.string().alphanum().optional(),
+      staffNumber: joi.number().optional(),
       dtcCode: joi.string().alphanum().optional(),
       appRef: joi.number().max(1000000000000).optional(),
     });

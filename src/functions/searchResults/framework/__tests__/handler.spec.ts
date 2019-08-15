@@ -3,7 +3,12 @@ import { handler } from '../handler';
 const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, It, Times } from 'typemoq';
 import * as configSvc from '../../../../common/framework/config/config';
-import { queryParameter, sampleToken_12345678, testResult, testResultResponse } from '../__tests__/handler.spec.data';
+import {
+  queryParameter,
+  queryParameterWith8DigitAppRef,
+  sampleToken_12345678, testResult,
+  testResultResponse,
+} from '../__tests__/handler.spec.data';
 import * as searchResultsSvc from '../repositories/search-repository';
 import { UserRole } from '../../../../common/domain/user-role';
 
@@ -82,6 +87,26 @@ describe('searchResults handler', () => {
       expect(resp.statusCode).toBe(200);
       expect(JSON.parse(resp.body)).toEqual(testResultResponse);
       moqSearchResults.verify(x => x(It.isObjectWith(queryParameter)), Times.once());
+    });
+  });
+
+  describe('using valid query parameters as LDTM, 8 digit application reference', () => {
+    it('gets the relevant results', async () => {
+      dummyApigwEvent.requestContext.authorizer = {
+        examinerRole: UserRole.LDTM,
+      };
+      dummyApigwEvent.queryStringParameters['startDate'] = queryParameterWith8DigitAppRef.startDate;
+      dummyApigwEvent.queryStringParameters['endDate'] = queryParameterWith8DigitAppRef.endDate;
+      dummyApigwEvent.queryStringParameters['driverNumber'] = queryParameterWith8DigitAppRef.driverNumber;
+      dummyApigwEvent.queryStringParameters['dtcCode'] = queryParameterWith8DigitAppRef.dtcCode;
+      dummyApigwEvent.queryStringParameters['staffNumber'] = queryParameterWith8DigitAppRef.staffNumber;
+      dummyApigwEvent.queryStringParameters['applicationReference'] = queryParameterWith8DigitAppRef
+        .applicationReference;
+      moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
+      const resp = await handler(dummyApigwEvent, dummyContext);
+      expect(resp.statusCode).toBe(200);
+      expect(JSON.parse(resp.body)).toEqual(testResultResponse);
+      moqSearchResults.verify(x => x(It.isObjectWith(queryParameterWith8DigitAppRef)), Times.once());
     });
   });
 });

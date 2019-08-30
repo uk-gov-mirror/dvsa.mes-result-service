@@ -3,8 +3,6 @@ import * as mysql from 'mysql2';
 import { IntegrationType } from '../domain/result-integration';
 import { getConnection } from '../../../common/framework/mysql/database';
 import { buildTestResultInsert, buildUploadQueueInsert } from '../framework/database/query-builder';
-import { isCompletedTest } from './isCompletedTest';
-import { hasCandidateCommunicationPermission } from './hasCandidateCommunicationPermission';
 
 export const saveTestResult = async (
   testResult: StandardCarTestCATBSchema,
@@ -28,15 +26,9 @@ const trySaveUploadQueueRecords = async (
   testResult: StandardCarTestCATBSchema,
   hasValidationError: boolean,
 ): Promise<void> => {
-  const { activityCode, communicationPreferences } = testResult;
   if (!hasValidationError) {
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.TARS));
-    if (
-      isCompletedTest(activityCode) &&
-      hasCandidateCommunicationPermission(communicationPreferences.communicationMethod)
-    ) {
-      await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));
-    }
+    await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.RSIS));
   }
 };

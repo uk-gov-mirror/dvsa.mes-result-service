@@ -1,4 +1,5 @@
 import { validateMESJoiSchema } from '../../domain/mes-joi-schema-service';
+import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 
 describe('Joi schema validation service', () => {
   const validationErrorName = 'ValidationError';

@@ -21,7 +21,8 @@ BEGIN
     tc_cc,
     driver_number,
     driver_surname,
-    result_status
+    result_status,
+    autosave
   ) VALUES
     (
       AppRef,
@@ -32,7 +33,8 @@ BEGIN
       1,
       CONCAT('dnum', AppRef),
       'Pearson',
-      (SELECT id FROM RESULT_STATUS WHERE result_status_name = ResultStatus)
+      (SELECT id FROM RESULT_STATUS WHERE result_status_name = ResultStatus),
+      0
     );
 
   INSERT INTO UPLOAD_QUEUE(

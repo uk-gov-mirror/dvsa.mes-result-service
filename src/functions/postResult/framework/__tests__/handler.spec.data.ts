@@ -62,7 +62,7 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
   journalData: {
     applicationReference: null,
     examiner: {
-      staffNumber: '87654321',
+      staffNumber: null,
     },
     testCentre: null,
     testSlotAttributes: null,
@@ -73,7 +73,7 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
   changeMarker: false,
   examinerBooked: 12345678,
   examinerConducted: 12345678,
-  examinerKeyed: 12345678,
+  examinerKeyed: 87654321,
 };
 
 export const sampleTest_empty: StandardCarTestCATBSchema = {
@@ -92,5 +92,5 @@ export const sampleTest_empty: StandardCarTestCATBSchema = {
   changeMarker: false,
   examinerBooked: 12345678,
   examinerConducted: 12345678,
-  examinerKeyed: 12345678,
+  examinerKeyed: null,
 };

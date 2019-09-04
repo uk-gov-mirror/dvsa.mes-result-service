@@ -65,9 +65,9 @@ export const isNullOrBlank = (body: string | null): boolean => {
   return body === null || body === undefined || body.trim().length === 0;
 };
 
-export const getStaffIdFromTest = (test: StandardCarTestCATBSchema) => {
-  if (test && test.journalData && test.journalData.examiner && test.journalData.examiner.staffNumber) {
-    return test.journalData.examiner.staffNumber;
+export const getStaffIdFromTest = (test: StandardCarTestCATBSchema): string => {
+  if (test && test.examinerKeyed) {
+    return test.examinerKeyed.toString();
   }
   logger.warn('No staffId found in the test data');
   return null;

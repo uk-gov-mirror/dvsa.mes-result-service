@@ -1,11 +1,14 @@
-import { StandardCarTestCATBSchema, ApplicationReference } from '@dvsa/mes-test-schema/categories/B';
+import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
 import { ResultStatus } from '../../domain/result-status';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../../domain/result-integration';
 import { ProcessingStatus } from '../../domain/processing-status';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
-export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: boolean = false): string => {
+export const buildTestResultInsert = (
+  test: StandardCarTestCATBSchema,
+  isError: boolean = false,
+  isPartialTest: boolean): string => {
   const template = `
   INSERT INTO TEST_RESULT (
     application_reference,
@@ -16,9 +19,13 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
     tc_cc,
     driver_number,
     driver_surname,
-    result_status
+    result_status,
+    autosave
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  ON DUPLICATE KEY UPDATE
+    test_result = ?,
+    autosave = false
   `;
 
   const { journalData } = test;
@@ -41,6 +48,8 @@ export const buildTestResultInsert = (test: StandardCarTestCATBSchema, isError: 
     driverNumber,
     driverSurname,
     isError ? ResultStatus.ERROR : ResultStatus.PROCESSING,
+    isPartialTest,
+    testResult,
   ];
 
   // Specify that dates should be serialised in UTC.
@@ -57,6 +66,8 @@ export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integrat
       upload_status,
       retry_count
     ) VALUES (?, ?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      application_reference = ?
   `;
   const applicationReference = formatApplicationReference(test.journalData.applicationReference);
   const { staffNumber } = test.journalData.examiner;
@@ -70,6 +81,7 @@ export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integrat
     integration,
     ProcessingStatus.PROCESSING,
     retryCount,
+    applicationReference,
   ];
   return mysql.format(template, args);
 };

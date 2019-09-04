@@ -15,6 +15,12 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
 
   let testResult: StandardCarTestCATBSchema;
 
+  let isPartialTestResult = false;
+  if (event.queryStringParameters && event.queryStringParameters['partial']
+    && event.queryStringParameters['partial'].toLowerCase() === 'true') {
+    isPartialTestResult = true;
+  }
+
   await bootstrapConfig();
 
   try {
@@ -43,11 +49,11 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
       // Validation error thrown with no action possible by examiner - save results in error state - return HTTP 201
       // to prevent app stalling at 'upload pending'.
       console.error(`Could not validate the test result body ${validationResult.error}`);
-      await saveTestResult(testResult, true);
+      await saveTestResult(testResult, true, isPartialTestResult);
       return createResponse({}, HttpStatus.CREATED);
     }
 
-    await saveTestResult(testResult);
+    await saveTestResult(testResult, false, isPartialTestResult);
   } catch (err) {
     console.error(err);
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);

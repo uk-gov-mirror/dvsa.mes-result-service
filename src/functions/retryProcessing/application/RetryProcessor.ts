@@ -81,8 +81,8 @@ export class RetryProcessor implements IRetryProcessor {
         error('A result has reached maximum number of retries', {
           application_reference: row.application_reference,
           staff_number: row.staff_number,
-          interface_id: row.interface,
-          interface_name: convertInterfaceIdToInterfaceType(row.interface),
+          interface: convertInterfaceIdToInterfaceType(row.interface),
+          retry_count: row.retry_count,
           error_message: row.error_message,
         });
       });

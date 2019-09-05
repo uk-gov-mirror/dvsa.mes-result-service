@@ -3,4 +3,5 @@ export interface FailedUploadQueueResult {
   staff_number: string;
   interface: number;
   error_message: string;
+  retry_count: number;
 }

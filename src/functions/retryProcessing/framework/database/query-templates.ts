@@ -50,7 +50,7 @@ export const updateErrorsToRetryQueryTemplate = `
 `;
 
 export const selectErrorsWhichWillBeAbortedTemplate = `
-  SELECT DISTINCT uq.application_reference, uq.staff_number, uq.interface, uq.error_message
+  SELECT DISTINCT uq.application_reference, uq.staff_number, uq.interface, uq.error_message, uq.retry_count
   FROM UPLOAD_QUEUE uq
   JOIN TEST_RESULT tr
     ON uq.application_reference = tr.application_reference

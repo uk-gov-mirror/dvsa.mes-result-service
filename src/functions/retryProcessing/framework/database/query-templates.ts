@@ -44,7 +44,9 @@ export const updateErrorsToRetryQueryTemplate = `
     ON uq1.application_reference = uq2.application_reference
     AND uq1.staff_number = uq2.staff_number
     AND uq1.interface = uq2.interface
-  SET uq1.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING')
+  SET
+    uq1.upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING'),
+    uq1.retry_count = uq1.retry_count + 1
 `;
 
 export const updateErrorsToAbortQueryTemplate = `

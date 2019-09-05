@@ -8,6 +8,12 @@ export interface IRetryProcessor {
     tarsRetryCount: number,
   ): Promise<number>;
 
+  processErrorsToLog(
+    rsisRetryCount: number,
+    notifyRetryCount: number,
+    tarsRetryCount: number,
+  ): Promise<void>;
+
   processErrorsToAbort(
     rsisRetryCount: number,
     notifyRetryCount: number,

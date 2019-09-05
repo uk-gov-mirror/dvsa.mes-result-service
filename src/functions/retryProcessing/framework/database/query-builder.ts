@@ -3,6 +3,7 @@ import {
   updateErrorsToRetryQueryTemplate,
   updateErrorsToAbortQueryTemplate as abortTestsExceedingRetryQueryTemplate,
   deleteAccepetedUploadsQuery,
+  selectErrorsWhichWillBeAbortedTemplate,
 } from './query-templates';
 import * as mysql from 'mysql2';
 import moment = require('moment');
@@ -27,6 +28,22 @@ export const buildUpdateErrorsToRetryQuery = (
   updateErrorsToRetryQueryTemplate,
   [rsisRetryCount, notifyRetryCount, tarsRetryCount],
 );
+
+/**
+ * Builds query to select all UPLOAD_QUEUE records that have exceeded the retry limit where the TEST_RESULT
+ * record is in the Processing state.
+ * @param rsisRetryCount
+ * @param notifyRetryCount
+ * @param tarsRetryCount
+ */
+export const buildSelectTestsExceedingRetryQuery = (
+  rsisRetryCount: number,
+  notifyRetryCount: number,
+  tarsRetryCount: number,
+  ) => mysql.format(
+    selectErrorsWhichWillBeAbortedTemplate,
+    [rsisRetryCount, notifyRetryCount, tarsRetryCount],
+  );
 
 /**
  * Builds query to update TEST_RESULT record to ERROR where there are interfaces that exceeded

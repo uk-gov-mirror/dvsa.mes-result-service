@@ -113,7 +113,7 @@ describe('postResult handler', () => {
       const resp = await handler(dummyApigwEvent, dummyContext);
 
       moqDecompressionSvc.verify(x => x(It.isValue('avalidcompressedresult')), Times.once());
-      moqSaveResultSvc.verify(x => x(It.isAny()), Times.once());
+      moqSaveResultSvc.verify(x => x(It.isAny(), It.isAny(), It.isAny()), Times.once());
       expect(resp.statusCode).toBe(HttpStatus.CREATED);
     });
     it('should indicate to saveTestResult when the test result could not be validated', async () => {
@@ -132,14 +132,14 @@ describe('postResult handler', () => {
 
       const resp = await handler(dummyApigwEvent, dummyContext);
 
-      moqSaveResultSvc.verify(x => x(It.isAny(), It.isValue(true)), Times.once());
+      moqSaveResultSvc.verify(x => x(It.isAny(), It.isValue(true), It.isAny()), Times.once());
       expect(resp.statusCode).toBe(HttpStatus.CREATED);
     });
     it('should return a 500 response when saveTestResult fails', async () => {
       dummyApigwEvent.body = 'avalidcompressedresult';
       const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
       moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
-      moqSaveResultSvc.setup(x => x(It.isAny())).throws(new Error('something we didnt expect'));
+      moqSaveResultSvc.setup(x => x(It.isAny(), It.isAny(), It.isAny())).throws(new Error('something we didnt expect'));
       moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
       spyOn(jwtVerificationSvc, 'verifyRequest').and.callFake(moqJWTVerificationSvc.object);
       moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
@@ -147,6 +147,37 @@ describe('postResult handler', () => {
       const resp = await handler(dummyApigwEvent, dummyContext);
 
       expect(resp.statusCode).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+    it('should pass isPartialTest as true to saveTestResult', async () => {
+      dummyApigwEvent.queryStringParameters = { partial: 'true' };
+      dummyApigwEvent.body = 'avalidcompressedresult';
+      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const validationResult = Mock.ofType<ValidationResult<any>>();
+
+      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
+      moqJoiValidationSvc.setup(x => x(It.isAny())).returns(() => validationResult.object.value);
+      spyOn(jwtVerificationSvc, 'verifyRequest').and.callFake(moqJWTVerificationSvc.object);
+      moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
+
+      const resp = await handler(dummyApigwEvent, dummyContext);
+
+      moqSaveResultSvc.verify(x => x(It.isAny(), It.isAny(), It.isValue(true)), Times.once());
+      expect(resp.statusCode).toBe(HttpStatus.CREATED);
+    });
+    it('should pass isPartialTest as false to saveTestResult', async () => {
+      dummyApigwEvent.body = 'avalidcompressedresult';
+      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const validationResult = Mock.ofType<ValidationResult<any>>();
+
+      moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
+      moqJoiValidationSvc.setup(x => x(It.isAny())).returns(() => validationResult.object.value);
+      spyOn(jwtVerificationSvc, 'verifyRequest').and.callFake(moqJWTVerificationSvc.object);
+      moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
+
+      const resp = await handler(dummyApigwEvent, dummyContext);
+
+      moqSaveResultSvc.verify(x => x(It.isAny(), It.isAny(), It.isValue(false)), Times.once());
+      expect(resp.statusCode).toBe(HttpStatus.CREATED);
     });
   });
   describe('getStaffIdFromTest', () => {

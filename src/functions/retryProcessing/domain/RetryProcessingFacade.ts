@@ -18,7 +18,11 @@ export class RetryProcessingFacade implements IRetryProcessingFacade {
       retryConfig().notifyRetryCount,
       retryConfig().tarsRetryCount,
     );
-
+    await this.retryProcessingRepository.processErrorsToLog(
+      retryConfig().rsisRetryCount,
+      retryConfig().notifyRetryCount,
+      retryConfig().tarsRetryCount,
+    );
     await this.retryProcessingRepository.processErrorsToAbort(
       retryConfig().rsisRetryCount,
       retryConfig().notifyRetryCount,

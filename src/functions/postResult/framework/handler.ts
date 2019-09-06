@@ -15,6 +15,12 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
 
   let testResult: StandardCarTestCATBSchema;
 
+  let isPartialTestResult = false;
+  if (event.queryStringParameters && event.queryStringParameters['partial']
+    && event.queryStringParameters['partial'].toLowerCase() === 'true') {
+    isPartialTestResult = true;
+  }
+
   await bootstrapConfig();
 
   try {
@@ -43,11 +49,11 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
       // Validation error thrown with no action possible by examiner - save results in error state - return HTTP 201
       // to prevent app stalling at 'upload pending'.
       console.error(`Could not validate the test result body ${validationResult.error}`);
-      await saveTestResult(testResult, true);
+      await saveTestResult(testResult, true, isPartialTestResult);
       return createResponse({}, HttpStatus.CREATED);
     }
 
-    await saveTestResult(testResult);
+    await saveTestResult(testResult, false, isPartialTestResult);
   } catch (err) {
     console.error(err);
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -59,9 +65,9 @@ export const isNullOrBlank = (body: string | null): boolean => {
   return body === null || body === undefined || body.trim().length === 0;
 };
 
-export const getStaffIdFromTest = (test: StandardCarTestCATBSchema) => {
-  if (test && test.journalData && test.journalData.examiner && test.journalData.examiner.staffNumber) {
-    return test.journalData.examiner.staffNumber;
+export const getStaffIdFromTest = (test: StandardCarTestCATBSchema): string => {
+  if (test && test.examinerKeyed) {
+    return test.examinerKeyed.toString();
   }
   logger.warn('No staffId found in the test data');
   return null;

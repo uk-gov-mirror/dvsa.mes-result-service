@@ -12,4 +12,4 @@ services:
       - './020-test-data-sproc.sql:/docker-entrypoint-initdb.d/020-test-data-sproc.sql'
       - './030-test-data.sql:/docker-entrypoint-initdb.d/030-test-data.sql'
     ports:
-      - '3306:3306'
+      - '1234:3306'

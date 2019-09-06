@@ -57,3 +57,11 @@ CALL sp_create_retry_process_scenario(52,'PROCESSING',NOW(),'PROCESSING',0,'PROC
 CALL sp_create_retry_process_scenario(53,'PROCESSED',NOW() - INTERVAL 30 DAY,'ACCEPTED',2,'ACCEPTED',2,'ACCEPTED',2); -- Delete all UPLOAD_QUEUE records
 CALL sp_create_retry_process_scenario(54,'PROCESSING',NOW() - INTERVAL 30 DAY,'ACCEPTED',0,'PROCESSING',0,'PROCESSING',0); -- Don't delete UPLOAD_QUEUE, result still PROCESSING
 CALL sp_create_retry_process_scenario(55,'PENDING',NOW(),'ACCEPTED',0,'FAILED',9,NULL,NULL);
+
+
+-- Errors to retry scenarios
+CALL sp_create_retry_process_scenario_without_rsis(65, 'PROCESSING',NOW(),'FAILED', 0,'FAILED', 0);
+CALL sp_create_retry_process_scenario_without_rsis(66, 'PROCESSING',NOW(),'FAILED', 0,'PROCESSING', 0);
+CALL sp_create_retry_process_scenario_without_rsis(67, 'PROCESSING',NOW(),'FAILED', 0,'ACCEPTED', 0);
+CALL sp_create_retry_process_scenario_without_rsis(68, 'PROCESSING',NOW(),'PROCESSING', 0,'FAILED', 0);
+CALL sp_create_retry_process_scenario_without_rsis(69, 'PROCESSING',NOW(),'ACCEPTED', 0,'FAILED', 0);

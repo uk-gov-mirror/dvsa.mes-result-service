@@ -33,7 +33,7 @@ describe('RetryProcessor database test', () => {
       const changedRowCount = await retryProcessor.processErrorsToRetry(3, 3, 3);
       const appRefInterfaces = await getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred();
 
-      expect(changedRowCount).toBe(12);
+      expect(changedRowCount).toBe(18);
       // TARS
       expect(appRefInterfaces).toContain({ application_reference: 11, interface: 0 });
       expect(appRefInterfaces).toContain({ application_reference: 14, interface: 0 });

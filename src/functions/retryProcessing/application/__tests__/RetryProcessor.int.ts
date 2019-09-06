@@ -1,6 +1,7 @@
 import * as mysql from 'mysql2';
 import { RetryProcessor } from '../RetryProcessor';
 import { IRetryProcessor } from '../IRetryProcessor';
+import { getErroredTestAppRefs } from './common/HelperSQLQueries';
 
 describe('RetryProcessor database test', () => {
   let db: mysql.Connection;
@@ -12,7 +13,7 @@ describe('RetryProcessor database test', () => {
       user: 'results_user',
       database: 'results',
       password: 'Pa55word1',
-      port: 1234,
+      port: 3306,
     });
     retryProcessor = new RetryProcessor(db);
   });
@@ -24,7 +25,7 @@ describe('RetryProcessor database test', () => {
     it('should move TEST_RESULTs with all successful UPLOAD_QUEUE records to PROCESSED', async () => {
       const changedRowCount = await retryProcessor.processSuccessful();
       const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus('PROCESSED');
-      expect(changedRowCount).toBe(2);
+      expect(changedRowCount).toBe(3);
       expect(acceptedTestAppRefs).toContain(9);
       expect(acceptedTestAppRefs).toContain(10);
     });
@@ -53,9 +54,9 @@ describe('RetryProcessor database test', () => {
 
     it('should abort TEST_RESULT records that have exceeded the retry count for any interface', async () => {
       const changedRowCount = await retryProcessor.processErrorsToAbort(3, 3, 3);
-      const erroredTestAppRefs = await getErroredTestAppRefs();
+      const erroredTestAppRefs = await getErroredTestAppRefs(db);
 
-      expect(changedRowCount).toBe(7);
+      expect(changedRowCount).toBe(12);
       expect(erroredTestAppRefs).toContain(25); // Failed TARS
       expect(erroredTestAppRefs).toContain(26); // Failed RSIS
       expect(erroredTestAppRefs).toContain(27); // Failed Notify
@@ -145,26 +146,6 @@ describe('RetryProcessor database test', () => {
             reject(err);
           }
           resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
-        });
-    });
-  };
-
-  const getErroredTestAppRefs = (): Promise<number[]> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT DISTINCT tr.application_reference
-        FROM TEST_RESULT tr
-        JOIN UPLOAD_QUEUE uq
-          ON tr.application_reference = uq.application_reference
-          AND result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'ERROR')
-        `,
-        [],
-        (err, results, fields) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(results.map(row => row.application_reference));
         });
     });
   };

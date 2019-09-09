@@ -1,5 +1,5 @@
 import * as mysql from 'mysql2';
-import { IRetryProcessor } from '../IretryProcessor';
+import { IRetryProcessor } from '../IRetryProcessor';
 import { RetryProcessor } from '../RetryProcessor';
 import { getAutosaveQueueRecords } from './common/HelperSQLQueries';
 

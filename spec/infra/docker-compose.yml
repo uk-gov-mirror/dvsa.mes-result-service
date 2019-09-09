@@ -14,4 +14,4 @@ services:
       - './040-test-data-autosave-sproc.sql:/docker-entrypoint-initdb.d/040-test-data-autosave-sproc.sql'
       - './050-autosave-test-data.sql:/docker-entrypoint-initdb.d/050-autosave-test-data.sql'
     ports:
-      - '3306:3306'
+      - '1234:3306'

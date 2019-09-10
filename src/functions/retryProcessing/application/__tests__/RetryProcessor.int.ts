@@ -25,9 +25,8 @@ describe('RetryProcessor database test', () => {
     it('should move TEST_RESULTs with all successful UPLOAD_QUEUE records to PROCESSED', async () => {
       const changedRowCount = await retryProcessor.processSuccessful();
       const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus('PROCESSED');
-      expect(changedRowCount).toBe(3);
+      expect(changedRowCount).toBe(1);
       expect(acceptedTestAppRefs).toContain(9);
-      expect(acceptedTestAppRefs).toContain(10);
     });
 
     it('should mark UPLOAD_QUEUE for reprocessing when they failed but not exceeded the retry limit', async () => {

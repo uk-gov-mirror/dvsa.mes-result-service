@@ -1,8 +1,8 @@
 import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
-import { ResultStatus } from '../../domain/result-status';
+import { ResultStatus } from '../../../../common/domain/result-status';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../../domain/result-integration';
-import { ProcessingStatus } from '../../domain/processing-status';
+import { ProcessingStatus } from '../../../../common/domain/processing-status';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
 export const buildTestResultInsert = (

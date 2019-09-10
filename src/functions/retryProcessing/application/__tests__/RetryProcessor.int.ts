@@ -13,7 +13,7 @@ describe('RetryProcessor database test', () => {
       user: 'results_user',
       database: 'results',
       password: 'Pa55word1',
-      port: 3306,
+      port: 1234,
     });
     retryProcessor = new RetryProcessor(db);
   });

@@ -1,9 +1,11 @@
 import * as mysql from 'mysql2';
 import { IRetryProcessor } from '../IRetryProcessor';
 import { RetryProcessor } from '../RetryProcessor';
-import { getAutosaveQueueRecords } from './common/HelperSQLQueries';
+import { getAutosaveQueueRecord, getTestResultAutosaveFlag , getQueueCount } from './common/HelperSQLQueries';
+import { ErrorsToRetryTestCases, InterfaceIds } from './common/TestEnums';
+import { ProcessingStatus } from '../../../../common/domain/processing-status';
 
-describe('AutoSaveErrorsToRetry', () => {
+fdescribe('AutoSaveErrorsToRetry', () => {
   let db: mysql.Connection;
   let retryProcessor: IRetryProcessor;
 
@@ -13,28 +15,105 @@ describe('AutoSaveErrorsToRetry', () => {
       user: 'results_user',
       database: 'results',
       password: 'Pa55word1',
-      port: 3306,
+      port: 1234,
     });
     retryProcessor = new RetryProcessor(db);
   });
 
   it('should set test_status of record to PROCESSING if  FAILED, should leave ACCEPTED untouched', async () => {
     await retryProcessor.processErrorsToRetry(5, 5, 5);
-    const autosaveRecords = await getAutosaveQueueRecords(db);
 
-    expect(autosaveRecords).toContain({ application_reference: 65, interface: 0, upload_status: 0 });
-    expect(autosaveRecords).toContain({ application_reference: 65, interface: 1, upload_status: 0 });
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.TARS , ErrorsToRetryTestCases.TarsFailedRsisFailed))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsFailedRsisFailed,
+        interface: InterfaceIds.TARS,
+        upload_status: ProcessingStatus.PROCESSING,
+      });
 
-    expect(autosaveRecords).toContain({ application_reference: 66, interface: 0, upload_status: 0 });
-    expect(autosaveRecords).toContain({ application_reference: 66, interface: 1, upload_status: 0 });
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY,  ErrorsToRetryTestCases.TarsFailedRsisFailed))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsFailedRsisFailed,
+        interface: InterfaceIds.NOTIFY,
+        upload_status: ProcessingStatus.PROCESSING,
+      });
 
-    expect(autosaveRecords).toContain({ application_reference: 67, interface: 0, upload_status: 0 });
-    expect(autosaveRecords).toContain({ application_reference: 67, interface: 1, upload_status: 1 });
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.TARS, ErrorsToRetryTestCases.TarsFailedRsisProcessing))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+        interface: InterfaceIds.TARS,
+        upload_status: ProcessingStatus.PROCESSING,
+      });
 
-    expect(autosaveRecords).toContain({ application_reference: 68, interface: 0, upload_status: 0 });
-    expect(autosaveRecords).toContain({ application_reference: 68, interface: 1, upload_status: 0 });
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY,  ErrorsToRetryTestCases.TarsFailedRsisProcessing))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+        interface: InterfaceIds.NOTIFY,
+        upload_status: ProcessingStatus.PROCESSING });
 
-    expect(autosaveRecords).toContain({ application_reference: 69, interface: 0, upload_status: 1 });
-    expect(autosaveRecords).toContain({ application_reference: 69, interface: 1, upload_status: 0 });
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.TARS,  ErrorsToRetryTestCases.TarsFailedRsisAccepted))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+        interface: InterfaceIds.TARS,
+        upload_status: ProcessingStatus.PROCESSING,
+      });
+
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY,  ErrorsToRetryTestCases.TarsFailedRsisAccepted))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+        interface: InterfaceIds.NOTIFY,
+        upload_status: ProcessingStatus.ACCEPTED,
+      });
+
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.TARS,  ErrorsToRetryTestCases.TarsProcessingRsisFailed))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+        interface: InterfaceIds.TARS,
+        upload_status: ProcessingStatus.PROCESSING,
+      });
+
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY,  ErrorsToRetryTestCases.TarsProcessingRsisFailed))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+        interface: InterfaceIds.NOTIFY,
+        upload_status: ProcessingStatus.PROCESSING,
+      });
+
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.TARS,  ErrorsToRetryTestCases.TarsAcceptedRsisFailed))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+        interface: InterfaceIds.TARS,
+        upload_status: ProcessingStatus.ACCEPTED,
+      });
+
+    expect(await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY,  ErrorsToRetryTestCases.TarsAcceptedRsisFailed))
+    .toContain(
+      { application_reference: ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+        interface: InterfaceIds.NOTIFY,
+        upload_status: ProcessingStatus.PROCESSING });
+
+    // ensure autosave flag is still set
+    expect(await getTestResultAutosaveFlag(db, ErrorsToRetryTestCases.TarsFailedRsisFailed)).toBe(1);
+    expect(await getTestResultAutosaveFlag(db, ErrorsToRetryTestCases.TarsFailedRsisProcessing)).toBe(1);
+    expect(await getTestResultAutosaveFlag(db, ErrorsToRetryTestCases.TarsFailedRsisAccepted)).toBe(1);
+    expect(await getTestResultAutosaveFlag(db, ErrorsToRetryTestCases.TarsProcessingRsisFailed)).toBe(1);
+    expect(await getTestResultAutosaveFlag(db, ErrorsToRetryTestCases.TarsAcceptedRsisFailed)).toBe(1);
+
+      // ensure no RSIS entries created
+    expect(await getQueueCount(db,
+                               ErrorsToRetryTestCases.TarsFailedRsisFailed,
+                               InterfaceIds.RSIS)).toBe(0);
+    expect(await getQueueCount(db,
+                               ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+                               InterfaceIds.RSIS)).toBe(0);
+    expect(await getQueueCount(db,
+                               ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+                               InterfaceIds.RSIS)).toBe(0);
+    expect(await getQueueCount(db,
+                               ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+                               InterfaceIds.RSIS)).toBe(0);
+    expect(await getQueueCount(db,
+                               ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+                               InterfaceIds.RSIS)).toBe(0);
+
   });
 });

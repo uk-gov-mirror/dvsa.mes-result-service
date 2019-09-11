@@ -55,7 +55,7 @@ export const insertAutosaveQueueResultData = (
       [itemsToInsert.map(item => [
         item.applicationReference,
         item.staffNumber,
-        new Date().toISOString().slice(0, 19).replace('T', ' '),
+        item.timestamp ? item.timestamp : new Date().toISOString().slice(0, 19).replace('T', ' '),
         item.interface,
         item.uploadStatus,
         item.retryCount,

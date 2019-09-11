@@ -79,7 +79,6 @@ describe('RetryProcessor database test', () => {
       expect(processingAppRefs).toContain(43);
       expect(processingAppRefs).toContain(44);
       expect(processingAppRefs).toContain(45);
-      expect(processingAppRefs).toContain(55);
       // UPLOAD_QUEUE upload_status ERROR -> PROCESSING
       expect(processingUploadQueueRecords).toContain({ application_reference: 39, interface: 0 });
       expect(processingUploadQueueRecords).toContain({ application_reference: 40, interface: 2 });
@@ -93,18 +92,8 @@ describe('RetryProcessor database test', () => {
       expect(processingUploadQueueRecords).toContain({ application_reference: 45, interface: 0 });
       expect(processingUploadQueueRecords).toContain({ application_reference: 45, interface: 1 });
       expect(processingUploadQueueRecords).toContain({ application_reference: 45, interface: 2 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 55, interface: 1 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 55, interface: 2 });
     });
 
-    it('should clean out old UPLOAD_QUEUE records', async () => {
-      const deletedRowCount = await retryProcessor.processOldEntryCleanup(30);
-      const allUploadQueueRecords = await getAllUploadQueueRecords();
-
-      expect(deletedRowCount).toBe(3);
-      expect(allUploadQueueRecords.some(record => record.application_reference === 53)).toBe(false);
-      expect(allUploadQueueRecords.some(record => record.application_reference === 54)).toBe(true);
-    });
   });
 
   const getTestResultAppRefsForResultStatus = (resultStatus: string): Promise<number[]> => {

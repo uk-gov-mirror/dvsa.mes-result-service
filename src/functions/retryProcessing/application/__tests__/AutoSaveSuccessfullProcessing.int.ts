@@ -137,6 +137,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 56,
         staffNumber: '1',
+        timestamp: null,
         interface: 0, // TARS
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -144,6 +145,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 56,
         staffNumber: '1',
+        timestamp: null,
         interface: 1, // NOTIFY
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -151,6 +153,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 57,
         staffNumber: '1',
+        timestamp: null,
         interface: 0, // TARS
         uploadStatus: 1, // ACCEPTED
         retryCount: 0,
@@ -158,6 +161,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 57,
         staffNumber: '1',
+        timestamp: null,
         interface: 1, // NOTIFY
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -165,6 +169,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 58,
         staffNumber: '1',
+        timestamp: null,
         interface: 0, // TARS
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -172,6 +177,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 58,
         staffNumber: '1',
+        timestamp: null,
         interface: 1, // NOTIFY
         uploadStatus: 1, // ACCEPTED
         retryCount: 0,
@@ -179,6 +185,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 59,
         staffNumber: '1',
+        timestamp: null,
         interface: 0, // TARS
         uploadStatus: 1, // ACCEPTED
         retryCount: 0,
@@ -186,6 +193,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 59,
         staffNumber: '1',
+        timestamp: null,
         interface: 1, // NOTIFY
         uploadStatus: 1, // ACCEPTED
         retryCount: 0,
@@ -198,6 +206,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 56,
         staffNumber: '1',
+        timestamp: null,
         interface: 2, // RSIS
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -205,6 +214,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 57,
         staffNumber: '1',
+        timestamp: null,
         interface: 2, // RSIS
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -212,6 +222,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 58,
         staffNumber: '1',
+        timestamp: null,
         interface: 2, // RSIS
         uploadStatus: 0, // PROCESSING
         retryCount: 0,
@@ -219,6 +230,7 @@ describe('Autosave processing operations', () => {
       {
         applicationReference: 59,
         staffNumber: '1',
+        timestamp: null,
         interface: 2, // RSIS
         uploadStatus: 1, // ACCEPTED
         retryCount: 0,

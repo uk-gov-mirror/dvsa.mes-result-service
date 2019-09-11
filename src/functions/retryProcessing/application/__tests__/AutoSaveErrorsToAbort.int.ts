@@ -8,7 +8,25 @@ import {
   getErroredTestAppRef} from './common/HelperSQLQueries';
 import { ErrorsToAbortTestCases, InterfaceIds } from './common/TestEnums';
 import { ProcessingStatus } from '../../../../common/domain/processing-status';
-fdescribe('AutoSaveErrorsToAbort', () => {
+import { AutosaveTestData } from '../helpers/mock-test-data';
+import { AutosaveQueueData } from '../mock-queue-data';
+import {
+  insertAutosaveTestResultData,
+  insertAutosaveQueueResultData,
+  deleteAutosaveTestResultData,
+} from '../helpers/autosave-helpers';
+
+describe('AutoSaveErrorsToAbort', () => {
+  const testCases: ErrorsToAbortTestCases[] =
+    [
+      ErrorsToAbortTestCases.TarsFailedNotifyFailed,
+      ErrorsToAbortTestCases.TarsFailedNotifyProcessing,
+      ErrorsToAbortTestCases.TarsFailedNotifyAccepted,
+      ErrorsToAbortTestCases.TarsProcessingNotifyFailed,
+      ErrorsToAbortTestCases.TarsAcceptedNotifyFailed,
+      ErrorsToAbortTestCases.TarsAcceptedNotifyAccepted,
+      ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
+    ];
   let db: mysql.Connection;
   let retryProcessor: IRetryProcessor;
 
@@ -18,9 +36,22 @@ fdescribe('AutoSaveErrorsToAbort', () => {
       user: 'results_user',
       database: 'results',
       password: 'Pa55word1',
-      port: 1234,
+      port: 3306,
     });
     retryProcessor = new RetryProcessor(db);
+  });
+
+  beforeEach(async () => {
+    const testResultData = getTestResultData();
+    const queueResultData = getQueueResultData();
+
+    await insertAutosaveTestResultData(db, testResultData);
+    await insertAutosaveQueueResultData(db, queueResultData);
+  });
+
+  afterEach(async () => {
+    await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+    await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
   });
 
   it('should set test_status of record to ERROR if TARS/NOTIFY entry is FAILED', async () => {
@@ -128,7 +159,8 @@ fdescribe('AutoSaveErrorsToAbort', () => {
         interface: InterfaceIds.TARS,
         upload_status: ProcessingStatus.PROCESSING,
       });
-    expect(await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY, ErrorsToAbortTestCases.TarsProcessingNotifyProcessing))
+    expect(
+        await getAutosaveQueueRecord(db, InterfaceIds.NOTIFY, ErrorsToAbortTestCases.TarsProcessingNotifyProcessing))
       .toContain(
       { application_reference: ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
         interface: InterfaceIds.NOTIFY,
@@ -170,3 +202,160 @@ fdescribe('AutoSaveErrorsToAbort', () => {
 
   });
 });
+
+const getTestResultData = (): AutosaveTestData[] => {
+  return [
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyFailed,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyProcessing,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyAccepted,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyFailed,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyFailed,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyAccepted,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+  ];
+};
+
+const getQueueResultData = (): AutosaveQueueData[] => {
+  return [
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 5,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 5,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyProcessing,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 5,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyProcessing,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.PROCESSING,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyAccepted,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 5,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyAccepted,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.ACCEPTED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.PROCESSING,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 5,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.ACCEPTED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 5,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyAccepted,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.ACCEPTED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyAccepted,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.ACCEPTED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.PROCESSING,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.PROCESSING,
+      retryCount: 0,
+    },
+  ];
+};

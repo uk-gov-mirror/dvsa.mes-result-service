@@ -4,8 +4,24 @@ import { RetryProcessor } from '../RetryProcessor';
 import { getAutosaveQueueRecord, getTestResultAutosaveFlag , getQueueCount } from './common/HelperSQLQueries';
 import { ErrorsToRetryTestCases, InterfaceIds } from './common/TestEnums';
 import { ProcessingStatus } from '../../../../common/domain/processing-status';
+import { AutosaveTestData } from '../helpers/mock-test-data';
+import { AutosaveQueueData } from '../mock-queue-data';
+import {
+  insertAutosaveTestResultData,
+  insertAutosaveQueueResultData,
+  deleteAutosaveTestResultData,
+} from '../helpers/autosave-helpers';
 
-fdescribe('AutoSaveErrorsToRetry', () => {
+describe('AutoSaveErrorsToRetry', () => {
+  const testCases: ErrorsToRetryTestCases[] =
+    [
+      ErrorsToRetryTestCases.TarsFailedRsisFailed,
+      ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+      ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+      ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+      ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+    ];
+
   let db: mysql.Connection;
   let retryProcessor: IRetryProcessor;
 
@@ -15,9 +31,22 @@ fdescribe('AutoSaveErrorsToRetry', () => {
       user: 'results_user',
       database: 'results',
       password: 'Pa55word1',
-      port: 1234,
+      port: 3306,
     });
     retryProcessor = new RetryProcessor(db);
+  });
+
+  beforeEach(async () => {
+    const testResultData = getTestResultData();
+    const queueResultData = getQueueResultData();
+
+    await insertAutosaveTestResultData(db, testResultData);
+    await insertAutosaveQueueResultData(db, queueResultData);
+  });
+
+  afterEach(async () => {
+    await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+    await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
   });
 
   it('should set test_status of record to PROCESSING if  FAILED, should leave ACCEPTED untouched', async () => {
@@ -117,3 +146,118 @@ fdescribe('AutoSaveErrorsToRetry', () => {
 
   });
 });
+
+const getTestResultData = (): AutosaveTestData[] => {
+  return [
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisFailed,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+      staffNumber: '1',
+      driverSurname: 'Bloggs',
+      resultStatus: ProcessingStatus.PROCESSING,
+      autosave: true,
+    },
+  ];
+};
+
+const getQueueResultData = (): AutosaveQueueData[] => {
+  return [
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 0,
+    },
+    {
+      applicationReference:ErrorsToRetryTestCases.TarsFailedRsisProcessing,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.PROCESSING,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.ACCEPTED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.PROCESSING,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 0,
+    },
+    {
+      applicationReference:ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.TARS,
+      uploadStatus: ProcessingStatus.ACCEPTED,
+      retryCount: 0,
+    },
+    {
+      applicationReference: ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
+      staffNumber: '1',
+      interface: InterfaceIds.NOTIFY,
+      uploadStatus: ProcessingStatus.FAILED,
+      retryCount: 0,
+    },
+  ];
+};

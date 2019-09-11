@@ -4,6 +4,13 @@ export enum InterfaceIds {
     RSIS,
   }
 
+export enum SuccessfulTestCases {
+  TarsProcessingNotifyProcessing = 56,
+  TarsAcceptedNotifyProcessing = 57,
+  TarsProcessingNotifyAccepted = 58,
+  TarsAcceptedNotifyAccepted = 59,
+}
+
 export enum ErrorsToRetryTestCases {
      TarsFailedRsisFailed = 65,
      TarsFailedRsisProcessing = 66,

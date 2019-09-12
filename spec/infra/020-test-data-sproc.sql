@@ -37,34 +37,28 @@ BEGIN
       0
     );
 
-  INSERT INTO UPLOAD_QUEUE(
-    application_reference,
-    staff_number,
-    timestamp,
-    interface,
-    upload_status,
-    retry_count,
-    error_message
-  ) VALUES
+  IF TarsStatus IS NOT NULL THEN
+    INSERT INTO UPLOAD_QUEUE(
+      application_reference,
+      staff_number,
+      timestamp,
+      interface,
+      upload_status,
+      retry_count,
+      error_message
+    )
+    VALUES
     (
       AppRef,
       '1',
       ResultDate,
-      0, -- TARS
+      0,-- TARS
       (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = TarsStatus),
       TarsRetryCount,
       NULL
-    ),
-    (
-      AppRef,
-      '1',
-      ResultDate,
-      2, -- RSIS
-      (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = RsisStatus),
-      RsisRetryCount,
-      NULL
     );
-  -- Notify may not have an UPLOAD_QUEUE record if it's a terminated test
+  END IF;
+
   IF NotifyStatus IS NOT NULL THEN
     INSERT INTO UPLOAD_QUEUE(
       application_reference,
@@ -74,16 +68,39 @@ BEGIN
       upload_status,
       retry_count,
       error_message
-    ) VALUES
-      (
-        AppRef,
-        '1',
-        ResultDate,
-        1, -- Notify
-        (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = NotifyStatus),
-        NotifyRetryCount,
-        NULL
-      );
+    )
+    VALUES
+    (
+      AppRef,
+      '1',
+      ResultDate,
+      1,-- NOTIFY
+      (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = NotifyStatus),
+      NotifyRetryCount,
+      NULL
+    );
+  END IF;
+
+  IF RsisStatus IS NOT NULL THEN
+    INSERT INTO UPLOAD_QUEUE(
+      application_reference,
+      staff_number,
+      timestamp,
+      interface,
+      upload_status,
+      retry_count,
+      error_message
+    )
+    VALUES
+    (
+      AppRef,
+      '1',
+      ResultDate,
+      2,-- RSIS
+      (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = RsisStatus),
+      RsisRetryCount,
+      NULL
+    );
   END IF;
 END//
 

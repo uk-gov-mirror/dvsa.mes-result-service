@@ -1,9 +1,15 @@
 import * as mysql from 'mysql2';
 import { RetryProcessor } from '../RetryProcessor';
 import { IRetryProcessor } from '../IRetryProcessor';
-import { getErroredTestAppRefs } from './common/HelperSQLQueries';
 import  { RetryTestCases, InterfaceIds } from '../../application/__tests__/common/TestEnums';
 import moment = require('moment');
+import {
+  getErroredTestAppRefs,
+  getTestResultAppRefsForResultStatus,
+  getAllUploadQueueRecords,
+  getProcessingUploadQueueRecords,
+  getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred,
+} from './common/HelperSQLQueries';
 
 describe('RetryProcessor database test', () => {
   let db: mysql.Connection;
@@ -34,14 +40,14 @@ describe('RetryProcessor database test', () => {
   describe('Query correctness', () => {
     it('should move TEST_RESULTs with all successful UPLOAD_QUEUE records to PROCESSED', async () => {
       const changedRowCount = await retryProcessor.processSuccessful();
-      const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus('PROCESSED');
+      const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus(db, 'PROCESSED');
       expect(changedRowCount).toBe(1);
       expect(acceptedTestAppRefs).toContain(RetryTestCases.SuccessfulUpload);
     });
 
     it('should mark UPLOAD_QUEUE for reprocessing when they failed but not exceeded the retry limit', async () => {
       const changedRowCount = await retryProcessor.processErrorsToRetry(3, 3, 3);
-      const appRefInterfaces = await getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred();
+      const appRefInterfaces = await getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred(db);
 
       expect(changedRowCount).toBe(12);
       // TARS
@@ -123,8 +129,8 @@ describe('RetryProcessor database test', () => {
 
     it('should update TEST_RESULT and UPLOAD_QUEUE to make them ready for reprocessing post intervention', async () => {
       const changedRowCount = await retryProcessor.processSupportInterventions();
-      const processingAppRefs = await getTestResultAppRefsForResultStatus('PROCESSING');
-      const processingUploadQueueRecords = await getProcessingUploadQueueRecords();
+      const processingAppRefs = await getTestResultAppRefsForResultStatus(db, 'PROCESSING');
+      const processingUploadQueueRecords = await getProcessingUploadQueueRecords(db);
 
       expect(changedRowCount).toBe(45);
       // TEST_RESULT test_status PENDING -> PROCESSING
@@ -168,91 +174,6 @@ describe('RetryProcessor database test', () => {
     });
   });
 
-  const getTestResultAppRefsForResultStatus = (resultStatus: string): Promise<number[]> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT application_reference FROM TEST_RESULT
-        WHERE result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = '${resultStatus}')
-        `,
-        [],
-        (err, results, fields) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(results.map(row => row.application_reference));
-        });
-    });
-  };
-
-  interface AppRefInterface {
-    application_reference: number;
-    interface:  number;
-  }
-
-  const getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred = (): Promise<AppRefInterface[]> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT application_reference, interface
-        FROM UPLOAD_QUEUE
-        WHERE
-          retry_count > 0
-          AND upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING');
-        `,
-        [],
-        (err, results, fields) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(results.map(row => (
-          { application_reference: row.application_reference,
-            interface:  row.interface,
-          })));
-        });
-    });
-  };
-
-  const getProcessingUploadQueueRecords = (): Promise<AppRefInterface[]> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT application_reference, interface FROM UPLOAD_QUEUE
-        WHERE
-          upload_status = (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING')
-        `,
-        [],
-        (err, results, fields) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(results.map(row => (
-          {
-            application_reference: row.application_reference,
-            interface:  row.interface,
-          })));
-        });
-    });
-  };
-
-  const getAllUploadQueueRecords = (): Promise<AppRefInterface[]> => {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `
-        SELECT application_reference, interface FROM UPLOAD_QUEUE
-        `,
-        [],
-        (err, results, fields) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(results.map(row => ({
-            application_reference: row.application_reference,
-            interface:  row.interface,
-          })));
-        });
-    });
-  };
   const truncateTestresults = (): Promise<number> => {
     return new Promise((resolve, reject) => {
       db.query(

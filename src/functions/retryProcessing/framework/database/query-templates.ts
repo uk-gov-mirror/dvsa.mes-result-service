@@ -111,7 +111,13 @@ export const manualInterventionUploadQueueReplacementQuery = `
       0 as retry_count,
       NULL as error_message
   FROM TEST_RESULT tr, INTERFACE_TYPE it
-  WHERE tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
+  WHERE
+    tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
+    AND (
+      (tr.autosave = true AND it.id != (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'RSIS'))
+      OR
+      (tr.autosave = false)
+    )
 ) ON DUPLICATE KEY UPDATE
 	UPLOAD_QUEUE.application_reference = UPLOAD_QUEUE.application_reference
 `;

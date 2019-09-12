@@ -219,6 +219,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.TARS,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
@@ -226,6 +227,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.NOTIFY,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
@@ -233,6 +235,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.TARS,
         uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
@@ -240,6 +243,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.NOTIFY,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
@@ -247,6 +251,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.TARS,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
@@ -254,6 +259,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.NOTIFY,
         uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
@@ -261,6 +267,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.TARS,
         uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
@@ -268,6 +275,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.NOTIFY,
         uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
     ];
   };
@@ -280,6 +288,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.RSIS,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
@@ -287,6 +296,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.RSIS,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
@@ -294,6 +304,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.RSIS,
         uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
         applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
@@ -301,6 +312,7 @@ describe('Autosave processing operations', () => {
         interface: InterfaceIds.RSIS,
         uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
     ];
   };

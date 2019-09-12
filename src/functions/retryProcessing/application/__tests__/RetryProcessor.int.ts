@@ -166,17 +166,6 @@ describe('RetryProcessor database test', () => {
       expect(processingUploadQueueRecords).toContain(
           { application_reference: RetryTestCases.AcceptedTarsNotifyFailed, interface:  InterfaceIds.RSIS });
     });
-
-    it('should clean out old UPLOAD_QUEUE records', async () => {
-      const deletedRowCount = await retryProcessor.processOldEntryCleanup(30);
-      const allUploadQueueRecords = await getAllUploadQueueRecords();
-
-      expect(deletedRowCount).toBe(3);
-      expect(allUploadQueueRecords.some(
-          record => record.application_reference === RetryTestCases.SuccessfulUploadAfterMonth)).toBe(false);
-      expect(allUploadQueueRecords.some(
-        record => record.application_reference === RetryTestCases.AcceptedTarsNotifyAndRsisProcessing)).toBe(true);
-    });
   });
 
   const getTestResultAppRefsForResultStatus = (resultStatus: string): Promise<number[]> => {

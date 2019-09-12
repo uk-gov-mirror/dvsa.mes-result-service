@@ -23,7 +23,7 @@ describe('Autosave processing operations', () => {
       user: 'results_user',
       database: 'results',
       password: 'Pa55word1',
-      port: 1234,
+      port: 3306,
     });
     retryProcessor = new RetryProcessor(db);
   });
@@ -88,7 +88,7 @@ describe('Autosave processing operations', () => {
       await updateTestResultAutosaveFlag(db, 56, 59);
 
       const changedRowCount = await retryProcessor.processSuccessful();
-      const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus('PROCESSED', db);
+      const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus(db, 'PROCESSED');
 
       expect(changedRowCount).toBe(1);
 

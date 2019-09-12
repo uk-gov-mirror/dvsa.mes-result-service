@@ -167,7 +167,7 @@ export const updateTestResultAutosaveFlag = (
   });
 };
 
-export const getTestResultAppRefsForResultStatus = (resultStatus: string, db: mysql.Connection): Promise<number[]> => {
+export const getTestResultAppRefsForResultStatus = (db: mysql.Connection, resultStatus: string): Promise<number[]> => {
   return new Promise((resolve, reject) => {
     db.query(
       `

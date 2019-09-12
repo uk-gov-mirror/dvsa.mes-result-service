@@ -195,6 +195,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsFailedRsisFailed,
@@ -202,6 +203,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsFailedRsisProcessing,
@@ -209,6 +211,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference:ErrorsToRetryTestCases.TarsFailedRsisProcessing,
@@ -216,6 +219,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.PROCESSING,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
@@ -223,6 +227,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsFailedRsisAccepted,
@@ -230,6 +235,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.ACCEPTED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
@@ -237,6 +243,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.PROCESSING,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsProcessingRsisFailed,
@@ -244,6 +251,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference:ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
@@ -251,6 +259,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.ACCEPTED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToRetryTestCases.TarsAcceptedRsisFailed,
@@ -258,6 +267,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 0,
+      timestamp: null,
     },
   ];
 };

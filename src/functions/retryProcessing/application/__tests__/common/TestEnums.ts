@@ -62,11 +62,16 @@ export enum RetryTestCases {
   AcceptedTarsNotifyFailed = 55,
 }
 
+export enum RetryUploadCleanUpTestCases {
+  TarsAcceptedNotifyAcceptedRsisAccepted = 56,
+  TarsAcceptedNotifyAcceptedRsisProcessing = 57,
+}
+
 export enum SuccessfulTestCases {
-  TarsProcessingNotifyProcessing = 56,
-  TarsAcceptedNotifyProcessing = 57,
-  TarsProcessingNotifyAccepted = 58,
-  TarsAcceptedNotifyAccepted = 59,
+  TarsProcessingNotifyProcessing = 58,
+  TarsAcceptedNotifyProcessing = 59,
+  TarsProcessingNotifyAccepted = 60,
+  TarsAcceptedNotifyAccepted = 61,
 }
 
 export enum ErrorsToRetryTestCases {

@@ -9,10 +9,17 @@ import {
 } from '../helpers/autosave-helpers';
 import { AutosaveTestData } from '../helpers/mock-test-data';
 import { AutosaveQueueData } from '../mock-queue-data';
+import { RetryUploadCleanUpTestCases, InterfaceIds } from './common/TestEnums';
+import { ProcessingStatus } from '../../../../common/domain/processing-status';
 
 describe('Clean up operations', () => {
   let db: mysql.Connection;
   let retryProcessor: IRetryProcessor;
+  const testCases: RetryUploadCleanUpTestCases[] =
+    [
+      RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
+      RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
+    ];
 
   beforeAll(async () => {
     db = mysql.createConnection({
@@ -35,8 +42,8 @@ describe('Clean up operations', () => {
     });
 
     afterEach(async () => {
-      await deleteAutosaveTestResultData(db, 'TEST_RESULT', [56, 57, 58, 59]);
-      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', [56, 57, 58, 59]);
+      await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
     });
 
     it('should delete UPLOAD_QUEUE records that are PROCESSED with a timestamp less than the start_date provided',
@@ -45,45 +52,44 @@ describe('Clean up operations', () => {
          const autosaveQueueRecords = await getAutosaveQueueRecords(db);
 
          expect(changedRowCount).toBe(3);
-
         // assert UPLOAD_QUEUE records have been deleted for app-ref 56 and 57
          expect(autosaveQueueRecords).not.toContain(
            {
              application_reference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
-             interface: 0,
-             upload_status: 1,
+             interface: InterfaceIds.TARS,
+             upload_status: ProcessingStatus.ACCEPTED,
            });
          expect(autosaveQueueRecords).not.toContain(
            {
              application_reference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
-             interface: 1,
-             upload_status: 1,
+             interface: InterfaceIds.NOTIFY,
+             upload_status: ProcessingStatus.ACCEPTED,
            });
          expect(autosaveQueueRecords).not.toContain(
            {
              application_reference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
-             interface: 2,
-             upload_status: 1,
+             interface: InterfaceIds.RSIS,
+             upload_status: ProcessingStatus.ACCEPTED,
            });
 
         // assert UPLOAD_QUEUE records have been retained for app-ref 58
          expect(autosaveQueueRecords).toContain(
            {
              application_reference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
-             interface: 0,
-             upload_status: 1,
+             interface: InterfaceIds.TARS,
+             upload_status: ProcessingStatus.ACCEPTED,
            });
          expect(autosaveQueueRecords).toContain(
            {
              application_reference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
-             interface: 1,
-             upload_status: 1,
+             interface: InterfaceIds.NOTIFY,
+             upload_status: ProcessingStatus.ACCEPTED,
            });
          expect(autosaveQueueRecords).toContain(
            {
              application_reference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
-             interface: 2,
-             upload_status: 0,
+             interface: InterfaceIds.RSIS,
+             upload_status: ProcessingStatus.PROCESSING,
            });
        });
 
@@ -95,14 +101,14 @@ describe('Clean up operations', () => {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         driverSurname: 'Bloggs',
-        resultStatus: 1, // ACCEPTED
+        resultStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
         autosave: true,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         driverSurname: 'Bloggs',
-        resultStatus: 0, // ACCEPTED
+        resultStatus: ProcessingStatus.PROCESSING, // ACCEPTED
         autosave: true,
       },
     ];
@@ -114,56 +120,51 @@ describe('Clean up operations', () => {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: 0, // TARS
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.TARS, // TARS
+        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: 1, // NOTIFY
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.NOTIFY, // NOTIFY
+        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: 2, // RSIS
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.RSIS, // RSIS
+        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: 0, // TARS
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.TARS, // TARS
+        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: 1, // NOTIFY
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.NOTIFY, // NOTIFY
+        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: 2, // RSIS
-        uploadStatus: 0, // ACCEPTED
+        interface: InterfaceIds.RSIS, // RSIS
+        uploadStatus: ProcessingStatus.PROCESSING, // ACCEPTED
         retryCount: 0,
       },
     ];
   };
 
 });
-
-export enum RetryUploadCleanUpTestCases {
-  TarsAcceptedNotifyAcceptedRsisAccepted = 56,
-  TarsAcceptedNotifyAcceptedRsisProcessing = 57,
-}

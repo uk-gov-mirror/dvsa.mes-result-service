@@ -144,18 +144,8 @@ describe('Autosave processing operations', () => {
     });
 
     afterEach(async () => {
-      await deleteAutosaveTestResultData(db, 'TEST_RESULT', [
-        SuccessfulTestCases.TarsProcessingNotifyProcessing,
-        SuccessfulTestCases.TarsAcceptedNotifyProcessing,
-        SuccessfulTestCases.TarsProcessingNotifyAccepted,
-        SuccessfulTestCases.TarsAcceptedNotifyAccepted,
-      ]);
-      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', [
-        SuccessfulTestCases.TarsProcessingNotifyProcessing,
-        SuccessfulTestCases.TarsAcceptedNotifyProcessing,
-        SuccessfulTestCases.TarsProcessingNotifyAccepted,
-        SuccessfulTestCases.TarsAcceptedNotifyAccepted,
-      ]);
+      await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
     });
 
     it('should submit autosaved TEST_RESULTS when there is a full submission', async () => {

@@ -265,6 +265,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 5,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyFailed,
@@ -272,6 +273,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 5,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyProcessing,
@@ -279,6 +281,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 5,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyProcessing,
@@ -286,6 +289,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.PROCESSING,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyAccepted,
@@ -293,6 +297,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 5,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsFailedNotifyAccepted,
@@ -300,6 +305,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.ACCEPTED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyFailed,
@@ -307,6 +313,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.PROCESSING,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyFailed,
@@ -314,6 +321,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 5,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyFailed,
@@ -321,6 +329,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.ACCEPTED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyFailed,
@@ -328,6 +337,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.FAILED,
       retryCount: 5,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyAccepted,
@@ -335,6 +345,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.ACCEPTED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsAcceptedNotifyAccepted,
@@ -342,6 +353,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.ACCEPTED,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
@@ -349,6 +361,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.TARS,
       uploadStatus: ProcessingStatus.PROCESSING,
       retryCount: 0,
+      timestamp: null,
     },
     {
       applicationReference: ErrorsToAbortTestCases.TarsProcessingNotifyProcessing,
@@ -356,6 +369,7 @@ const getQueueResultData = (): AutosaveQueueData[] => {
       interface: InterfaceIds.NOTIFY,
       uploadStatus: ProcessingStatus.PROCESSING,
       retryCount: 0,
+      timestamp: null,
     },
   ];
 };

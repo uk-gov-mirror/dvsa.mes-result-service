@@ -2,9 +2,8 @@ import * as mysql from 'mysql2';
 import { RetryProcessor } from '../RetryProcessor';
 import { IRetryProcessor } from '../IRetryProcessor';
 import { getErroredTestAppRefs } from './common/HelperSQLQueries';
-import { AutosaveTestData } from '../helpers/mock-test-data';
+import  { RetryTestCases, InterfaceIds } from '../../application/__tests__/common/TestEnums';
 import moment = require('moment');
-import { create } from 'domain';
 
 describe('RetryProcessor database test', () => {
   let db: mysql.Connection;
@@ -37,7 +36,7 @@ describe('RetryProcessor database test', () => {
       const changedRowCount = await retryProcessor.processSuccessful();
       const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus('PROCESSED');
       expect(changedRowCount).toBe(1);
-      expect(acceptedTestAppRefs).toContain(9);
+      expect(acceptedTestAppRefs).toContain(RetryTestCases.SuccessfulUpload);
     });
 
     it('should mark UPLOAD_QUEUE for reprocessing when they failed but not exceeded the retry limit', async () => {
@@ -46,20 +45,66 @@ describe('RetryProcessor database test', () => {
 
       expect(changedRowCount).toBe(12);
       // TARS
-      expect(appRefInterfaces).toContain({ application_reference: 11, interface: 0 });
-      expect(appRefInterfaces).toContain({ application_reference: 14, interface: 0 });
-      expect(appRefInterfaces).toContain({ application_reference: 15, interface: 0 });
-      expect(appRefInterfaces).toContain({ application_reference: 17, interface: 0 });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTars,
+          interface:  InterfaceIds.TARS,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTarsAndRsis,
+          interface:  InterfaceIds.TARS,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTarsAndNotify,
+          interface:  InterfaceIds.TARS,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTarsRsisAndNotify,
+          interface:  InterfaceIds.TARS,
+        });
       // NOTIFY
-      expect(appRefInterfaces).toContain({ application_reference: 13, interface: 1 });
-      expect(appRefInterfaces).toContain({ application_reference: 15, interface: 1 });
-      expect(appRefInterfaces).toContain({ application_reference: 16, interface: 1 });
-      expect(appRefInterfaces).toContain({ application_reference: 17, interface: 1 });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedNotify,
+          interface:  InterfaceIds.NOTIFY,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTarsAndNotify,
+          interface:  InterfaceIds.NOTIFY,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedRsisAndNotify,
+          interface:  InterfaceIds.NOTIFY,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTarsRsisAndNotify,
+          interface:  InterfaceIds.NOTIFY,
+        });
       // RSIS
-      expect(appRefInterfaces).toContain({ application_reference: 12, interface: 2 });
-      expect(appRefInterfaces).toContain({ application_reference: 14, interface: 2 });
-      expect(appRefInterfaces).toContain({ application_reference: 16, interface: 2 });
-      expect(appRefInterfaces).toContain({ application_reference: 17, interface: 2 });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedRsis,
+          interface:  InterfaceIds.RSIS,
+        });
+      expect(appRefInterfaces).toContain(
+        {
+          application_reference: RetryTestCases.FailedTarsAndRsis,
+          interface:  InterfaceIds.RSIS,
+        });
+      expect(appRefInterfaces).toContain(
+        { application_reference: RetryTestCases.FailedRsisAndNotify,
+          interface:  InterfaceIds.RSIS,
+        });
+      expect(appRefInterfaces).toContain(
+        { application_reference: RetryTestCases.FailedTarsRsisAndNotify,
+          interface:  InterfaceIds.RSIS,
+        });
     });
 
     it('should abort TEST_RESULT records that have exceeded the retry count for any interface', async () => {
@@ -67,13 +112,13 @@ describe('RetryProcessor database test', () => {
       const erroredTestAppRefs = await getErroredTestAppRefs(db);
 
       expect(changedRowCount).toBe(7);
-      expect(erroredTestAppRefs).toContain(25); // Failed TARS
-      expect(erroredTestAppRefs).toContain(26); // Failed RSIS
-      expect(erroredTestAppRefs).toContain(27); // Failed Notify
-      expect(erroredTestAppRefs).toContain(28); // Failed TARS+RSIS
-      expect(erroredTestAppRefs).toContain(29); // Failed TARS+Notify
-      expect(erroredTestAppRefs).toContain(30); // Failed RSIS+Notify
-      expect(erroredTestAppRefs).toContain(31); // Failed TARS+RSIS+Notify
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedTarsExceeded); // Failed TARS
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedRsisExceeded); // Failed RSIS
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedNotifyExceeded); // Failed Notify
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedTarsAndRsisExceeded); // Failed TARS+RSIS
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedTarsAndNotifyExceeded); // Failed TARS+Notify
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedRSISAndNotifyExceeded); // Failed RSIS+Notify
+      expect(erroredTestAppRefs).toContain(RetryTestCases.FailedTarsRSISAndNotifyExceeded); // Failed TARS+RSIS+Notify
     });
 
     it('should update TEST_RESULT and UPLOAD_QUEUE to make them ready for reprocessing post intervention', async () => {
@@ -83,29 +128,43 @@ describe('RetryProcessor database test', () => {
 
       expect(changedRowCount).toBe(45);
       // TEST_RESULT test_status PENDING -> PROCESSING
-      expect(processingAppRefs).toContain(39);
-      expect(processingAppRefs).toContain(40);
-      expect(processingAppRefs).toContain(41);
-      expect(processingAppRefs).toContain(42);
-      expect(processingAppRefs).toContain(43);
-      expect(processingAppRefs).toContain(44);
-      expect(processingAppRefs).toContain(45);
-      expect(processingAppRefs).toContain(55);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedTarsPending);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedRsisPending);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedNotifyPending);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedTarsAndRsisPending);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedTarsAndNotifyPending);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedRsisAndNotifyPending);
+      expect(processingAppRefs).toContain(RetryTestCases.FailedTarsRsisAndNotifyPending);
+      expect(processingAppRefs).toContain(RetryTestCases.AcceptedTarsNotifyFailed);
       // UPLOAD_QUEUE upload_status ERROR -> PROCESSING
-      expect(processingUploadQueueRecords).toContain({ application_reference: 39, interface: 0 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 40, interface: 2 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 41, interface: 1 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 42, interface: 0 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 42, interface: 2 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 43, interface: 0 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 43, interface: 1 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 44, interface: 1 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 44, interface: 2 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 45, interface: 0 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 45, interface: 1 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 45, interface: 2 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 55, interface: 1 });
-      expect(processingUploadQueueRecords).toContain({ application_reference: 55, interface: 2 });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsPending, interface:  InterfaceIds.TARS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedRsisPending, interface:  InterfaceIds.RSIS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedNotifyPending, interface:  InterfaceIds.NOTIFY });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsAndRsisPending, interface:  InterfaceIds.TARS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsAndRsisPending, interface:  InterfaceIds.RSIS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsAndNotifyPending, interface:  InterfaceIds.TARS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsAndNotifyPending, interface:  InterfaceIds.NOTIFY });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedRsisAndNotifyPending, interface:  InterfaceIds.NOTIFY });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedRsisAndNotifyPending, interface:  InterfaceIds.RSIS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsRsisAndNotifyPending, interface:  InterfaceIds.TARS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsRsisAndNotifyPending, interface:  InterfaceIds.NOTIFY });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.FailedTarsRsisAndNotifyPending, interface:  InterfaceIds.RSIS });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.AcceptedTarsNotifyFailed, interface:  InterfaceIds.NOTIFY });
+      expect(processingUploadQueueRecords).toContain(
+          { application_reference: RetryTestCases.AcceptedTarsNotifyFailed, interface:  InterfaceIds.RSIS });
     });
 
     it('should clean out old UPLOAD_QUEUE records', async () => {
@@ -113,8 +172,10 @@ describe('RetryProcessor database test', () => {
       const allUploadQueueRecords = await getAllUploadQueueRecords();
 
       expect(deletedRowCount).toBe(3);
-      expect(allUploadQueueRecords.some(record => record.application_reference === 53)).toBe(false);
-      expect(allUploadQueueRecords.some(record => record.application_reference === 54)).toBe(true);
+      expect(allUploadQueueRecords.some(
+          record => record.application_reference === RetryTestCases.SuccessfulUploadAfterMonth)).toBe(false);
+      expect(allUploadQueueRecords.some(
+        record => record.application_reference === RetryTestCases.AcceptedTarsNotifyAndRsisProcessing)).toBe(true);
     });
   });
 
@@ -137,7 +198,7 @@ describe('RetryProcessor database test', () => {
 
   interface AppRefInterface {
     application_reference: number;
-    interface: number;
+    interface:  number;
   }
 
   const getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred = (): Promise<AppRefInterface[]> => {
@@ -155,7 +216,10 @@ describe('RetryProcessor database test', () => {
           if (err) {
             reject(err);
           }
-          resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
+          resolve(results.map(row => (
+          { application_reference: row.application_reference,
+            interface:  row.interface,
+          })));
         });
     });
   };
@@ -173,7 +237,11 @@ describe('RetryProcessor database test', () => {
           if (err) {
             reject(err);
           }
-          resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
+          resolve(results.map(row => (
+          {
+            application_reference: row.application_reference,
+            interface:  row.interface,
+          })));
         });
     });
   };
@@ -189,7 +257,10 @@ describe('RetryProcessor database test', () => {
           if (err) {
             reject(err);
           }
-          resolve(results.map(row => ({ application_reference: row.application_reference, interface: row.interface })));
+          resolve(results.map(row => ({
+            application_reference: row.application_reference,
+            interface:  row.interface,
+          })));
         });
     });
   };
@@ -257,63 +328,122 @@ describe('RetryProcessor database test', () => {
     // # Scenarios
     // # https://wiki.dvsacloud.uk/display/MES/Retry+Lambda+Scenarios
     // #############################################################
-    await createRetryScenario(1, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'PROCESSING', 0);
-    await createRetryScenario(2, 'ERROR', today, 'PROCESSING', 0, 'PROCESSING', 0, 'PROCESSING', 0);
-    await createRetryScenario(3, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'ACCEPTED', 0);
-    await createRetryScenario(4, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'ACCEPTED', 2);
-    await createRetryScenario(5, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'PROCESSING', 0);
-    await createRetryScenario(6, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'ACCEPTED', 2);
-    await createRetryScenario(7, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'PROCESSING', 0);
-    await createRetryScenario(8, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'PROCESSING', 0);
-    await createRetryScenario(9, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(10, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, null, null);
-    await createRetryScenario(11, 'PROCESSING', today, 'FAILED', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(12, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(13, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 2);
-    await createRetryScenario(14, 'PROCESSING', today, 'FAILED', 2, 'FAILED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(15, 'PROCESSING', today, 'FAILED', 2, 'ACCEPTED', 2, 'FAILED', 2);
-    await createRetryScenario(16, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 2, 'FAILED', 2);
-    await createRetryScenario(17, 'PROCESSING', today, 'FAILED', 2, 'FAILED', 2, 'FAILED', 2);
-    await createRetryScenario(18, 'PROCESSING', today, 'PROCESSING', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(19, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 2, 'ACCEPTED', 2);
-    await createRetryScenario(20, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'PROCESSING', 2);
-    await createRetryScenario(21, 'PROCESSING', today, 'PROCESSING', 2, 'PROCESSING', 2, 'ACCEPTED', 2);
-    await createRetryScenario(22, 'PROCESSING', today, 'PROCESSING', 2, 'ACCEPTED', 2, 'PROCESSING', 2);
-    await createRetryScenario(23, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 2, 'PROCESSING', 2);
-    await createRetryScenario(24, 'PROCESSING', today, 'PROCESSING', 2, 'PROCESSING', 2, 'PROCESSING', 2);
-    await createRetryScenario(25, 'PROCESSING', today, 'FAILED', 9, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(26, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 9, 'ACCEPTED', 2);
-    await createRetryScenario(27, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 9);
-    await createRetryScenario(28, 'PROCESSING', today, 'FAILED', 9, 'FAILED', 9, 'ACCEPTED', 2);
-    await createRetryScenario(29, 'PROCESSING', today, 'FAILED', 9, 'ACCEPTED', 2, 'FAILED', 9);
-    await createRetryScenario(30, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 9, 'FAILED', 9);
-    await createRetryScenario(31, 'PROCESSING', today, 'FAILED', 9, 'FAILED', 9, 'FAILED', 9);
-    await createRetryScenario(32, 'ERROR', today, 'FAILED', 9, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(33, 'ERROR', today, 'ACCEPTED', 2, 'FAILED', 9, 'ACCEPTED', 2);
-    await createRetryScenario(34, 'ERROR', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 9);
-    await createRetryScenario(35, 'ERROR', today, 'FAILED', 9, 'FAILED', 9, 'ACCEPTED', 2);
-    await createRetryScenario(36, 'ERROR', today, 'FAILED', 9, 'ACCEPTED', 2, 'FAILED', 9);
-    await createRetryScenario(37, 'ERROR', today, 'ACCEPTED', 2, 'FAILED', 9, 'FAILED', 9);
-    await createRetryScenario(38, 'ERROR', today, 'FAILED', 9, 'FAILED', 9, 'FAILED', 9);
-    await createRetryScenario(39, 'PENDING', today, 'FAILED', 9, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(40, 'PENDING', today, 'ACCEPTED', 2, 'FAILED', 9, 'ACCEPTED', 2);
-    await createRetryScenario(41, 'PENDING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 9);
-    await createRetryScenario(42, 'PENDING', today, 'FAILED', 9, 'FAILED', 9, 'ACCEPTED', 2);
-    await createRetryScenario(43, 'PENDING', today, 'FAILED', 9, 'ACCEPTED', 2, 'FAILED', 9);
-    await createRetryScenario(44, 'PENDING', today, 'ACCEPTED', 2, 'FAILED', 9, 'FAILED', 9);
-    await createRetryScenario(45, 'PENDING', today, 'FAILED', 9, 'FAILED', 9, 'FAILED', 9);
-    await createRetryScenario(46, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'ACCEPTED', 2);
-    await createRetryScenario(47, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'ACCEPTED', 2);
-    await createRetryScenario(48, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'PROCESSING', 0);
-    await createRetryScenario(49, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'ACCEPTED', 2);
-    await createRetryScenario(50, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'PROCESSING', 0);
-    await createRetryScenario(51, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'PROCESSING', 0);
-    await createRetryScenario(52, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.UploadedNotProcessed, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.FailedValidation, 'ERROR', today, 'PROCESSING', 0, 'PROCESSING', 0, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.PendingTars, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'ACCEPTED', 0);
+    await createRetryScenario(
+        RetryTestCases.PendingRsis, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.PendingNotify, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.PendingTarsAndRsis, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.PendingTarsAndNotify, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.PendingRsisAndNotify, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.SuccessfulUpload, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.SuccessfulUploadTerminatedNoNotify,
+        'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, null, null);
+    await createRetryScenario(
+        RetryTestCases.FailedTars, 'PROCESSING', today, 'FAILED', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedRsis, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedNotify, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndRsis, 'PROCESSING', today, 'FAILED', 2, 'FAILED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndNotify, 'PROCESSING', today, 'FAILED', 2, 'ACCEPTED', 2, 'FAILED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisAndNotify, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 2, 'FAILED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsRsisAndNotify, 'PROCESSING', today, 'FAILED', 2, 'FAILED', 2, 'FAILED', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryTars, 'PROCESSING', today, 'PROCESSING', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryRsis, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryNotify, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'PROCESSING', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryTarsAndRsis, 'PROCESSING', today, 'PROCESSING', 2, 'PROCESSING', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryTarsAndNotify, 'PROCESSING', today, 'PROCESSING', 2, 'ACCEPTED', 2, 'PROCESSING', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryRSISAndNotify, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 2, 'PROCESSING', 2);
+    await createRetryScenario(
+        RetryTestCases.RetryTarsRsisAndNotify, 'PROCESSING', today, 'PROCESSING', 2, 'PROCESSING', 2, 'PROCESSING', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsExceeded, 'PROCESSING', today, 'FAILED', 9, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisExceeded, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 9, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedNotifyExceeded, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndRsisExceeded, 'PROCESSING', today, 'FAILED', 9, 'FAILED', 9, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndNotifyExceeded, 'PROCESSING', today, 'FAILED', 9, 'ACCEPTED', 2, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedRSISAndNotifyExceeded, 'PROCESSING', today, 'ACCEPTED', 2, 'FAILED', 9, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsRSISAndNotifyExceeded, 'PROCESSING', today, 'FAILED', 9, 'FAILED', 9, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsError, 'ERROR', today, 'FAILED', 9, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisError, 'ERROR', today, 'ACCEPTED', 2, 'FAILED', 9, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedNotifyError, 'ERROR', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndRsisError, 'ERROR', today, 'FAILED', 9, 'FAILED', 9, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndNotifyError, 'ERROR', today, 'FAILED', 9, 'ACCEPTED', 2, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisAndNotifyError, 'ERROR', today, 'ACCEPTED', 2, 'FAILED', 9, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsRsisAndNotifyError, 'ERROR', today, 'FAILED', 9, 'FAILED', 9, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsPending, 'PENDING', today, 'FAILED', 9, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisPending, 'PENDING', today, 'ACCEPTED', 2, 'FAILED', 9, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedNotifyPending, 'PENDING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndRsisPending, 'PENDING', today, 'FAILED', 9, 'FAILED', 9, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndNotifyPending, 'PENDING', today, 'FAILED', 9, 'ACCEPTED', 2, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisAndNotifyPending, 'PENDING', today, 'ACCEPTED', 2, 'FAILED', 9, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsRsisAndNotifyPending, 'PENDING', today, 'FAILED', 9, 'FAILED', 9, 'FAILED', 9);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsRetry, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisRetry, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedNotifyRetry, 'PROCESSING', today, 'ACCEPTED', 2, 'ACCEPTED', 2, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndRsisRetry, 'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsAndNotifyRetry, 'PROCESSING', today, 'PROCESSING', 0, 'ACCEPTED', 2, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.FailedRsisAndNotifyRetry, 'PROCESSING', today, 'ACCEPTED', 2, 'PROCESSING', 0, 'PROCESSING', 0);
+    await createRetryScenario(
+        RetryTestCases.FailedTarsRsisAndNotifyRetry,
+        'PROCESSING', today, 'PROCESSING', 0, 'PROCESSING', 0, 'PROCESSING', 0);
     // Delete all UPLOAD_QUEUE records
-    await createRetryScenario(53, 'PROCESSED', todayMinus31, 'ACCEPTED', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
+    await createRetryScenario(
+        RetryTestCases.SuccessfulUploadAfterMonth,
+        'PROCESSED', todayMinus31, 'ACCEPTED', 2, 'ACCEPTED', 2, 'ACCEPTED', 2);
     // Don't delete UPLOAD_QUEUE, result still PROCESSIN';
-    await createRetryScenario(54, 'PROCESSING', todayMinus31, 'ACCEPTED', 0, 'PROCESSING', 0, 'PROCESSING', 0);
-    await createRetryScenario(55, 'PENDING', today, 'ACCEPTED', 0, 'FAILED', 9, null, null);
+    await createRetryScenario(
+      RetryTestCases.AcceptedTarsNotifyAndRsisProcessing,
+      'PROCESSING', todayMinus31, 'ACCEPTED', 0, 'PROCESSING', 0, 'PROCESSING', 0);
+    await createRetryScenario(
+      RetryTestCases.AcceptedTarsNotifyFailed, 'PENDING', today, 'ACCEPTED', 0, 'FAILED', 9, null, null);
   };
 
 });

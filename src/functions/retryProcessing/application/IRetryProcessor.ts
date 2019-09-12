@@ -23,4 +23,6 @@ export interface IRetryProcessor {
   processSupportInterventions(): Promise<number>;
 
   processOldEntryCleanup(cutOffPointInDays: number): Promise<number>;
+
+  processStalledTestResults(autosaveCutOffPointInDays: number): Promise<number>;
 }

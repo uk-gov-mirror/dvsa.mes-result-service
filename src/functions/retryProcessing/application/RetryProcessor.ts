@@ -5,6 +5,7 @@ import {
   buildAbortTestsExceeingRetryQuery,
   buildDeleteAcceptedQueueRowsQuery,
   buildSelectTestsExceedingRetryQuery,
+  buildProcessStalledTestResultsQuery,
 } from '../framework/database/query-builder';
 import { IRetryProcessor } from './IRetryProcessor';
 import { warn, customMetric, error } from '@dvsa/mes-microservice-common/application/utils/logger';
@@ -37,7 +38,7 @@ export class RetryProcessor implements IRetryProcessor {
       return changedRowCount;
     } catch (err) {
       this.connection.rollback();
-      warn('Error caught marking test results as successfully submitted', err.messsage);
+      warn('Error caught marking test results as successfully submitted', err.message);
     }
   }
   async processErrorsToRetry(
@@ -171,4 +172,22 @@ export class RetryProcessor implements IRetryProcessor {
     }
   }
 
+  async processStalledTestResults(autosaveCutOffPointInDays: number): Promise<number> {
+    try {
+      await this.connection.promise().beginTransaction();
+      const [rows] =
+        await this.connection.promise().query(buildProcessStalledTestResultsQuery(autosaveCutOffPointInDays));
+      const createdRowCount = rows.affectedRows;
+      customMetric(
+        'UploadQueueRsisRowsChanged',
+        'The number of UPLOAD_QUEUE records added due to stale TEST_RESULT autosave data',
+        createdRowCount,
+      );
+      await this.connection.promise().commit();
+      return createdRowCount;
+    } catch (err) {
+      this.connection.rollback();
+      warn('Error caught creating RSIS records for stale test result records', err.message);
+    }
+  }
 }

@@ -4,6 +4,7 @@ import {
   updateErrorsToAbortQueryTemplate as abortTestsExceedingRetryQueryTemplate,
   deleteAccepetedUploadsQuery,
   selectErrorsWhichWillBeAbortedTemplate,
+  processStalledTestResultsQuery,
 } from './query-templates';
 import * as mysql from 'mysql2';
 import moment = require('moment');
@@ -64,4 +65,9 @@ export const buildAbortTestsExceeingRetryQuery = (
 export const buildDeleteAcceptedQueueRowsQuery = (cutOffPointInDays: number) => {
   const startDate = moment().subtract(cutOffPointInDays, 'days').format('YYYY-MM-DD HH:mm:ss');
   return mysql.format(deleteAccepetedUploadsQuery, [startDate]);
+};
+
+export const buildProcessStalledTestResultsQuery = (autosaveCutOffPointInDays: number) => {
+  const startDate = moment().subtract(autosaveCutOffPointInDays, 'days').format('YYYY-MM-DD');
+  return mysql.format(processStalledTestResultsQuery, [startDate]);
 };

@@ -91,3 +91,15 @@ export enum ErrorsToAbortTestCases {
   TarsAcceptedNotifyAccepted = 75,
   TarsProcessingNotifyProcessing = 76,
 }
+
+export enum SupportInterventionTestCases {
+  AutosaveNoUploadRecords = 77,
+  FullSubNoUploadRecords = 78,
+  FullSubTarsProcRsisFailNotifyProc = 79,
+  FullSubTarsAcceptRsisFailNotifyFail = 80,
+  FullSubAllThreeFail = 81,
+  FullSubTarsAcceptRsisFailNotifyAccept = 82,
+  AutosaveTarsFailNotifyProc = 83,
+  AutosaveTarsFailNotifyFail = 84,
+  AutosaveTarsFailNotifyAccept = 85,
+}

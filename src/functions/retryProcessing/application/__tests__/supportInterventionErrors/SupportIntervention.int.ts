@@ -9,18 +9,17 @@ import {
 import {
   getTestResultData,
   getQueueResultData,
-  TestCases,
-  Interface,
-  UploadStatus,
 } from './supportInterventionTestData';
 import {
   insertAutosaveTestResultData,
   insertAutosaveQueueResultData,
   deleteAutosaveTestResultData,
 } from '../../helpers/autosave-helpers';
+import { SupportInterventionTestCases, InterfaceIds } from '../common/TestEnums';
+import { UploadStatus } from '../../../../../common/domain/upload-status';
 
 // TODO: Move to a common folder to be referenced by multiple test scenarios
-const autosaveRecord = (appRef: TestCases, interf: Interface, status: UploadStatus = null) => {
+const autosaveRecord = (appRef: SupportInterventionTestCases, interf: InterfaceIds, status: UploadStatus = null) => {
   return {
     application_reference: appRef,
     interface: interf,
@@ -28,23 +27,23 @@ const autosaveRecord = (appRef: TestCases, interf: Interface, status: UploadStat
   };
 };
 // TODO: Move to a common folder to be referenced by multiple test scenarios
-const processingRecord = (appRef: TestCases, interf: Interface) => {
+const processingRecord = (appRef: SupportInterventionTestCases, interf: InterfaceIds) => {
   return {
     application_reference: appRef,
     interface: interf,
   };
 };
 
-const testCasesArray: TestCases[] = [
-  TestCases.AutosaveNoUploadRecords,
-  TestCases.FullSubNoUploadRecords,
-  TestCases.FullSubTarsProcRsisFailNotifyProc,
-  TestCases.FullSubTarsAcceptRsisFailNotifyFail,
-  TestCases.FullSubAllThreeFail,
-  TestCases.FullSubTarsAcceptRsisFailNotifyAccept,
-  TestCases.AutosaveTarsFailNotifyProc,
-  TestCases.AutosaveTarsFailNotifyFail,
-  TestCases.AutosaveTarsFailNotifyAccept,
+const testCases: SupportInterventionTestCases[] = [
+  SupportInterventionTestCases.AutosaveNoUploadRecords,
+  SupportInterventionTestCases.FullSubNoUploadRecords,
+  SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc,
+  SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail,
+  SupportInterventionTestCases.FullSubAllThreeFail,
+  SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept,
+  SupportInterventionTestCases.AutosaveTarsFailNotifyProc,
+  SupportInterventionTestCases.AutosaveTarsFailNotifyFail,
+  SupportInterventionTestCases.AutosaveTarsFailNotifyAccept,
 ];
 
 describe('SupportIntervention', () => {
@@ -68,8 +67,8 @@ describe('SupportIntervention', () => {
   });
 
   afterEach(async () => {
-    await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCasesArray);
-    await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCasesArray);
+    await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+    await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
   });
 
   describe('AUTOSAVE - FAILED VALIDATION (NO RECORDS CREATED', () => {
@@ -81,13 +80,16 @@ describe('SupportIntervention', () => {
       const processingResults = await getTestResultAppRefsForResultStatus(db, 'PROCESSING');
 
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveNoUploadRecords, Interface.TARS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveNoUploadRecords, InterfaceIds.TARS, UploadStatus.PROCESSING));
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveNoUploadRecords, Interface.NOTIFY, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveNoUploadRecords, InterfaceIds.NOTIFY, UploadStatus.PROCESSING));
       expect(autosaveRecords).not.toContain(
-        autosaveRecord(TestCases.AutosaveNoUploadRecords, Interface.RSIS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveNoUploadRecords, InterfaceIds.RSIS, UploadStatus.PROCESSING));
 
-      expect(processingResults).toContain(TestCases.AutosaveNoUploadRecords);
+      expect(processingResults).toContain(SupportInterventionTestCases.AutosaveNoUploadRecords);
     });
 
   });
@@ -101,13 +103,13 @@ describe('SupportIntervention', () => {
       const processingResults = await getTestResultAppRefsForResultStatus(db, 'PROCESSING');
 
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubNoUploadRecords, Interface.TARS));
+        processingRecord(SupportInterventionTestCases.FullSubNoUploadRecords, InterfaceIds.TARS));
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubNoUploadRecords, Interface.NOTIFY));
+        processingRecord(SupportInterventionTestCases.FullSubNoUploadRecords, InterfaceIds.NOTIFY));
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubNoUploadRecords, Interface.RSIS));
+        processingRecord(SupportInterventionTestCases.FullSubNoUploadRecords, InterfaceIds.RSIS));
 
-      expect(processingResults).toContain(TestCases.FullSubNoUploadRecords);
+      expect(processingResults).toContain(SupportInterventionTestCases.FullSubNoUploadRecords);
     });
   });
 
@@ -119,27 +121,27 @@ describe('SupportIntervention', () => {
       const processingResults = await getTestResultAppRefsForResultStatus(db, 'PROCESSING');
 
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubTarsProcRsisFailNotifyProc, Interface.RSIS));
+        processingRecord(SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc, InterfaceIds.RSIS));
 
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubTarsAcceptRsisFailNotifyFail, Interface.NOTIFY));
+        processingRecord(SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail, InterfaceIds.NOTIFY));
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubTarsAcceptRsisFailNotifyFail, Interface.RSIS));
+        processingRecord(SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail, InterfaceIds.RSIS));
 
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubAllThreeFail, Interface.TARS));
+        processingRecord(SupportInterventionTestCases.FullSubAllThreeFail, InterfaceIds.TARS));
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubAllThreeFail, Interface.NOTIFY));
+        processingRecord(SupportInterventionTestCases.FullSubAllThreeFail, InterfaceIds.NOTIFY));
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubAllThreeFail, Interface.RSIS));
+        processingRecord(SupportInterventionTestCases.FullSubAllThreeFail, InterfaceIds.RSIS));
 
       expect(processingUploadQueueRecords).toContain(
-        processingRecord(TestCases.FullSubTarsAcceptRsisFailNotifyAccept, Interface.RSIS));
+        processingRecord(SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept, InterfaceIds.RSIS));
 
-      expect(processingResults).toContain(TestCases.FullSubTarsProcRsisFailNotifyProc);
-      expect(processingResults).toContain(TestCases.FullSubTarsAcceptRsisFailNotifyFail);
-      expect(processingResults).toContain(TestCases.FullSubAllThreeFail);
-      expect(processingResults).toContain(TestCases.FullSubTarsAcceptRsisFailNotifyAccept);
+      expect(processingResults).toContain(SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc);
+      expect(processingResults).toContain(SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail);
+      expect(processingResults).toContain(SupportInterventionTestCases.FullSubAllThreeFail);
+      expect(processingResults).toContain(SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept);
     });
   });
 
@@ -151,29 +153,38 @@ describe('SupportIntervention', () => {
       const processingResults = await getTestResultAppRefsForResultStatus(db, 'PROCESSING');
 
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyProc, Interface.TARS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyProc, InterfaceIds.TARS, UploadStatus.PROCESSING));
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyProc, Interface.NOTIFY, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyProc, InterfaceIds.NOTIFY, UploadStatus.PROCESSING));
       expect(autosaveRecords).not.toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyProc, Interface.RSIS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyProc, InterfaceIds.RSIS, UploadStatus.PROCESSING));
 
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyFail, Interface.TARS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyFail, InterfaceIds.TARS, UploadStatus.PROCESSING));
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyFail, Interface.NOTIFY, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyFail, InterfaceIds.NOTIFY, UploadStatus.PROCESSING));
       expect(autosaveRecords).not.toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyFail, Interface.RSIS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyFail, InterfaceIds.RSIS, UploadStatus.PROCESSING));
 
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyAccept, Interface.TARS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyAccept, InterfaceIds.TARS, UploadStatus.PROCESSING));
       expect(autosaveRecords).toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyAccept, Interface.NOTIFY, UploadStatus.ACCEPTED));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyAccept, InterfaceIds.NOTIFY, UploadStatus.ACCEPTED));
       expect(autosaveRecords).not.toContain(
-        autosaveRecord(TestCases.AutosaveTarsFailNotifyAccept, Interface.RSIS, UploadStatus.PROCESSING));
+        autosaveRecord(
+          SupportInterventionTestCases.AutosaveTarsFailNotifyAccept, InterfaceIds.RSIS, UploadStatus.PROCESSING));
 
-      expect(processingResults).toContain(TestCases.AutosaveTarsFailNotifyProc);
-      expect(processingResults).toContain(TestCases.AutosaveTarsFailNotifyFail);
-      expect(processingResults).toContain(TestCases.AutosaveTarsFailNotifyAccept);
+      expect(processingResults).toContain(SupportInterventionTestCases.AutosaveTarsFailNotifyProc);
+      expect(processingResults).toContain(SupportInterventionTestCases.AutosaveTarsFailNotifyFail);
+      expect(processingResults).toContain(SupportInterventionTestCases.AutosaveTarsFailNotifyAccept);
     });
   });
 });

@@ -1,42 +1,11 @@
 import { AutosaveTestData } from '../../helpers/mock-test-data';
 import { AutosaveQueueData } from '../../mock-queue-data';
-
-export enum TestCases {
-  AutosaveNoUploadRecords = 77,
-  FullSubNoUploadRecords = 78,
-  FullSubTarsProcRsisFailNotifyProc = 79,
-  FullSubTarsAcceptRsisFailNotifyFail = 80,
-  FullSubAllThreeFail = 81,
-  FullSubTarsAcceptRsisFailNotifyAccept = 82,
-  AutosaveTarsFailNotifyProc = 83,
-  AutosaveTarsFailNotifyFail = 84,
-  AutosaveTarsFailNotifyAccept = 85,
-}
-
-// TODO: Use the common enum
-export enum UploadStatus {
-  PROCESSING = 0,
-  ACCEPTED = 1,
-  FAILED = 2,
-}
-
-// TODO: Use the common enum
-export enum ResultStatus {
-  PROCESSING = 0,
-  PROCESSED = 1,
-  PENDING = 2,
-  ERROR = 3,
-}
-
-// TODO: Use the common enum
-export enum Interface {
-  TARS = 0,
-  NOTIFY = 1,
-  RSIS = 2,
-}
+import { SupportInterventionTestCases, InterfaceIds } from '../common/TestEnums';
+import { ResultStatus } from '../../../../../common/domain/result-status';
+import { UploadStatus } from '../../../../../common/domain/upload-status';
 
 // TODO: Possibly move to commmon
-const createTestResultRecord = (appRef: TestCases, status: ResultStatus, autoSave: boolean) => {
+const createTestResultRecord = (appRef: SupportInterventionTestCases, status: ResultStatus, autoSave: boolean) => {
   return {
     applicationReference: appRef,
     staffNumber: '1',
@@ -47,7 +16,7 @@ const createTestResultRecord = (appRef: TestCases, status: ResultStatus, autoSav
 };
 
 // TODO: Possibly move to commmon
-const createUploadRecord = (appRef: TestCases, interf: Interface, status: UploadStatus) => {
+const createUploadRecord = (appRef: SupportInterventionTestCases, interf: InterfaceIds, status: UploadStatus) => {
   return {
     applicationReference: appRef,
     staffNumber: '1',
@@ -60,43 +29,58 @@ const createUploadRecord = (appRef: TestCases, interf: Interface, status: Upload
 
 export const getTestResultData = (): AutosaveTestData[] => {
   return [
-    createTestResultRecord(TestCases.AutosaveNoUploadRecords, ResultStatus.PENDING, true),
-    createTestResultRecord(TestCases.FullSubNoUploadRecords, ResultStatus.PENDING, false),
-    createTestResultRecord(TestCases.FullSubTarsProcRsisFailNotifyProc, ResultStatus.PENDING, false),
-    createTestResultRecord(TestCases.FullSubTarsAcceptRsisFailNotifyFail, ResultStatus.PENDING, false),
-    createTestResultRecord(TestCases.FullSubAllThreeFail, ResultStatus.PENDING, false),
-    createTestResultRecord(TestCases.FullSubTarsAcceptRsisFailNotifyAccept, ResultStatus.PENDING, false),
-    createTestResultRecord(TestCases.AutosaveTarsFailNotifyProc, ResultStatus.PENDING, true),
-    createTestResultRecord(TestCases.AutosaveTarsFailNotifyFail, ResultStatus.PENDING, true),
-    createTestResultRecord(TestCases.AutosaveTarsFailNotifyAccept, ResultStatus.PENDING, true),
+    createTestResultRecord(SupportInterventionTestCases.AutosaveNoUploadRecords, ResultStatus.PENDING, true),
+    createTestResultRecord(SupportInterventionTestCases.FullSubNoUploadRecords, ResultStatus.PENDING, false),
+    createTestResultRecord(SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc, ResultStatus.PENDING, false),
+    createTestResultRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail, ResultStatus.PENDING, false),
+    createTestResultRecord(SupportInterventionTestCases.FullSubAllThreeFail, ResultStatus.PENDING, false),
+    createTestResultRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept, ResultStatus.PENDING, false),
+    createTestResultRecord(SupportInterventionTestCases.AutosaveTarsFailNotifyProc, ResultStatus.PENDING, true),
+    createTestResultRecord(SupportInterventionTestCases.AutosaveTarsFailNotifyFail, ResultStatus.PENDING, true),
+    createTestResultRecord(SupportInterventionTestCases.AutosaveTarsFailNotifyAccept, ResultStatus.PENDING, true),
   ];
 };
 
 export const getQueueResultData = (): AutosaveQueueData[] => {
   return [
-    createUploadRecord(TestCases.FullSubTarsProcRsisFailNotifyProc, Interface.TARS, UploadStatus.PROCESSING),
-    createUploadRecord(TestCases.FullSubTarsProcRsisFailNotifyProc, Interface.NOTIFY, UploadStatus.PROCESSING),
-    createUploadRecord(TestCases.FullSubTarsProcRsisFailNotifyProc, Interface.RSIS, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc, InterfaceIds.TARS, UploadStatus.PROCESSING),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc, InterfaceIds.NOTIFY, UploadStatus.PROCESSING),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsProcRsisFailNotifyProc, InterfaceIds.RSIS, UploadStatus.FAILED),
 
-    createUploadRecord(TestCases.FullSubTarsAcceptRsisFailNotifyFail, Interface.TARS, UploadStatus.ACCEPTED),
-    createUploadRecord(TestCases.FullSubTarsAcceptRsisFailNotifyFail, Interface.NOTIFY, UploadStatus.FAILED),
-    createUploadRecord(TestCases.FullSubTarsAcceptRsisFailNotifyFail, Interface.RSIS, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail, InterfaceIds.TARS, UploadStatus.ACCEPTED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail, InterfaceIds.NOTIFY, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyFail, InterfaceIds.RSIS, UploadStatus.FAILED),
 
-    createUploadRecord(TestCases.FullSubAllThreeFail, Interface.TARS, UploadStatus.FAILED),
-    createUploadRecord(TestCases.FullSubAllThreeFail, Interface.NOTIFY, UploadStatus.FAILED),
-    createUploadRecord(TestCases.FullSubAllThreeFail, Interface.RSIS, UploadStatus.FAILED),
+    createUploadRecord(SupportInterventionTestCases.FullSubAllThreeFail, InterfaceIds.TARS, UploadStatus.FAILED),
+    createUploadRecord(SupportInterventionTestCases.FullSubAllThreeFail, InterfaceIds.NOTIFY, UploadStatus.FAILED),
+    createUploadRecord(SupportInterventionTestCases.FullSubAllThreeFail, InterfaceIds.RSIS, UploadStatus.FAILED),
 
-    createUploadRecord(TestCases.FullSubTarsAcceptRsisFailNotifyAccept, Interface.TARS, UploadStatus.ACCEPTED),
-    createUploadRecord(TestCases.FullSubTarsAcceptRsisFailNotifyAccept, Interface.NOTIFY, UploadStatus.ACCEPTED),
-    createUploadRecord(TestCases.FullSubTarsAcceptRsisFailNotifyAccept, Interface.RSIS, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept, InterfaceIds.TARS, UploadStatus.ACCEPTED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept, InterfaceIds.NOTIFY, UploadStatus.ACCEPTED),
+    createUploadRecord(
+      SupportInterventionTestCases.FullSubTarsAcceptRsisFailNotifyAccept, InterfaceIds.RSIS, UploadStatus.FAILED),
 
-    createUploadRecord(TestCases.AutosaveTarsFailNotifyProc, Interface.TARS, UploadStatus.FAILED),
-    createUploadRecord(TestCases.AutosaveTarsFailNotifyProc, Interface.NOTIFY, UploadStatus.PROCESSING),
+    createUploadRecord(SupportInterventionTestCases.AutosaveTarsFailNotifyProc, InterfaceIds.TARS, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.AutosaveTarsFailNotifyProc, InterfaceIds.NOTIFY, UploadStatus.PROCESSING),
 
-    createUploadRecord(TestCases.AutosaveTarsFailNotifyFail, Interface.TARS, UploadStatus.FAILED),
-    createUploadRecord(TestCases.AutosaveTarsFailNotifyFail, Interface.NOTIFY, UploadStatus.FAILED),
+    createUploadRecord(SupportInterventionTestCases.AutosaveTarsFailNotifyFail, InterfaceIds.TARS, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.AutosaveTarsFailNotifyFail, InterfaceIds.NOTIFY, UploadStatus.FAILED),
 
-    createUploadRecord(TestCases.AutosaveTarsFailNotifyAccept, Interface.TARS, UploadStatus.FAILED),
-    createUploadRecord(TestCases.AutosaveTarsFailNotifyAccept, Interface.NOTIFY, UploadStatus.ACCEPTED),
+    createUploadRecord(
+      SupportInterventionTestCases.AutosaveTarsFailNotifyAccept, InterfaceIds.TARS, UploadStatus.FAILED),
+    createUploadRecord(
+      SupportInterventionTestCases.AutosaveTarsFailNotifyAccept, InterfaceIds.NOTIFY, UploadStatus.ACCEPTED),
   ];
 };

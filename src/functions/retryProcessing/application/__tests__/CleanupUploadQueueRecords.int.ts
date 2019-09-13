@@ -101,14 +101,14 @@ describe('Clean up operations', () => {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         driverSurname: 'Bloggs',
-        resultStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
+        resultStatus: ProcessingStatus.ACCEPTED,
         autosave: true,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         driverSurname: 'Bloggs',
-        resultStatus: ProcessingStatus.PROCESSING, // ACCEPTED
+        resultStatus: ProcessingStatus.PROCESSING,
         autosave: true,
       },
     ];
@@ -120,48 +120,48 @@ describe('Clean up operations', () => {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: InterfaceIds.TARS, // TARS
-        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
+        interface: InterfaceIds.TARS,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: InterfaceIds.NOTIFY, // NOTIFY
-        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
+        interface: InterfaceIds.NOTIFY,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisAccepted,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: InterfaceIds.RSIS, // RSIS
-        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
+        interface: InterfaceIds.RSIS,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: InterfaceIds.TARS, // TARS
-        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
+        interface: InterfaceIds.TARS,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: InterfaceIds.NOTIFY, // NOTIFY
-        uploadStatus: ProcessingStatus.ACCEPTED, // ACCEPTED
+        interface: InterfaceIds.NOTIFY,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
       },
       {
         applicationReference: RetryUploadCleanUpTestCases.TarsAcceptedNotifyAcceptedRsisProcessing,
         staffNumber: '1',
         timestamp: '2019-09-01 13:59:59',
-        interface: InterfaceIds.RSIS, // RSIS
-        uploadStatus: ProcessingStatus.PROCESSING, // ACCEPTED
+        interface: InterfaceIds.RSIS,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
       },
     ];

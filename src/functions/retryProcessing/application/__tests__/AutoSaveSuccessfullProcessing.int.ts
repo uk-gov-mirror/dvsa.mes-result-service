@@ -14,6 +14,7 @@ import { AutosaveTestData } from '../helpers/mock-test-data';
 import { AutosaveQueueData } from '../mock-queue-data';
 import { SuccessfulTestCases, InterfaceIds } from './common/TestEnums';
 import { ProcessingStatus } from '../../../../common/domain/processing-status';
+import { UploadStatus } from '../../../../common/domain/upload-status';
 
 describe('Autosave processing operations', () => {
   let db: mysql.Connection;
@@ -66,43 +67,43 @@ describe('Autosave processing operations', () => {
         {
           application_reference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
           interface: InterfaceIds.NOTIFY,
-          upload_status: 0,
+          upload_status: UploadStatus.PROCESSING,
         });
       expect(autosaveQueueRecords).toContain(
         {
           application_reference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
           interface: InterfaceIds.TARS,
-          upload_status: 1,
+          upload_status: UploadStatus.ACCEPTED,
         });
       expect(autosaveQueueRecords).toContain(
         {
           application_reference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
           interface: InterfaceIds.NOTIFY,
-          upload_status: 0,
+          upload_status: UploadStatus.PROCESSING,
         });
       expect(autosaveQueueRecords).toContain(
         {
           application_reference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
           interface: InterfaceIds.TARS,
-          upload_status: 0,
+          upload_status: UploadStatus.PROCESSING,
         });
       expect(autosaveQueueRecords).toContain(
         {
           application_reference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
           interface: InterfaceIds.NOTIFY,
-          upload_status: 1,
+          upload_status: UploadStatus.ACCEPTED,
         });
       expect(autosaveQueueRecords).toContain(
         {
           application_reference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
           interface: InterfaceIds.TARS,
-          upload_status: 1,
+          upload_status: UploadStatus.ACCEPTED,
         });
       expect(autosaveQueueRecords).toContain(
         {
           application_reference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
           interface: InterfaceIds.NOTIFY,
-          upload_status: 1,
+          upload_status: UploadStatus.ACCEPTED,
         });
 
       // assert TEST_RESULT records have not changed

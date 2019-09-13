@@ -9,7 +9,7 @@ import {
 import {
   getTestResultData,
   getQueueResultData,
-} from './supportInterventionTestData';
+} from './SupportInterventionTestData';
 import {
   insertAutosaveTestResultData,
   insertAutosaveQueueResultData,

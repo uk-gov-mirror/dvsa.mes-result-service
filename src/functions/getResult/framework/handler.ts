@@ -47,7 +47,6 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     const compressedPayload = gzipSync(JSON.stringify(results[0])).toString('base64');
     return createResponse(compressedPayload, HttpStatus.OK);
   } catch (err) {
-    console.log(err);
     return createResponse(err, HttpStatus.BAD_REQUEST);
   }
 }

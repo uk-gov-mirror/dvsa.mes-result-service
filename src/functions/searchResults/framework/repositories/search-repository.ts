@@ -15,7 +15,6 @@ export const getConciseSearchResults = async (
     );
     batch = rows;
   } catch (err) {
-    console.log(err);
     throw err;
   } finally {
     connection.end();

@@ -12,10 +12,19 @@ import {
 } from '../helpers/autosave-helpers';
 import { AutosaveTestData } from '../helpers/mock-test-data';
 import { AutosaveQueueData } from '../mock-queue-data';
+import { SuccessfulTestCases, InterfaceIds } from './common/TestEnums';
+import { ProcessingStatus } from '../../../../common/domain/processing-status';
+import { UploadStatus } from '../../../../common/domain/upload-status';
 
 describe('Autosave processing operations', () => {
   let db: mysql.Connection;
   let retryProcessor: IRetryProcessor;
+  const testCases: SuccessfulTestCases[] = [
+    SuccessfulTestCases.TarsProcessingNotifyProcessing,
+    SuccessfulTestCases.TarsAcceptedNotifyProcessing,
+    SuccessfulTestCases.TarsProcessingNotifyAccepted,
+    SuccessfulTestCases.TarsAcceptedNotifyAccepted,
+  ];
 
   beforeAll(async () => {
     db = mysql.createConnection({
@@ -38,8 +47,8 @@ describe('Autosave processing operations', () => {
     });
 
     afterEach(async () => {
-      await deleteAutosaveTestResultData(db, 'TEST_RESULT', [56, 57, 58, 59]);
-      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', [56, 57, 58, 59]);
+      await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
     });
 
     it('should not update autosaved TEST_RESULTS in the PROCESSING state as PROCESSED', async () => {
@@ -48,25 +57,82 @@ describe('Autosave processing operations', () => {
       const autosaveTestRecords = await getAutosaveTestResultRecords(db);
 
       // assert UPLOAD_QUEUE records have not changed
-      expect(autosaveQueueRecords).toContain({ application_reference: 56, interface: 0, upload_status: 0 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 56, interface: 1, upload_status: 0 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 57, interface: 0, upload_status: 1 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 57, interface: 1, upload_status: 0 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 58, interface: 0, upload_status: 0 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 58, interface: 1, upload_status: 1 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 59, interface: 0, upload_status: 1 });
-      expect(autosaveQueueRecords).toContain({ application_reference: 59, interface: 1, upload_status: 1 });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
+          interface: InterfaceIds.TARS,
+          upload_status:0,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
+          interface: InterfaceIds.NOTIFY,
+          upload_status: UploadStatus.PROCESSING,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
+          interface: InterfaceIds.TARS,
+          upload_status: UploadStatus.ACCEPTED,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
+          interface: InterfaceIds.NOTIFY,
+          upload_status: UploadStatus.PROCESSING,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
+          interface: InterfaceIds.TARS,
+          upload_status: UploadStatus.PROCESSING,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
+          interface: InterfaceIds.NOTIFY,
+          upload_status: UploadStatus.ACCEPTED,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
+          interface: InterfaceIds.TARS,
+          upload_status: UploadStatus.ACCEPTED,
+        });
+      expect(autosaveQueueRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
+          interface: InterfaceIds.NOTIFY,
+          upload_status: UploadStatus.ACCEPTED,
+        });
 
       // assert TEST_RESULT records have not changed
-      expect(autosaveTestRecords).toContain({ application_reference: 56, result_status: 0 });
-      expect(autosaveTestRecords).toContain({ application_reference: 57, result_status: 0 });
-      expect(autosaveTestRecords).toContain({ application_reference: 58, result_status: 0 });
-      expect(autosaveTestRecords).toContain({ application_reference: 59, result_status: 0 });
+      expect(autosaveTestRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
+          result_status: 0,
+        });
+
+      expect(autosaveTestRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
+          result_status: 0,
+        });
+      expect(autosaveTestRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
+          result_status: 0,
+        });
+      expect(autosaveTestRecords).toContain(
+        {
+          application_reference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
+          result_status: 0,
+        });
     });
 
   });
 
-  describe('Full submission', () => {
+  describe('Partial submission', () => {
     beforeEach(async () => {
       // necessary to cleanse data that skews results depending on Jasmine spec execution order
       // due to some test data being created by docker scripts for other integration tests
@@ -79,51 +145,55 @@ describe('Autosave processing operations', () => {
     });
 
     afterEach(async () => {
-      await deleteAutosaveTestResultData(db, 'TEST_RESULT', [56, 57, 58, 59]);
-      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', [56, 57, 58, 59]);
+      await deleteAutosaveTestResultData(db, 'TEST_RESULT', testCases);
+      await deleteAutosaveTestResultData(db, 'UPLOAD_QUEUE', testCases);
     });
 
     it('should submit autosaved TEST_RESULTS when there is a full submission', async () => {
       await insertAutosaveQueueResultData(db, getRSISData());
-      await updateTestResultAutosaveFlag(db, 56, 59);
+      await updateTestResultAutosaveFlag(
+        db,
+        SuccessfulTestCases.TarsProcessingNotifyProcessing,
+        SuccessfulTestCases.TarsAcceptedNotifyAccepted,
+        );
 
       const changedRowCount = await retryProcessor.processSuccessful();
       const acceptedTestAppRefs = await getTestResultAppRefsForResultStatus(db, 'PROCESSED');
 
       expect(changedRowCount).toBe(1);
 
-      expect(acceptedTestAppRefs).not.toContain(56);
-      expect(acceptedTestAppRefs).not.toContain(57);
-      expect(acceptedTestAppRefs).not.toContain(58);
-      expect(acceptedTestAppRefs).toContain(59);
+      expect(acceptedTestAppRefs).not.toContain(SuccessfulTestCases.TarsProcessingNotifyProcessing);
+      expect(acceptedTestAppRefs).not.toContain(SuccessfulTestCases.TarsAcceptedNotifyProcessing);
+      expect(acceptedTestAppRefs).not.toContain(SuccessfulTestCases.TarsProcessingNotifyAccepted);
+      expect(acceptedTestAppRefs).toContain(SuccessfulTestCases.TarsAcceptedNotifyAccepted);
     });
   });
 
   const getTestResultData = (): AutosaveTestData[] => {
     return [
       {
-        applicationReference: 56,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
         staffNumber: '1',
         driverSurname: 'Bloggs',
         resultStatus: 0,
         autosave: true,
       },
       {
-        applicationReference: 57,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
         staffNumber: '1',
         driverSurname: 'Bloggs',
         resultStatus: 0,
         autosave: true,
       },
       {
-        applicationReference: 58,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
         staffNumber: '1',
         driverSurname: 'Bloggs',
         resultStatus: 0,
         autosave: true,
       },
       {
-        applicationReference: 59,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
         staffNumber: '1',
         driverSurname: 'Bloggs',
         resultStatus: 0,
@@ -135,68 +205,68 @@ describe('Autosave processing operations', () => {
   const getQueueResultData = (): AutosaveQueueData[] => {
     return [
       {
-        applicationReference: 56,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
         staffNumber: '1',
-        timestamp: null,
-        interface: 0, // TARS
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.TARS,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 56,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
         staffNumber: '1',
-        timestamp: null,
-        interface: 1, // NOTIFY
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.NOTIFY,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 57,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
         staffNumber: '1',
-        timestamp: null,
-        interface: 0, // TARS
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.TARS,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 57,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
         staffNumber: '1',
-        timestamp: null,
-        interface: 1, // NOTIFY
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.NOTIFY,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 58,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
         staffNumber: '1',
-        timestamp: null,
-        interface: 0, // TARS
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.TARS,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 58,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
         staffNumber: '1',
-        timestamp: null,
-        interface: 1, // NOTIFY
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.NOTIFY,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 59,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
         staffNumber: '1',
-        timestamp: null,
-        interface: 0, // TARS
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.TARS,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 59,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
         staffNumber: '1',
-        timestamp: null,
-        interface: 1, // NOTIFY
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.NOTIFY,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
     ];
   };
@@ -204,36 +274,36 @@ describe('Autosave processing operations', () => {
   const getRSISData = (): AutosaveQueueData[] => {
     return [
       {
-        applicationReference: 56,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyProcessing,
         staffNumber: '1',
-        timestamp: null,
-        interface: 2, // RSIS
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.RSIS,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 57,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyProcessing,
         staffNumber: '1',
-        timestamp: null,
-        interface: 2, // RSIS
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.RSIS,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 58,
+        applicationReference: SuccessfulTestCases.TarsProcessingNotifyAccepted,
         staffNumber: '1',
-        timestamp: null,
-        interface: 2, // RSIS
-        uploadStatus: 0, // PROCESSING
+        interface: InterfaceIds.RSIS,
+        uploadStatus: ProcessingStatus.PROCESSING,
         retryCount: 0,
+        timestamp: null,
       },
       {
-        applicationReference: 59,
+        applicationReference: SuccessfulTestCases.TarsAcceptedNotifyAccepted,
         staffNumber: '1',
-        timestamp: null,
-        interface: 2, // RSIS
-        uploadStatus: 1, // ACCEPTED
+        interface: InterfaceIds.RSIS,
+        uploadStatus: ProcessingStatus.ACCEPTED,
         retryCount: 0,
+        timestamp: null,
       },
     ];
   };

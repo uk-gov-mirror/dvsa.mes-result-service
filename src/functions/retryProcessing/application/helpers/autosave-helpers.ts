@@ -79,9 +79,7 @@ export const deleteAutosaveTestResultData = (
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.query(
-      `
-      DELETE FROM ${table} WHERE application_reference IN (${itemsToDelete})
-      `,
+      `DELETE FROM ${table} WHERE application_reference IN (${itemsToDelete})`,
       [],
       (err, results, fields) => {
         if (err) {

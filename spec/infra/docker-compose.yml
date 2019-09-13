@@ -10,8 +10,6 @@ services:
     volumes:
       - './010-schema.sql:/docker-entrypoint-initdb.d/010-schema.sql'
       - './020-test-data-sproc.sql:/docker-entrypoint-initdb.d/020-test-data-sproc.sql'
-      - './030-test-data.sql:/docker-entrypoint-initdb.d/030-test-data.sql'
       - './040-test-data-autosave-sproc.sql:/docker-entrypoint-initdb.d/040-test-data-autosave-sproc.sql'
-      - './050-autosave-test-data.sql:/docker-entrypoint-initdb.d/050-autosave-test-data.sql'
     ports:
       - '3306:3306'

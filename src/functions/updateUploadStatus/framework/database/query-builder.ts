@@ -1,6 +1,6 @@
 import { IntegrationType } from '../../../postResult/domain/result-integration';
 import * as mysql from 'mysql2';
-import { ProcessingStatus  } from '../../../../functions/postResult/domain/processing-status';
+import { ProcessingStatus  } from '../../../../common/domain/processing-status';
 
 export const updateUploadStatus = (appReference: number, body: any): string => {
 

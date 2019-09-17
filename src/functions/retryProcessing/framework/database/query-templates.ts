@@ -145,3 +145,5 @@ export const deleteAccepetedUploadsQuery = `
     AND uq.staff_number = to_delete.staff_number
     AND uq.interface = to_delete.interface
 `;
+
+export const setIsolationLevelSerializable: string = `set session transaction isolation level serializable;`;

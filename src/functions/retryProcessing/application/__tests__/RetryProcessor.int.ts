@@ -10,6 +10,7 @@ import {
   getProcessingUploadQueueRecords,
   getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred,
 } from './common/HelperSQLQueries';
+import { setIsolationLevelSerializable } from '../../framework/database/query-templates';
 
 describe('RetryProcessor database test', () => {
   let db: mysql.Connection;
@@ -171,6 +172,28 @@ describe('RetryProcessor database test', () => {
           { application_reference: RetryTestCases.AcceptedTarsNotifyFailed, interface:  InterfaceIds.NOTIFY });
       expect(processingUploadQueueRecords).toContain(
           { application_reference: RetryTestCases.AcceptedTarsNotifyFailed, interface:  InterfaceIds.RSIS });
+    });
+  });
+
+  describe('setSerializableIsolationLevel', () => {
+    it('should set the Transaction isolation level to Serializable', async () => {
+      const newConnection: mysql.Connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        database: 'results',
+        password: '',
+        port: 3306,
+      });
+      const newRetryProcessor = new RetryProcessor(db);
+
+      // Enables viewing of the current transaction isolation level
+      await newConnection.promise().query(`set @@global.show_compatibility_56=ON;`);
+
+      await newConnection.promise().query(setIsolationLevelSerializable);
+
+      const response = await newConnection.promise().query(
+        `SELECT * FROM information_schema.session_variables WHERE variable_name = 'tx_isolation';`);
+      expect(JSON.stringify(response)).toMatch(/"VARIABLE_VALUE":"SERIALIZABLE"/);
     });
   });
 

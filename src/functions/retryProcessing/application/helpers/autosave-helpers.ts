@@ -21,7 +21,7 @@ export const insertAutosaveTestResultData = (
         item.applicationReference,
         item.staffNumber,
         '{}',
-        new Date().toISOString().slice(0, 10),
+        item.testDate ? item.testDate : new Date().toISOString().slice(0, 10),
         1,
         1,
         `dnum${item.applicationReference}`,

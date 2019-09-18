@@ -103,3 +103,10 @@ export enum SupportInterventionTestCases {
   AutosaveTarsFailNotifyFail = 84,
   AutosaveTarsFailNotifyAccept = 85,
 }
+
+export enum StalledSubmissionTestResultCases {
+  AutosavedDateInPastNoRsisUpload = 86,
+  AutosavedDateNotInPastNoRsisUpload = 87,
+  NotAutosavedDateInPastNoRsisUpload = 88,
+  NotAutosavedDateNotInPastNoRsisUpload = 89,
+}

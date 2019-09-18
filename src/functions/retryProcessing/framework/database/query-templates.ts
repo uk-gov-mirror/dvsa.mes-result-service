@@ -147,3 +147,19 @@ export const deleteAccepetedUploadsQuery = `
 `;
 
 export const setIsolationLevelSerializable: string = `set session transaction isolation level serializable;`;
+
+export const processStalledTestResultsQuery = `
+  INSERT INTO UPLOAD_QUEUE
+  SELECT DISTINCT
+    uq.application_reference,
+    uq.staff_number,
+    uq.timestamp,
+    (SELECT it.id FROM INTERFACE_TYPE it WHERE it.interface_type_name = 'RSIS') AS interface,
+    (SELECT ps.id FROM PROCESSING_STATUS ps WHERE ps.processing_status_name = 'PROCESSING') AS upload_status,
+    0 AS retry_count,
+    null AS error_message
+  FROM TEST_RESULT tr JOIN UPLOAD_QUEUE uq
+  ON tr.application_reference = uq.application_reference
+  WHERE tr.autosave = 1 AND tr.result_status != (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSED')
+  AND tr.test_date <= ?
+`;

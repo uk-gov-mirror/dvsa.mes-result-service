@@ -7,6 +7,7 @@ export type Config = {
   rsisRetryCount: number;
   notifyRetryCount: number;
   tarsRetryCount: number;
+  autosaveCutOffPointInDays: number;
 };
 
 let configuration: Config;
@@ -16,6 +17,7 @@ export const getRetryConfig = async (): Promise<void> => {
     rsisRetryCount: +defaultIfNotPresent(process.env.RSIS_RETRY_COUNT, '3'),
     notifyRetryCount: +defaultIfNotPresent(process.env.NOTIFY_RETRY_COUNT, '3'),
     tarsRetryCount: +defaultIfNotPresent(process.env.TARS_RETRY_COUNT, '3'),
+    autosaveCutOffPointInDays: +defaultIfNotPresent(process.env.AUTOSAVE_CUT_OFF_POINT_IN_DAYS, '15'),
   };
 };
 

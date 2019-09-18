@@ -31,6 +31,6 @@ export class RetryProcessingFacade implements IRetryProcessingFacade {
 
     await this.retryProcessingRepository.processSupportInterventions();
     await this.retryProcessingRepository.processOldEntryCleanup(retryConfig().retryCutOffPointDays);
-    await this.retryProcessingRepository.processStalledTestResults(retryConfig().autosaveCutOffPointInDays);
+    await this.retryProcessingRepository.processStalledTestResults(retryConfig().autosaveCutOffPointDays);
   }
 }

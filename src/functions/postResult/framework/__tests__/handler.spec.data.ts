@@ -39,6 +39,7 @@ VUQ4QJMUSisGQ9wSBR7GgFuPvKrdIzvi-2dZLcaCazThAsA9XxV1FetdMtFHcX0XiW-FEDfEYZhJoMhj
 sKbh_w';
 
 export const sampleTest_12345678: StandardCarTestCATBSchema = {
+  version: '0.0.1',
   category: null,
   journalData: {
     applicationReference: null,
@@ -58,6 +59,7 @@ export const sampleTest_12345678: StandardCarTestCATBSchema = {
 };
 
 export const sampleTest_87654321: StandardCarTestCATBSchema = {
+  version: '0.0.1',
   category: null,
   journalData: {
     applicationReference: null,
@@ -77,6 +79,7 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
 };
 
 export const sampleTest_empty: StandardCarTestCATBSchema = {
+  version: '0.0.1',
   category: null,
   journalData: {
     applicationReference: null,

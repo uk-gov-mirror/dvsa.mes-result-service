@@ -11,6 +11,7 @@ describe('Joi schema validation service', () => {
 
   it('should return a validation error if \'testSlotAttributes.start\' schema validation fails', () => {
     const invalidSchema = {
+      version: '0.0.1',
       activityCode: '1',
       category: 'B',
       journalData: {
@@ -49,6 +50,7 @@ describe('Joi schema validation service', () => {
 
   it('should not return a validation error if \'testSlotAttributes.start\' is valid', () => {
     const invalidSchema = {
+      version: '0.0.1',
       activityCode: '1',
       category: 'B',
       journalData: {
@@ -84,6 +86,7 @@ describe('Joi schema validation service', () => {
 
   it('should return a validation error if required property is missing from schema', () => {
     const invalidSchema = {
+      version: '0.0.1',
       activityCode: '1',
       category: 'B',
       journalData: {

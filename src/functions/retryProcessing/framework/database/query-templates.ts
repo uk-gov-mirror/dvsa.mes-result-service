@@ -151,16 +151,21 @@ export const setIsolationLevelSerializable: string = `set session transaction is
 
 export const processStalledTestResultsQuery = `
   INSERT INTO UPLOAD_QUEUE
-  SELECT DISTINCT
-    uq.application_reference,
-    uq.staff_number,
-    uq.timestamp,
+  (application_reference, staff_number, timestamp, interface, upload_status, retry_count, error_message)
+  SELECT
+    application_reference,
+    staff_number,
+    NOW(),
     (SELECT it.id FROM INTERFACE_TYPE it WHERE it.interface_type_name = 'RSIS') AS interface,
     (SELECT ps.id FROM PROCESSING_STATUS ps WHERE ps.processing_status_name = 'PROCESSING') AS upload_status,
     0 AS retry_count,
     null AS error_message
-  FROM TEST_RESULT tr JOIN UPLOAD_QUEUE uq
-  ON tr.application_reference = uq.application_reference
+  FROM TEST_RESULT tr
   WHERE tr.autosave = 1 AND tr.result_status != (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PROCESSED')
   AND tr.test_date <= ?
+  AND NOT EXISTS (SELECT application_reference FROM UPLOAD_QUEUE uq1
+                  WHERE uq1.interface = (SELECT it.id FROM INTERFACE_TYPE it WHERE it.interface_type_name = 'RSIS')
+                  AND uq1.application_reference = tr.application_reference
+                  AND uq1.staff_number = tr.staff_number)
+
 `;

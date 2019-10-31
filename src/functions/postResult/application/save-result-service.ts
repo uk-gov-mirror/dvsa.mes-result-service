@@ -1,4 +1,4 @@
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../domain/result-integration';
 import { getConnection } from '../../../common/framework/mysql/database';
@@ -6,7 +6,7 @@ import { buildTestResultInsert, buildUploadQueueInsert } from '../framework/data
 import * as logger from '../../../common/application/utils/logger';
 
 export const saveTestResult = async (
-  testResult: StandardCarTestCATBSchema,
+  testResult: CatBUniqueTypes.TestResult,
   hasValidationError: boolean = false,
   isPartialTestResult: boolean,
 ): Promise<void> => {
@@ -28,7 +28,7 @@ export const saveTestResult = async (
 
 const trySaveUploadQueueRecords = async (
   connection: mysql.Connection,
-  testResult: StandardCarTestCATBSchema,
+  testResult: CatBUniqueTypes.TestResult,
   hasValidationError: boolean,
   isPartialTestResult: boolean,
 ): Promise<void> => {

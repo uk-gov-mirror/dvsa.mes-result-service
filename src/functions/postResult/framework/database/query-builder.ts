@@ -1,4 +1,4 @@
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
 import { ResultStatus } from '../../../../common/domain/result-status';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../../domain/result-integration';
@@ -6,7 +6,7 @@ import { ProcessingStatus } from '../../../../common/domain/processing-status';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
 export const buildTestResultInsert = (
-  test: StandardCarTestCATBSchema,
+  test: CatBUniqueTypes.TestResult,
   isError: boolean = false,
   isPartialTest: boolean): string => {
   const template = `
@@ -56,7 +56,7 @@ export const buildTestResultInsert = (
   return mysql.format(template, args, false, 'UTC');
 };
 
-export const buildUploadQueueInsert = (test: StandardCarTestCATBSchema, integration: IntegrationType): string => {
+export const buildUploadQueueInsert = (test: CatBUniqueTypes.TestResult, integration: IntegrationType): string => {
   const template = `
     INSERT INTO UPLOAD_QUEUE (
       application_reference,

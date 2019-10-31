@@ -4,7 +4,7 @@ const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, It, Times } from 'typemoq';
 import * as decompressionService from '../../application/decompression-service';
 import { TestResultDecompressionError } from '../../domain/errors/test-result-decompression-error';
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
 import { HttpStatus } from '../../../../common/application/api/HttpStatus';
 import * as saveResultSvc from '../../application/save-result-service';
 import * as configSvc from '../../../../common/framework/config/config';
@@ -87,7 +87,7 @@ describe('postResult handler', () => {
     it('should ignore an invalid token EMPLOYEE_ID_VERIFICATION_DISABLED is true', async () => {
       process.env.EMPLOYEE_ID_VERIFICATION_DISABLED = 'true';
       dummyApigwEvent.body = 'avalidcompressedresult';
-      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const fakeTestResult = Mock.ofType<CatBUniqueTypes.TestResult>();
       const validationResult = Mock.ofType<ValidationResult<any>>();
 
       moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
@@ -102,7 +102,7 @@ describe('postResult handler', () => {
   describe('calling saveTestResult', () => {
     it('should pass decompressed test result to saveTestResult', async () => {
       dummyApigwEvent.body = 'avalidcompressedresult';
-      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const fakeTestResult = Mock.ofType<CatBUniqueTypes.TestResult>();
       const validationResult = Mock.ofType<ValidationResult<any>>();
 
       moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
@@ -118,7 +118,7 @@ describe('postResult handler', () => {
     });
     it('should indicate to saveTestResult when the test result could not be validated', async () => {
       dummyApigwEvent.body = '{"this": "JSON wont validate"}';
-      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const fakeTestResult = Mock.ofType<CatBUniqueTypes.TestResult>();
       const validationError = Mock.ofType<ValidationError>();
       // @ts-ignore
       const validationResult: ValidationResult<any> = {
@@ -137,7 +137,7 @@ describe('postResult handler', () => {
     });
     it('should return a 500 response when saveTestResult fails', async () => {
       dummyApigwEvent.body = 'avalidcompressedresult';
-      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const fakeTestResult = Mock.ofType<CatBUniqueTypes.TestResult>();
       moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
       moqSaveResultSvc.setup(x => x(It.isAny(), It.isAny(), It.isAny())).throws(new Error('something we didnt expect'));
       moqJWTVerificationSvc.setup(x => x(It.isAny(), It.isAny())).returns(() => true);
@@ -151,7 +151,7 @@ describe('postResult handler', () => {
     it('should pass isPartialTest as true to saveTestResult', async () => {
       dummyApigwEvent.queryStringParameters = { partial: 'true' };
       dummyApigwEvent.body = 'avalidcompressedresult';
-      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const fakeTestResult = Mock.ofType<CatBUniqueTypes.TestResult>();
       const validationResult = Mock.ofType<ValidationResult<any>>();
 
       moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);
@@ -166,7 +166,7 @@ describe('postResult handler', () => {
     });
     it('should pass isPartialTest as false to saveTestResult', async () => {
       dummyApigwEvent.body = 'avalidcompressedresult';
-      const fakeTestResult = Mock.ofType<StandardCarTestCATBSchema>();
+      const fakeTestResult = Mock.ofType<CatBUniqueTypes.TestResult>();
       const validationResult = Mock.ofType<ValidationResult<any>>();
 
       moqDecompressionSvc.setup(x => x(It.isAny())).returns(() => fakeTestResult.object);

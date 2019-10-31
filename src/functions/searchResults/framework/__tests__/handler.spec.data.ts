@@ -1,4 +1,4 @@
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
 import { QueryParameters } from '../../domain/query_parameters';
 import { TestResultRecord } from '../../../../common/domain/test-results';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema';

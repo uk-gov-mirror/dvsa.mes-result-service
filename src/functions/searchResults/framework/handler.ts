@@ -8,7 +8,7 @@ import joi from '@hapi/joi';
 import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema/index';
 import { getEmployeeIdFromRequestContext } from '../../../common/application/utils/getEmployeeId';
-import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import { TestResultRecord } from '../../../common/domain/test-results';
 import { UserRole } from '../../../common/domain/user-role';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
@@ -102,7 +102,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const result: TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
-    const results: CatBUniqueTypes.TestResult[] = result.map(row => row.test_result);
+    const results: TestResultSchemasUnion[] = result.map(row => row.test_result);
     const condensedTestResult: SearchResultTestSchema[] = [];
 
     for (const testResultRow of results) {

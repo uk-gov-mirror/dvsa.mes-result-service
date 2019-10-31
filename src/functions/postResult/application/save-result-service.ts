@@ -1,4 +1,4 @@
-import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../domain/result-integration';
 import { getConnection } from '../../../common/framework/mysql/database';
@@ -6,7 +6,7 @@ import { buildTestResultInsert, buildUploadQueueInsert } from '../framework/data
 import * as logger from '../../../common/application/utils/logger';
 
 export const saveTestResult = async (
-  testResult: CatBUniqueTypes.TestResult,
+  testResult: TestResultSchemasUnion,
   hasValidationError: boolean = false,
   isPartialTestResult: boolean,
 ): Promise<void> => {
@@ -28,7 +28,7 @@ export const saveTestResult = async (
 
 const trySaveUploadQueueRecords = async (
   connection: mysql.Connection,
-  testResult: CatBUniqueTypes.TestResult,
+  testResult: TestResultSchemasUnion,
   hasValidationError: boolean,
   isPartialTestResult: boolean,
 ): Promise<void> => {

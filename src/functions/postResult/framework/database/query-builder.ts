@@ -1,12 +1,12 @@
-import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
 import { ResultStatus } from '../../../../common/domain/result-status';
 import * as mysql from 'mysql2';
 import { IntegrationType } from '../../domain/result-integration';
 import { ProcessingStatus } from '../../../../common/domain/processing-status';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 
 export const buildTestResultInsert = (
-  test: CatBUniqueTypes.TestResult,
+  test: TestResultSchemasUnion,
   isError: boolean = false,
   isPartialTest: boolean): string => {
   const template = `
@@ -56,7 +56,7 @@ export const buildTestResultInsert = (
   return mysql.format(template, args, false, 'UTC');
 };
 
-export const buildUploadQueueInsert = (test: CatBUniqueTypes.TestResult, integration: IntegrationType): string => {
+export const buildUploadQueueInsert = (test: TestResultSchemasUnion, integration: IntegrationType): string => {
   const template = `
     INSERT INTO UPLOAD_QUEUE (
       application_reference,

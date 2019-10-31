@@ -1,6 +1,6 @@
-import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 
-export const dummyTestResult: CatBUniqueTypes.TestResult = {
+export const dummyTestResult: TestResultSchemasUnion = {
   version: '0.0.1',
   category: 'B',
   journalData: {

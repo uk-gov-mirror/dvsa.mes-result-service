@@ -7,7 +7,7 @@ import { HttpStatus } from '../../../common/application/api/HttpStatus';
 import createResponse from '../../../common/application/utils/createResponse';
 import joi from '@hapi/joi';
 import { TestResultRecord } from '../../../common/domain/test-results';
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import { gzipSync } from 'zlib';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
@@ -33,7 +33,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const result: TestResultRecord[] = await getResult(appRefPathParam);
 
-    const results: StandardCarTestCATBSchema[] = result.map(row => row.test_result);
+    const results: TestResultSchemasUnion[] = result.map(row => row.test_result);
 
     if (results.length === 0) {
       return createResponse('No records found matching criteria', HttpStatus.BAD_REQUEST);

@@ -3,7 +3,7 @@ import createResponse from '../../../common/application/utils/createResponse';
 import Response from '../../../common/application/api/Response';
 import { HttpStatus } from '../../../common/application/api/HttpStatus';
 import { decompressTestResult } from '../application/decompression-service';
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import { saveTestResult } from '../application/save-result-service';
 import { TestResultDecompressionError } from '../domain/errors/test-result-decompression-error';
 import { bootstrapConfig } from '../../../common/framework/config/config';
@@ -13,7 +13,7 @@ import * as logger from '../../../common/application/utils/logger';
 
 export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Promise<Response> {
 
-  let testResult: StandardCarTestCATBSchema;
+  let testResult: TestResultSchemasUnion;
 
   let isPartialTestResult = false;
   if (event.queryStringParameters && event.queryStringParameters['partial']
@@ -65,7 +65,7 @@ export const isNullOrBlank = (body: string | null): boolean => {
   return body === null || body === undefined || body.trim().length === 0;
 };
 
-export const getStaffIdFromTest = (test: StandardCarTestCATBSchema): string => {
+export const getStaffIdFromTest = (test: TestResultSchemasUnion): string => {
   if (test && test.examinerKeyed) {
     return test.examinerKeyed.toString();
   }

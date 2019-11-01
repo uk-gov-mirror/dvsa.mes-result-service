@@ -1,4 +1,5 @@
-import { StandardCarTestCATBSchema } from '@dvsa/mes-test-schema/categories/B';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
+import { Test } from 'aws-sdk/clients/devicefarm';
 
 // tslint:disable: variable-name
 export const sampleToken_12345678 =
@@ -38,7 +39,7 @@ WsvyZCPejXBvjTk8NTUh6NcdXr6oZW1cMVMYVLf1kOjS8QopynWfe1349DnFNvUEMqILlj7Fr5LXD5HZ
 VUQ4QJMUSisGQ9wSBR7GgFuPvKrdIzvi-2dZLcaCazThAsA9XxV1FetdMtFHcX0XiW-FEDfEYZhJoMhj7Gyk0GW9Z4kyDj-\
 sKbh_w';
 
-export const sampleTest_12345678: StandardCarTestCATBSchema = {
+export const sampleTest_12345678: TestResultSchemasUnion = {
   version: '0.0.1',
   category: null,
   journalData: {
@@ -58,7 +59,7 @@ export const sampleTest_12345678: StandardCarTestCATBSchema = {
   examinerKeyed: 12345678,
 };
 
-export const sampleTest_87654321: StandardCarTestCATBSchema = {
+export const sampleTest_87654321: TestResultSchemasUnion = {
   version: '0.0.1',
   category: null,
   journalData: {
@@ -78,7 +79,7 @@ export const sampleTest_87654321: StandardCarTestCATBSchema = {
   examinerKeyed: 87654321,
 };
 
-export const sampleTest_empty: StandardCarTestCATBSchema = {
+export const sampleTest_empty: TestResultSchemasUnion = {
   version: '0.0.1',
   category: null,
   journalData: {

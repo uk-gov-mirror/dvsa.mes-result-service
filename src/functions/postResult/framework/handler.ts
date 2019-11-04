@@ -33,7 +33,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
       console.error(`Could not decompress test result body ${event.body}`);
       return createResponse({ message: 'The test result body could not be decompressed' }, HttpStatus.BAD_REQUEST);
     }
-    console.error(err);
+    logger.error(`${err}. Request body: ${JSON.stringify(testResult)}`);
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   if (process.env.EMPLOYEE_ID_VERIFICATION_DISABLED !== 'true') {
@@ -56,7 +56,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
 
     await saveTestResult(testResult, false, isPartialTestResult);
   } catch (err) {
-    console.error(err);
+    logger.error(`${err}. Request body: ${JSON.stringify(testResult)}`);
     return createResponse({}, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   return createResponse({}, HttpStatus.CREATED);

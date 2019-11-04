@@ -38,7 +38,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
   }
   if (process.env.EMPLOYEE_ID_VERIFICATION_DISABLED !== 'true') {
     if (!verifyRequest(event, getStaffIdFromTest(testResult))) {
-      console.error(`EmployeeId and staffId do not match. Request body: ${testResult}`)
+      logger.error(`EmployeeId and staffId do not match. Request body: ${testResult}`);
       return createResponse({ message: 'EmployeeId and staffId do not match' }, HttpStatus.UNAUTHORIZED);
     }
   }

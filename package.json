@@ -10,6 +10,7 @@
     "url": "git+https://github.com/dvsa/mes-result-service.git"
   },
   "dependencies": {
+    "@dvsa/mes-test-schema": "3.2.5",
     "@hapi/joi": "^15.0.3",
     "@types/hapi__joi": "^15.0.1",
     "enjoi": "^6.0.0",
@@ -19,7 +20,6 @@
   "devDependencies": {
     "@dvsa/mes-microservice-common": "0.1.7",
     "@dvsa/mes-search-schema": "1.1.0",
-    "@dvsa/mes-test-schema": "3.2.3",
     "@types/aws-lambda": "^8.10.13",
     "@types/aws-sdk": "^2.7.0",
     "@types/jasmine": "^2.8.9",

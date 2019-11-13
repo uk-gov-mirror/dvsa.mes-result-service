@@ -10,7 +10,7 @@
     "url": "git+https://github.com/dvsa/mes-result-service.git"
   },
   "dependencies": {
-    "@dvsa/mes-test-schema": "3.2.5",
+    "@dvsa/mes-test-schema": "3.2.6",
     "@hapi/joi": "^15.0.3",
     "@types/hapi__joi": "^15.0.1",
     "enjoi": "^6.0.0",

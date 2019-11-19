@@ -1,5 +1,9 @@
-import { validateMESJoiSchema } from '../../domain/mes-joi-schema-service';
-import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
+import { validateMESJoiSchema, getTestCategory, getCategorySpecificSchema } from '../mes-joi-schema-service';
+import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
+
+import * as catBSchema from '@dvsa/mes-test-schema/categories/B/index.json';
+import * as catBESchema from '@dvsa/mes-test-schema/categories/BE/index.json';
+import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
 
 describe('Joi schema validation service', () => {
   const validationErrorName = 'ValidationError';
@@ -28,9 +32,7 @@ describe('Joi schema validation service', () => {
           welshTest: false,
           extendedTest: false,
         },
-        candidate: {
-
-        },
+        candidate: {},
         applicationReference: {
           applicationId: 12,
           bookingSequence: 222,
@@ -116,5 +118,60 @@ describe('Joi schema validation service', () => {
     const validationResult = validateMESJoiSchema(invalidSchema);
     expect(validationResult.error.message).toEqual(requiredFieldMissingErrorMessage);
     expect(validationResult.error.name).toEqual(validationErrorName);
+  });
+});
+
+describe('getTestCategory', () => {
+  it('should return the category of schema', () => {
+    const schema = {
+      version: '0.0.1',
+      activityCode: '1',
+      category: 'B',
+      journalData: {
+        examiner: { staffNumber: '01234567' },
+        testCentre: {
+          centreId: 1234,
+          costCode: '1234',
+        },
+        testSlotAttributes: {
+          slotId: 1,
+          start: 'ABCDEFGHIJKLMNOPQRS',
+          vehicleTypeCode: 'C',
+          specialNeeds: false,
+          welshTest: false,
+          extendedTest: false,
+        },
+        candidate: {},
+      },
+      rekey: false,
+      changeMarker: false,
+      examinerBooked: 12345678,
+      examinerConducted: 12345678,
+      examinerKeyed: 12345678,
+    };
+    const category = getTestCategory(schema as TestResultSchemasUnion);
+    expect(category).toEqual('B');
+  });
+});
+
+describe('getCategorySpecificSchema', () => {
+  it('should return Category B schema', () => {
+    const schema = getCategorySpecificSchema('B');
+    expect(schema).toEqual(catBSchema);
+  });
+
+  it('should return Category BE schema', () => {
+    const schema = getCategorySpecificSchema('BE');
+    expect(schema).toEqual(catBESchema);
+  });
+
+  it('should return Category C schema', () => {
+    const schema = getCategorySpecificSchema('C');
+    expect(schema).toEqual(catCSchema);
+  });
+
+  it('should use Category B as default', () => {
+    const schema = getCategorySpecificSchema(null);
+    expect(schema).toEqual(catBSchema);
   });
 });

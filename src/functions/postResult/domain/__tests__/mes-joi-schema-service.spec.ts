@@ -1,5 +1,6 @@
 import { validateMESJoiSchema, getTestCategory, getCategorySpecificSchema } from '../mes-joi-schema-service';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
+import { TestCategory } from '../../../../common/domain/test-category';
 
 import * as catBSchema from '@dvsa/mes-test-schema/categories/B/index.json';
 import * as catBESchema from '@dvsa/mes-test-schema/categories/BE/index.json';
@@ -150,23 +151,23 @@ describe('getTestCategory', () => {
       examinerKeyed: 12345678,
     };
     const category = getTestCategory(schema as TestResultSchemasUnion);
-    expect(category).toEqual('B');
+    expect(category).toEqual(TestCategory.B);
   });
 });
 
 describe('getCategorySpecificSchema', () => {
   it('should return Category B schema', () => {
-    const schema = getCategorySpecificSchema('B');
+    const schema = getCategorySpecificSchema(TestCategory.B);
     expect(schema).toEqual(catBSchema);
   });
 
   it('should return Category BE schema', () => {
-    const schema = getCategorySpecificSchema('BE');
+    const schema = getCategorySpecificSchema(TestCategory.BE);
     expect(schema).toEqual(catBESchema);
   });
 
   it('should return Category C schema', () => {
-    const schema = getCategorySpecificSchema('C');
+    const schema = getCategorySpecificSchema(TestCategory.C);
     expect(schema).toEqual(catCSchema);
   });
 

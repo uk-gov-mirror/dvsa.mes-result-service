@@ -5,6 +5,7 @@ import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
 import joi, { ValidationResult } from '@hapi/joi';
 import enjoi from 'enjoi';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
+import { TestCategory } from '../../../common/domain/test-category';
 
 /**
  * Converts the MES schema into a Joi schema which will then be validated
@@ -35,11 +36,11 @@ export const getTestCategory = (testResult: TestResultSchemasUnion): string => t
  */
 export const getCategorySpecificSchema = (category: string): Object => {
   switch (category) {
-    case 'B':
+    case TestCategory.B:
       return catBSchema;
-    case 'BE':
+    case TestCategory.BE:
       return catBESchema;
-    case 'C':
+    case TestCategory.C:
       return catCSchema;
     default:
       return catBSchema;

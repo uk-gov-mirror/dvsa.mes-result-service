@@ -1,11 +1,14 @@
 import * as catBSchema from '@dvsa/mes-test-schema/categories/B/index.json';
 import * as catBESchema from '@dvsa/mes-test-schema/categories/BE/index.json';
 import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
+import * as catC1Schema from '@dvsa/mes-test-schema/categories/C1/index.json';
+import * as catCESchema from '@dvsa/mes-test-schema/categories/CE/index.json';
+import * as catC1ESchema from '@dvsa/mes-test-schema/categories/C1E/index.json';
 
 import joi, { ValidationResult } from '@hapi/joi';
 import enjoi from 'enjoi';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
-import { TestCategory } from '@dvsa/mes-test-schema/categories/common/test-category';
+import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
 
 /**
  * Converts the MES schema into a Joi schema which will then be validated
@@ -42,6 +45,12 @@ export const getCategorySpecificSchema = (category: string): Object => {
       return catBESchema;
     case TestCategory.C:
       return catCSchema;
+    case TestCategory.C1:
+      return catC1Schema;
+    case TestCategory.CE:
+      return catCESchema;
+    case TestCategory.C1E:
+      return catC1ESchema;
     default:
       return catBSchema;
   }

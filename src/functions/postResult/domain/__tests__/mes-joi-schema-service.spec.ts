@@ -4,7 +4,7 @@ import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import * as catBSchema from '@dvsa/mes-test-schema/categories/B/index.json';
 import * as catBESchema from '@dvsa/mes-test-schema/categories/BE/index.json';
 import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
-import { TestCategory } from '@dvsa/mes-test-schema/categories/common/test-category';
+import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
 
 describe('Joi schema validation service', () => {
   const validationErrorName = 'ValidationError';

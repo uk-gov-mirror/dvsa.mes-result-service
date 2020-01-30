@@ -5,7 +5,7 @@ import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
 import joi, { ValidationResult } from '@hapi/joi';
 import enjoi from 'enjoi';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
-import { TestCategory } from '@dvsa/mes-test-schema/categories/common/test-category';
+import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
 
 /**
  * Converts the MES schema into a Joi schema which will then be validated

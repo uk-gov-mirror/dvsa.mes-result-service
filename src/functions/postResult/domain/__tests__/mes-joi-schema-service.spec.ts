@@ -4,6 +4,7 @@ import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import * as catBSchema from '@dvsa/mes-test-schema/categories/B/index.json';
 import * as catBESchema from '@dvsa/mes-test-schema/categories/BE/index.json';
 import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
+import * as catAM1Schema from '@dvsa/mes-test-schema/categories/AM1/index.json';
 import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
 
 describe('Joi schema validation service', () => {
@@ -169,6 +170,26 @@ describe('getCategorySpecificSchema', () => {
   it('should return Category C schema', () => {
     const schema = getCategorySpecificSchema(TestCategory.C);
     expect(schema).toEqual(catCSchema);
+  });
+
+  it('should return Category A Mod1 schema for a EUAMM1 test', () => {
+    const schema = getCategorySpecificSchema(TestCategory.EUAMM1);
+    expect(schema).toEqual(catAM1Schema);
+  });
+
+  it('should return Category A Mod1 schema for a EUAM1 test', () => {
+    const schema = getCategorySpecificSchema(TestCategory.EUAM1);
+    expect(schema).toEqual(catAM1Schema);
+  });
+
+  it('should return Category A Mod1 schema for a EUA1M1 test', () => {
+    const schema = getCategorySpecificSchema(TestCategory.EUA1M1);
+    expect(schema).toEqual(catAM1Schema);
+  });
+
+  it('should return Category A Mod1 schema for a EUA2M1 test', () => {
+    const schema = getCategorySpecificSchema(TestCategory.EUA2M1);
+    expect(schema).toEqual(catAM1Schema);
   });
 
   it('should use Category B as default', () => {

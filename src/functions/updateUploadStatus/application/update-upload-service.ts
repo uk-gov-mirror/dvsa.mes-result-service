@@ -2,9 +2,9 @@ import * as mysql from 'mysql2';
 import { getConnection } from '../../../common/framework/mysql/database';
 import { updateUploadStatus } from '../framework/database/query-builder';
 import { InconsistentUpdateError } from '../domain/InconsistentUpdateError';
-import { error } from '@dvsa/mes-microservice-common/application/utils/logger';
+import { SubmissionOutcome } from '../domain/SubmissionOutcome';
 
-export const updateUpload = async (id: number, body: any): Promise<void> => {
+export const updateUpload = async (id: number, body: SubmissionOutcome): Promise<void> => {
 
   const connection: mysql.Connection = getConnection();
 
@@ -16,10 +16,7 @@ export const updateUpload = async (id: number, body: any): Promise<void> => {
     }
   } catch (err) {
     connection.rollback();
-    if (err instanceof InconsistentUpdateError) {
-      throw err;
-    }
-    error(err);
+    throw err;
   } finally {
     connection.end();
   }

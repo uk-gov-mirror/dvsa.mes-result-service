@@ -46,7 +46,7 @@ export async function handler(event: APIGatewayProxyEvent, fnCtx: Context): Prom
         HttpStatus.NOT_FOUND,
       );
     }
-    error('Error while updating upload status - ' , ...enrichError(err, appRef, null));
+    error('Error while updating upload status - ' , ...enrichError(err, appRef, body));
     return createResponse(
       { message: `Error updating the status in UUS of Reference Number: ${appRef}` }, HttpStatus.INTERNAL_SERVER_ERROR);
   }

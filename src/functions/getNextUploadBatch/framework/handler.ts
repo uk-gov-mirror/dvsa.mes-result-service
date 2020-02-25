@@ -7,7 +7,7 @@ import { InterfaceTypes } from '../domain/interface-types';
 import { gzipSync } from 'zlib';
 import joi from '@hapi/joi';
 import { bootstrapConfig } from '../../../common/framework/config/config';
-import { bootstrapLogging, customMetric } from '@dvsa/mes-microservice-common/application/utils/logger';
+import { bootstrapLogging, customMetric, error } from '@dvsa/mes-microservice-common/application/utils/logger';
 
 export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<Response> {
 
@@ -32,19 +32,22 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     return createResponse(validationResult.error, HttpStatus.BAD_REQUEST);
   }
 
-  await bootstrapConfig();
-  const batchPromise = getNextUploadBatch(batchSize, interfaceType);
-  await batchPromise.then((response) => {
-    // compress response
+  try {
+    await bootstrapConfig();
+    const response = await getNextUploadBatch(batchSize, interfaceType);
     nextBatchData = [
       ...response.map(((row) => {
         return gzipSync(JSON.stringify(row.test_result)).toString('base64');
       })),
     ];
-  }).catch((err) => {
-    console.error(err);
-  });
-  return createResponse(nextBatchData, HttpStatus.CREATED);
+    return createResponse(nextBatchData, HttpStatus.CREATED);
+  } catch (err) {
+    error(`ERROR - ${err.message} - `, enrichError(err, interfaceType, batchSize));
+    return createResponse(
+      { message: `Error trying retrive a batch of ${ batchSize } results for ${ interfaceType }` },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
 }
 
 export function convertToInterfaceType(interfaceType: string) {
@@ -54,4 +57,12 @@ export function convertToInterfaceType(interfaceType: string) {
     case 'notify': return InterfaceTypes.NOTIFY;
     default: return InterfaceTypes.NO_MATCH_FOUND;
   }
+}
+
+function enrichError(err: any, interfaceType: InterfaceTypes, batchSize: number) {
+  return {
+    ...err,
+    interfaceType,
+    batchSize,
+  };
 }

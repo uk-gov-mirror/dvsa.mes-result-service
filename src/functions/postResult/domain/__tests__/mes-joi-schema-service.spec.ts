@@ -4,8 +4,32 @@ import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import * as catBSchema from '@dvsa/mes-test-schema/categories/B/index.json';
 import * as catBESchema from '@dvsa/mes-test-schema/categories/BE/index.json';
 import * as catCSchema from '@dvsa/mes-test-schema/categories/C/index.json';
+import * as catCESchema from '@dvsa/mes-test-schema/categories/CE/index.json';
+import * as catC1Schema from '@dvsa/mes-test-schema/categories/C1/index.json';
+import * as catC1ESchema from '@dvsa/mes-test-schema/categories/C1E/index.json';
+import * as catDSchema from '@dvsa/mes-test-schema/categories/D/index.json';
+import * as catDESchema from '@dvsa/mes-test-schema/categories/DE/index.json';
+import * as catD1Schema from '@dvsa/mes-test-schema/categories/D1/index.json';
+import * as catD1ESchema from '@dvsa/mes-test-schema/categories/D1E/index.json';
 import * as catAM1Schema from '@dvsa/mes-test-schema/categories/AM1/index.json';
 import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
+
+const expectedSchema = [
+    { category: TestCategory.B, schema: catBSchema },
+    { category: TestCategory.BE, schema: catBESchema },
+    { category: TestCategory.C, schema: catCSchema },
+    { category: TestCategory.CE, schema: catCESchema },
+    { category: TestCategory.C1E, schema: catC1ESchema },
+    { category: TestCategory.C1, schema: catC1Schema },
+    { category: TestCategory.EUA1M1, schema: catAM1Schema },
+    { category: TestCategory.EUAMM1, schema: catAM1Schema },
+    { category: TestCategory.EUAM1, schema: catAM1Schema },
+    { category: TestCategory.EUA2M1, schema: catAM1Schema },
+    { category: TestCategory.D, schema: catDSchema },
+    { category: TestCategory.DE, schema: catDESchema },
+    { category: TestCategory.D1, schema: catD1Schema },
+    { category: TestCategory.D1E, schema: catD1ESchema },
+];
 
 describe('Joi schema validation service', () => {
   const validationErrorName = 'ValidationError';
@@ -157,42 +181,13 @@ describe('getTestCategory', () => {
 });
 
 describe('getCategorySpecificSchema', () => {
-  it('should return Category B schema', () => {
-    const schema = getCategorySpecificSchema(TestCategory.B);
-    expect(schema).toEqual(catBSchema);
+  expectedSchema.forEach((cat) => {
+    it(`should return Category ${cat.category} schema`, () => {
+      const schema = getCategorySpecificSchema(cat.category);
+      expect(schema).toEqual(cat.schema);
+    });
   });
-
-  it('should return Category BE schema', () => {
-    const schema = getCategorySpecificSchema(TestCategory.BE);
-    expect(schema).toEqual(catBESchema);
-  });
-
-  it('should return Category C schema', () => {
-    const schema = getCategorySpecificSchema(TestCategory.C);
-    expect(schema).toEqual(catCSchema);
-  });
-
-  it('should return Category A Mod1 schema for a EUAMM1 test', () => {
-    const schema = getCategorySpecificSchema(TestCategory.EUAMM1);
-    expect(schema).toEqual(catAM1Schema);
-  });
-
-  it('should return Category A Mod1 schema for a EUAM1 test', () => {
-    const schema = getCategorySpecificSchema(TestCategory.EUAM1);
-    expect(schema).toEqual(catAM1Schema);
-  });
-
-  it('should return Category A Mod1 schema for a EUA1M1 test', () => {
-    const schema = getCategorySpecificSchema(TestCategory.EUA1M1);
-    expect(schema).toEqual(catAM1Schema);
-  });
-
-  it('should return Category A Mod1 schema for a EUA2M1 test', () => {
-    const schema = getCategorySpecificSchema(TestCategory.EUA2M1);
-    expect(schema).toEqual(catAM1Schema);
-  });
-
-  it('should use Category B as default', () => {
+  it(`should return Category B schema if null category passed in`, () => {
     const schema = getCategorySpecificSchema(null);
     expect(schema).toEqual(catBSchema);
   });

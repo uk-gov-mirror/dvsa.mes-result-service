@@ -12,6 +12,7 @@ import * as catDESchema from '@dvsa/mes-test-schema/categories/DE/index.json';
 import * as catD1Schema from '@dvsa/mes-test-schema/categories/D1/index.json';
 import * as catD1ESchema from '@dvsa/mes-test-schema/categories/D1E/index.json';
 import * as catAM1Schema from '@dvsa/mes-test-schema/categories/AM1/index.json';
+import * as catAM2Schema from '@dvsa/mes-test-schema/categories/AM2/index.json';
 import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
 
 const expectedSchema = [
@@ -25,6 +26,10 @@ const expectedSchema = [
     { category: TestCategory.EUAMM1, schema: catAM1Schema },
     { category: TestCategory.EUAM1, schema: catAM1Schema },
     { category: TestCategory.EUA2M1, schema: catAM1Schema },
+    { category: TestCategory.EUA1M2, schema: catAM2Schema },
+    { category: TestCategory.EUAMM2, schema: catAM2Schema },
+    { category: TestCategory.EUAM2, schema: catAM2Schema },
+    { category: TestCategory.EUA2M2, schema: catAM2Schema },
     { category: TestCategory.D, schema: catDSchema },
     { category: TestCategory.DE, schema: catDESchema },
     { category: TestCategory.D1, schema: catD1Schema },

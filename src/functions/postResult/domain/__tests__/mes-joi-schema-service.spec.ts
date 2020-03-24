@@ -11,6 +11,10 @@ import * as catDSchema from '@dvsa/mes-test-schema/categories/D/index.json';
 import * as catDESchema from '@dvsa/mes-test-schema/categories/DE/index.json';
 import * as catD1Schema from '@dvsa/mes-test-schema/categories/D1/index.json';
 import * as catD1ESchema from '@dvsa/mes-test-schema/categories/D1E/index.json';
+import * as catFSchema from '@dvsa/mes-test-schema/categories/F/index.json';
+import * as catGSchema from '@dvsa/mes-test-schema/categories/G/index.json';
+import * as catHSchema from '@dvsa/mes-test-schema/categories/H/index.json';
+import * as catKSchema from '@dvsa/mes-test-schema/categories/K/index.json';
 import * as catAM1Schema from '@dvsa/mes-test-schema/categories/AM1/index.json';
 import * as catAM2Schema from '@dvsa/mes-test-schema/categories/AM2/index.json';
 import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
@@ -34,6 +38,10 @@ const expectedSchema = [
     { category: TestCategory.DE, schema: catDESchema },
     { category: TestCategory.D1, schema: catD1Schema },
     { category: TestCategory.D1E, schema: catD1ESchema },
+    { category: TestCategory.F, schema: catFSchema },
+    { category: TestCategory.G, schema: catGSchema },
+    { category: TestCategory.H, schema: catHSchema },
+    { category: TestCategory.K, schema: catKSchema },
 ];
 
 describe('Joi schema validation service', () => {

@@ -13,6 +13,11 @@ import * as catD1ESchema from '@dvsa/mes-test-schema/categories/D1E/index.json';
 import * as catAM1Schema from '@dvsa/mes-test-schema/categories/AM1/index.json';
 import * as catAM2Schema from '@dvsa/mes-test-schema/categories/AM2/index.json';
 
+import * as catFSchema from '@dvsa/mes-test-schema/categories/F/index.json';
+import * as catGSchema from '@dvsa/mes-test-schema/categories/G/index.json';
+import * as catHSchema from '@dvsa/mes-test-schema/categories/H/index.json';
+import * as catKSchema from '@dvsa/mes-test-schema/categories/K/index.json';
+
 import joi, { ValidationResult } from '@hapi/joi';
 import enjoi from 'enjoi';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
@@ -67,6 +72,14 @@ export const getCategorySpecificSchema = (category: string): Object => {
       return catDESchema;
     case TestCategory.D1E:
       return catD1ESchema;
+    case TestCategory.F:
+      return catFSchema;
+    case TestCategory.G:
+      return catGSchema;
+    case TestCategory.H:
+      return catHSchema;
+    case TestCategory.K:
+      return catKSchema;
     case TestCategory.EUA1M1:
     case TestCategory.EUAMM1:
     case TestCategory.EUAM1:

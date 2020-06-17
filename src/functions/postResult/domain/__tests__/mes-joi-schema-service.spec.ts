@@ -17,6 +17,8 @@ import * as catHSchema from '@dvsa/mes-test-schema/categories/H/index.json';
 import * as catKSchema from '@dvsa/mes-test-schema/categories/K/index.json';
 import * as catAM1Schema from '@dvsa/mes-test-schema/categories/AM1/index.json';
 import * as catAM2Schema from '@dvsa/mes-test-schema/categories/AM2/index.json';
+import * as catADI2Schema from '@dvsa/mes-test-schema/categories/ADI2/index.json';
+import * as catCPCSchema from '@dvsa/mes-test-schema/categories/CPC/index.json';
 import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/test-category';
 
 const expectedSchema = [
@@ -42,6 +44,9 @@ const expectedSchema = [
     { category: TestCategory.G, schema: catGSchema },
     { category: TestCategory.H, schema: catHSchema },
     { category: TestCategory.K, schema: catKSchema },
+    { category: TestCategory.ADI2, schema: catADI2Schema },
+    { category: TestCategory.CCPC, schema: catCPCSchema },
+    { category: TestCategory.DCPC, schema: catCPCSchema },
 ];
 
 describe('Joi schema validation service', () => {

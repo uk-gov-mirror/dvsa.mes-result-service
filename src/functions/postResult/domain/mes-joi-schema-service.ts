@@ -20,6 +20,8 @@ import * as catKSchema from '@dvsa/mes-test-schema/categories/K/index.json';
 
 import * as catADI2Schema from '@dvsa/mes-test-schema/categories/ADI2/index.json';
 
+import * as catCPCSchema from '@dvsa/mes-test-schema/categories/CPC/index.json';
+
 import joi, { ValidationResult } from '@hapi/joi';
 import enjoi from 'enjoi';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
@@ -94,6 +96,9 @@ export const getCategorySpecificSchema = (category: string): Object => {
       return catAM2Schema;
     case TestCategory.ADI2:
       return catADI2Schema;
+    case TestCategory.CCPC:
+    case TestCategory.DCPC:
+      return catCPCSchema;
     default:
       return catBSchema;
   }

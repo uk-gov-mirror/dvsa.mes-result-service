@@ -19,7 +19,7 @@
   "devDependencies": {
     "@dvsa/mes-microservice-common": "0.7.0",
     "@dvsa/mes-search-schema": "1.1.1",
-    "@dvsa/mes-test-schema": "3.25.1",
+    "@dvsa/mes-test-schema": "3.25.3",
     "@types/aws-lambda": "^8.10.13",
     "@types/aws-sdk": "^2.7.0",
     "@types/jasmine": "^2.8.9",

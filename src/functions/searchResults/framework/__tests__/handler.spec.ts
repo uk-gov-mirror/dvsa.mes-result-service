@@ -109,4 +109,42 @@ describe('searchResults handler', () => {
       moqSearchResults.verify(x => x(It.isObjectWith(queryParameterWith8DigitAppRef)), Times.once());
     });
   });
+
+  describe('request made by DLG', () => {
+    it('should fail with bad request when using forbidden query params', async () => {
+      dummyApigwEvent.requestContext.authorizer = {
+        examinerRole: UserRole.DLG,
+      };
+
+      const wrongQueryParameterKey = 'startDate';
+
+      dummyApigwEvent.queryStringParameters[wrongQueryParameterKey] = queryParameter.startDate;
+      const resp = await handler(dummyApigwEvent, dummyContext);
+      expect(resp.statusCode).toBe(400);
+      expect(JSON.parse(resp.body))
+        .toBe(`DLG is not permitted to use the parameter ${wrongQueryParameterKey}`);
+    });
+
+    it('should get relevant results when searching by correct application reference', async () => {
+      dummyApigwEvent.requestContext.authorizer = {
+        examinerRole: UserRole.DLG,
+      };
+      dummyApigwEvent.queryStringParameters['applicationReference'] = queryParameter.applicationReference;
+      moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
+      const resp = await handler(dummyApigwEvent, dummyContext);
+      expect(resp.statusCode).toBe(200);
+      expect(JSON.parse(resp.body)).toEqual(testResultResponse);
+    });
+
+    it('should get relevant results when searching by correct driver number', async () => {
+      dummyApigwEvent.requestContext.authorizer = {
+        examinerRole: UserRole.DLG,
+      };
+      dummyApigwEvent.queryStringParameters['driverNumber'] = queryParameter.driverNumber;
+      moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
+      const resp = await handler(dummyApigwEvent, dummyContext);
+      expect(resp.statusCode).toBe(200);
+      expect(JSON.parse(resp.body)).toEqual(testResultResponse);
+    });
+  });
 });

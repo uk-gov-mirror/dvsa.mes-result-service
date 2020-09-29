@@ -79,6 +79,8 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const dePermittedQueries = ['driverNumber', 'applicationReference'];
 
+    const dlgPermittedQueries = ['driverNumber', 'applicationReference'];
+
     const isLDTM = event.requestContext.authorizer.examinerRole === UserRole.LDTM;
 
     // This is to be safe, incase new parameters are added for DE only in the future
@@ -90,7 +92,17 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       }
     }
 
-    if (!isLDTM) {
+    const isDLG = event.requestContext.authorizer.examinerRole === UserRole.DLG;
+
+    if (isDLG) {
+      for (const key in queryParameters) {
+        if (!dlgPermittedQueries.includes(key)) {
+          return createResponse(`DLG is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
+        }
+      }
+    }
+
+    if (!isLDTM && !isDLG) {
       for (const key in queryParameters) {
         if (!dePermittedQueries.includes(key)) {
           return createResponse(`DE is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);

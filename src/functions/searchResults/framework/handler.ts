@@ -1,4 +1,4 @@
-import { APIGatewayEvent, Context } from 'aws-lambda';
+import { APIGatewayEvent, AuthResponseContext, Context } from 'aws-lambda';
 import createResponse from '../../../common/application/utils/createResponse';
 import { HttpStatus } from '../../../common/application/api/HttpStatus';
 import Response from '../../../common/application/api/Response';
@@ -83,32 +83,32 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const isLDTM = event.requestContext.authorizer.examinerRole === UserRole.LDTM;
 
-    // This is to be safe, incase new parameters are added for DE only in the future
-    if (isLDTM) {
-      for (const key in queryParameters) {
-        if (!ldtmPermittedQueries.includes(key)) {
-          return createResponse(`LDTM is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
-        }
-      }
-    }
-
     const isDLG = event.requestContext.authorizer.examinerRole === UserRole.DLG;
 
-    if (isDLG) {
+    const staffNumber: string = getEmployeeIdFromRequestContext(event.requestContext);
+
+    const searchingForOwnTest = isSearchingForOwnTests(queryParameters, staffNumber);
+
+    // This is to be safe, incase new parameters are added for DE only in the future
+    if (isLDTM || searchingForOwnTest) {
+      for (const key in queryParameters) {
+        if (!ldtmPermittedQueries.includes(key)) {
+          const role = isLDTM ? 'LDTM' : 'User searching for own test';
+          return createResponse(`${role} is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
+        }
+      }
+    } else if (isDLG) {
       for (const key in queryParameters) {
         if (!dlgPermittedQueries.includes(key)) {
           return createResponse(`DLG is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
         }
       }
-    }
-
-    if (!isLDTM && !isDLG) {
+    } else if (!isLDTM && !isDLG) {
       for (const key in queryParameters) {
         if (!dePermittedQueries.includes(key)) {
           return createResponse(`DE is not permitted to use the parameter ${key}`, HttpStatus.BAD_REQUEST);
         }
       }
-      const staffNumber = getEmployeeIdFromRequestContext(event.requestContext);
       queryParameters.staffNumber = staffNumber;
     }
 
@@ -138,3 +138,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
   }
 
 }
+
+const isSearchingForOwnTests = (queryParameters: QueryParameters, staffNumber: string): boolean => {
+  return queryParameters && queryParameters.staffNumber === staffNumber;
+};

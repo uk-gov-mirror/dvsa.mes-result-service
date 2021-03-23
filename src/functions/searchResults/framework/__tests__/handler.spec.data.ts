@@ -46,6 +46,7 @@ export const queryParameter: QueryParameters = {
   driverNumber: 'SHAWX885220A99HC',
   applicationReference: '1234570231',
   dtcCode: 'EXTC1',
+  excludeAutoSavedTests: 'false',
 };
 
 export const queryParameterWith8DigitAppRef: QueryParameters = {
@@ -55,6 +56,7 @@ export const queryParameterWith8DigitAppRef: QueryParameters = {
   driverNumber: 'SHAWX885220A99HC',
   applicationReference: '12345702',
   dtcCode: 'EXTC1',
+  excludeAutoSavedTests: 'false',
 };
 
 export const testResultResponse = [

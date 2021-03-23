@@ -6,5 +6,5 @@ export class QueryParameters {
   driverNumber: string;
   dtcCode: string;
   applicationReference: string;
-
+  excludeAutoSavedTests: string;
 }

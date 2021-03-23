@@ -82,6 +82,7 @@ describe('searchResults handler', () => {
       dummyApigwEvent.queryStringParameters['dtcCode'] = queryParameter.dtcCode;
       dummyApigwEvent.queryStringParameters['staffNumber'] = queryParameter.staffNumber;
       dummyApigwEvent.queryStringParameters['applicationReference'] = queryParameter.applicationReference;
+      dummyApigwEvent.queryStringParameters['excludeAutoSavedTests'] = queryParameter.excludeAutoSavedTests;
       moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
       const resp = await handler(dummyApigwEvent, dummyContext);
       expect(resp.statusCode).toBe(200);
@@ -100,6 +101,8 @@ describe('searchResults handler', () => {
       dummyApigwEvent.queryStringParameters['driverNumber'] = queryParameterWith8DigitAppRef.driverNumber;
       dummyApigwEvent.queryStringParameters['dtcCode'] = queryParameterWith8DigitAppRef.dtcCode;
       dummyApigwEvent.queryStringParameters['staffNumber'] = queryParameterWith8DigitAppRef.staffNumber;
+      dummyApigwEvent.queryStringParameters['excludeAutoSavedTests'] =
+        queryParameterWith8DigitAppRef.excludeAutoSavedTests;
       dummyApigwEvent.queryStringParameters['applicationReference'] = queryParameterWith8DigitAppRef
         .applicationReference;
       moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));

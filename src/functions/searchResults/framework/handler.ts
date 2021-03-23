@@ -42,6 +42,10 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
     if (event.queryStringParameters.applicationReference) {
       queryParameters.applicationReference = event.queryStringParameters.applicationReference;
     }
+    if (event.queryStringParameters.excludeAutoSavedTests) {
+      queryParameters.excludeAutoSavedTests = event.queryStringParameters.excludeAutoSavedTests === 'true' ?
+        'true' : 'false';
+    }
 
     if (Object.keys(queryParameters).length === 0) {
       return createResponse('Query parameters have to be supplied', HttpStatus.BAD_REQUEST);
@@ -56,6 +60,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
       staffNumber: joi.number().optional(),
       dtcCode: joi.string().alphanum().optional(),
       appRef: joi.number().max(1000000000000).optional(),
+      excludeAutoSavedTests: joi.string().optional(),
     });
 
     const validationResult =
@@ -66,6 +71,7 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
         appRef: queryParameters.applicationReference,
         startDate: queryParameters.startDate,
         endDate: queryParameters.endDate,
+        excludeAutoSavedTests: queryParameters.excludeAutoSavedTests,
       },           parametersSchema);
 
     if (validationResult.error) {
@@ -74,12 +80,12 @@ export async function handler(event: APIGatewayEvent, fnCtx: Context): Promise<R
 
     const ldtmPermittedQueries = [
       'startDate', 'staffNumber', 'endDate', 'driverNumber',
-      'dtcCode', 'applicationReference',
+      'dtcCode', 'applicationReference', 'excludeAutoSavedTests',
     ];
 
-    const dePermittedQueries = ['driverNumber', 'applicationReference'];
+    const dePermittedQueries = ['driverNumber', 'applicationReference', 'excludeAutoSavedTests'];
 
-    const dlgPermittedQueries = ['driverNumber', 'applicationReference'];
+    const dlgPermittedQueries = ['driverNumber', 'applicationReference', 'excludeAutoSavedTests'];
 
     const isLDTM = event.requestContext.authorizer.examinerRole === UserRole.LDTM;
 

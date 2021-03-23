@@ -23,6 +23,10 @@ export const getConciseSearchResultsFromSearchQuery = (queryParameters: QueryPar
     parameterArray.push(queryParameters.staffNumber);
   }
 
+  if (queryParameters.excludeAutoSavedTests === 'true') {
+    queries.push('autosave <> 1');
+  }
+
   if (queryParameters.applicationReference) {
     if (queryParameters.applicationReference.toString().length === 8) {
       /*

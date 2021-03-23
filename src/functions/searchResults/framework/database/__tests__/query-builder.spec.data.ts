@@ -7,4 +7,5 @@ export const queryParameter: QueryParameters = {
   driverNumber: 'SHAWX885220A99HC',
   applicationReference: '1234570231',
   dtcCode: 'EXTC1',
+  excludeAutoSavedTests: 'true',
 };

@@ -147,7 +147,15 @@ export async function handler(event: APIGatewayEvent) {
 
     const result: TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
-    const results: TestResultSchemasUnion[] = result.map(row => row.test_result);
+    const results: any[] = result.map((row) => {
+      console.log();
+      return {
+        ...row.test_result,
+        autosave: row.autosave.readIntBE(0, row.autosave.length),
+      };
+    }
+    );
+
     const condensedTestResult: SearchResultTestSchema[] = [];
 
     for (const testResultRow of results) {
@@ -163,6 +171,7 @@ export async function handler(event: APIGatewayEvent) {
           activityCode: testResultRow.activityCode,
           passCertificateNumber: get(testResultRow, 'passCompletion.passCertificateNumber', null),
           grade: get(testResultRow, 'testData.review.grade', null),
+          autosave: testResultRow.autosave,
         },
       );
     }

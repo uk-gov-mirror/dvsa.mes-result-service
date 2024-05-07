@@ -78,6 +78,7 @@ export const testResultResponse = [
     candidateName: 'candidatename',
     passCertificateNumber: 'A123456X',
     grade: null,
+    autosave: 0,
   },
 ];
 
@@ -162,4 +163,5 @@ export const testResult: TestResultRecord[] = [{
     },
     passCompletion: { passCertificateNumber: 'A123456X' },
   },
+  autosave: Buffer.from([0x00]),
 }];

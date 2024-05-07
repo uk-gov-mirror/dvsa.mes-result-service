@@ -6,7 +6,7 @@ describe('QueryBuilder', () => {
   describe('getConciseSearchResultsFromSearchQuery', () => {
     it('should build a valid SELECT statement', () => {
       const result = getConciseSearchResultsFromSearchQuery(queryParameter as QueryParameters);
-      expect(result).toMatch(/SELECT test_result FROM TEST_RESULT/);
+      expect(result).toMatch(/SELECT test_result, autosave FROM TEST_RESULT/);
     });
     it('should order the results by Desc', () => {
       const result = getConciseSearchResultsFromSearchQuery(queryParameter as QueryParameters);
@@ -56,7 +56,7 @@ describe('QueryBuilder', () => {
 
     it('should change query to a sub query when rekey is provided', () => {
       const result = getConciseSearchResultsFromSearchQuery(queryParameterRekey);
-      expect(result).toContain('SELECT TR.test_result from (SELECT * FROM TEST_RESULT WHERE');
+      expect(result).toContain('SELECT TR.test_result, TR.autosave from (SELECT * FROM TEST_RESULT WHERE');
       expect(result).toContain('WHERE JSON_EXTRACT(TR.test_result, "$.rekey") = true');
     });
   });

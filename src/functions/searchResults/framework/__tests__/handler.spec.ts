@@ -1,4 +1,4 @@
-import { APIGatewayEvent, Context } from 'aws-lambda';
+import { APIGatewayEvent } from 'aws-lambda';
 import { handler } from '../handler';
 const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, It, Times } from 'typemoq';
@@ -114,6 +114,7 @@ describe('searchResults handler', () => {
       moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toBe(200);
+      console.log('JSON.parse(resp.body)', JSON.parse(resp.body));
       expect(JSON.parse(resp.body)).toEqual(testResultResponse);
       moqSearchResults.verify(x => x(It.isObjectWith(queryParameterWith8DigitAppRef)), Times.once());
     });

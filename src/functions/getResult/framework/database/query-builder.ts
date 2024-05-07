@@ -2,7 +2,7 @@ import * as mysql from 'mysql2';
 
 export const buildGetResultQuery = (appRef: number): string => {
   const template = `
-  SELECT TEST_RESULT.test_result
+  SELECT TEST_RESULT.test_result, autosave
   FROM TEST_RESULT
   WHERE application_reference = ?;
  `;

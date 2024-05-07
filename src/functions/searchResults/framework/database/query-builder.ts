@@ -65,9 +65,9 @@ export const getConciseSearchResultsFromSearchQuery = (queryParameters: QueryPar
 
   // If rekey is true then existing query becomes sub query, extracting only tests marked for rekey from the result
   if (queryParameters.rekey) {
-    queryString = queryString.concat('SELECT TR.test_result from (SELECT * FROM TEST_RESULT WHERE ');
+    queryString = queryString.concat('SELECT TR.test_result, TR.autosave from (SELECT * FROM TEST_RESULT WHERE ');
   } else {
-    queryString = queryString.concat('SELECT test_result FROM TEST_RESULT WHERE ');
+    queryString = queryString.concat('SELECT test_result, autosave FROM TEST_RESULT WHERE ');
   }
 
   queries.forEach((query) => {

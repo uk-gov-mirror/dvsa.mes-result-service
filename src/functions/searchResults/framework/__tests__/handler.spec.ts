@@ -114,7 +114,6 @@ describe('searchResults handler', () => {
       moqSearchResults.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toBe(200);
-      console.log('JSON.parse(resp.body)', JSON.parse(resp.body));
       expect(JSON.parse(resp.body)).toEqual(testResultResponse);
       moqSearchResults.verify(x => x(It.isObjectWith(queryParameterWith8DigitAppRef)), Times.once());
     });

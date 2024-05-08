@@ -148,7 +148,6 @@ export async function handler(event: APIGatewayEvent) {
     const result: TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
     const results: any[] = result.map((row) => {
-      console.log();
       return {
         ...row.test_result,
         autosave: row.autosave.readIntBE(0, row.autosave.length),

@@ -9,8 +9,7 @@ import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema';
 import { get } from 'lodash';
 import { ExaminerRole } from '@dvsa/mes-microservice-common/domain/examiner-role';
-import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
-import { TestResultRecord } from '../../../common/domain/test-results';
+import { TestResultRecord, TestResultSchemasUnionWithAutosave } from '../../../common/domain/test-results';
 import { getStaffNumberFromRequestContext } from '@dvsa/mes-microservice-common/framework/security/authorisation';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
@@ -147,7 +146,7 @@ export async function handler(event: APIGatewayEvent) {
 
     const result: TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
-    const results: any[] = result.map((row) => {
+    const results: TestResultSchemasUnionWithAutosave[] = result.map((row) => {
       return {
         ...row.test_result,
         autosave: row.autosave.readIntBE(0, row.autosave.length),

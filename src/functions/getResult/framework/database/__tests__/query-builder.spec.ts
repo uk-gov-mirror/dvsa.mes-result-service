@@ -5,8 +5,8 @@ describe('QueryBuilder', () => {
   describe('buildGetResultQuery', () => {
     it('should build a valid SELECT statement', () => {
       const result = buildGetResultQuery(applicationReference);
-      expect(result).toMatch(/SELECT TEST_RESULT.test_result/);
-      expect(result).toMatch(/FROM TEST_RESULT/);
+      expect(result).toMatch(/SELECT TR.test_result/);
+      expect(result).toMatch(/FROM TEST_RESULT TR/);
     });
     it('should have the correct applicationReference in the SELECT', () => {
       const result = buildGetResultQuery(applicationReference);

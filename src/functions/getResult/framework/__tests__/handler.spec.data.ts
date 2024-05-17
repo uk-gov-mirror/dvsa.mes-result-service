@@ -1,6 +1,4 @@
-import { CatBUniqueTypes } from '@dvsa/mes-test-schema/categories/B';
 import { TestResultRecord } from '../../../../common/domain/test-results';
-import { SearchResultTestSchema } from '@dvsa/mes-search-schema';
 
 // tslint:disable: variable-name
 export const sampleToken_12345678 =
@@ -134,6 +132,7 @@ export const testResult: TestResultRecord[] =
         communicationMethod: 'Post',
       },
     },
+    autosave: 0,
   }];
 
 export const moreThanOneTestResult: TestResultRecord[] = [

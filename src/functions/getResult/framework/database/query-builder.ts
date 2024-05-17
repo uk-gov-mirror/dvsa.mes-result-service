@@ -2,8 +2,8 @@ import * as mysql from 'mysql2';
 
 export const buildGetResultQuery = (appRef: number): string => {
   const template = `
-  SELECT TEST_RESULT.test_result
-  FROM TEST_RESULT
+  SELECT TR.test_result
+  FROM TEST_RESULT TR 
   WHERE application_reference = ?;
  `;
 

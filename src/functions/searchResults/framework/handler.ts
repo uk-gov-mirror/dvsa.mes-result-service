@@ -9,8 +9,7 @@ import { QueryParameters } from '../domain/query_parameters';
 import { SearchResultTestSchema } from '@dvsa/mes-search-schema';
 import { get } from 'lodash';
 import { ExaminerRole } from '@dvsa/mes-microservice-common/domain/examiner-role';
-import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
-import { TestResultRecord } from '../../../common/domain/test-results';
+import { TestResultRecord, TestResultSchemasUnionWithAutosave } from '../../../common/domain/test-results';
 import { getStaffNumberFromRequestContext } from '@dvsa/mes-microservice-common/framework/security/authorisation';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
@@ -147,7 +146,14 @@ export async function handler(event: APIGatewayEvent) {
 
     const result: TestResultRecord[] = await getConciseSearchResults(queryParameters);
 
-    const results: TestResultSchemasUnion[] = result.map(row => row.test_result);
+    const results: TestResultSchemasUnionWithAutosave[] = result.map((row) => {
+      return {
+        ...row.test_result,
+        autosave: row.autosave.readIntBE(0, row.autosave.length),
+      };
+    }
+    );
+
     const condensedTestResult: SearchResultTestSchema[] = [];
 
     for (const testResultRow of results) {
@@ -163,6 +169,7 @@ export async function handler(event: APIGatewayEvent) {
           activityCode: testResultRow.activityCode,
           passCertificateNumber: get(testResultRow, 'passCompletion.passCertificateNumber', null),
           grade: get(testResultRow, 'testData.review.grade', null),
+          autosave: testResultRow.autosave,
         },
       );
     }

@@ -40,6 +40,13 @@ functions:
           path: test-results/search-examiner-records
           method: get
 
+  getMultipleResults:
+    handler: src/functions/getMultipleResults/framework/handler.handler
+    events:
+      - http:
+          path: test-results/multiple-results
+          method: get
+
   getResult:
     handler: src/functions/getResult/framework/handler.handler
     events:

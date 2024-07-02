@@ -6,8 +6,6 @@ import { Mock, It, Times } from 'typemoq';
 import * as configService from '../../../../common/framework/config/config';
 import {
   sampleToken_12345678,
-  queryParameter,
-  testResults,
 } from './handler.spec.data';
 import * as multipleResultService from '../repositories/get-result-repository';
 import { HttpStatus } from '@dvsa/mes-microservice-common/application/api/http-status';

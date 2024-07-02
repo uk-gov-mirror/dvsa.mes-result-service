@@ -2,10 +2,12 @@ import { APIGatewayEvent } from 'aws-lambda';
 import { handler } from '../handler';
 
 const lambdaTestUtils = require('aws-lambda-test-utils');
-import { Mock, It, Times } from 'typemoq';
+import { Mock, Times } from 'typemoq';
 import * as configService from '../../../../common/framework/config/config';
 import {
+  encodedTestResult,
   sampleToken_12345678,
+  testResult,
 } from './handler.spec.data';
 import * as multipleResultService from '../repositories/get-result-repository';
 import { HttpStatus } from '@dvsa/mes-microservice-common/application/api/http-status';
@@ -72,10 +74,10 @@ describe('getMultipleResults', () => {
     it('should fail with bad request and give an error message - no staffNumber', async () => {
       dummyApigwEvent.queryStringParameters['staffNumber'] = '123456';
       dummyApigwEvent.queryStringParameters['applicationReferences'] = '123,234';
-      spyOn(multipleResultService, 'getMultipleResult').and.resolveTo([]);
+      spyOn(multipleResultService, 'getMultipleResult').and.resolveTo(testResult);
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toEqual(HttpStatus.OK);
-      expect(JSON.parse(resp.body)).toEqual('H4sIAAAAAAAAE4uOBQApu0wNAgAAAA==');
+      expect(JSON.parse(resp.body)).toEqual(encodedTestResult);
     });
 
     it('returns internal server error when getMultipleResult throws error', async () => {

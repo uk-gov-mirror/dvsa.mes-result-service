@@ -5,7 +5,7 @@ import { createResponse } from '@dvsa/mes-microservice-common/application/api/cr
 import { HttpStatus } from '@dvsa/mes-microservice-common/application/api/http-status';
 import { bootstrapLogging, error } from '@dvsa/mes-microservice-common/application/utils/logger';
 import { FullResultQueryParameters } from '../domain/query_parameters';
-import { TestResultRecord, TestResultSchemasUnionWithAutosave } from '../../../common/domain/test-results';
+import { TestResultRecord } from '../../../common/domain/test-results';
 import { gzipSync } from 'zlib';
 import { getMultipleResult } from './repositories/get-result-repository';
 
@@ -43,16 +43,7 @@ export async function handler(event: APIGatewayEvent) {
     const result: TestResultRecord[] =
       await getMultipleResult(queryParameters.staffNumber, queryParameters.applicationReferences);
 
-    const results: TestResultSchemasUnionWithAutosave[] =
-      result.map((row) => {
-        return {
-          ...row.test_result,
-          autosave: row.autosave.readIntBE(0, row.autosave.length),
-        };
-      },
-      );
-
-    const compressedPayload = gzipSync(JSON.stringify(results)).toString('base64');
+    const compressedPayload = gzipSync(JSON.stringify(result)).toString('base64');
     return createResponse(compressedPayload, HttpStatus.OK);
   } catch (err) {
     error('Internal server error', err);

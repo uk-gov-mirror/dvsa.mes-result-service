@@ -10,7 +10,7 @@ import {
 import * as multipleResultService from '../repositories/get-result-repository';
 import { HttpStatus } from '@dvsa/mes-microservice-common/application/api/http-status';
 
-fdescribe('getMultipleResults', () => {
+describe('getMultipleResults', () => {
   let dummyApigwEvent: APIGatewayEvent;
   const moqMultipleResults = Mock.ofInstance(multipleResultService.getMultipleResult);
   const moqBootstrapConfig = Mock.ofInstance(configService.bootstrapConfig);

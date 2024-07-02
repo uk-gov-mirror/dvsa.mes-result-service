@@ -5,12 +5,12 @@ const lambdaTestUtils = require('aws-lambda-test-utils');
 import { Mock, Times } from 'typemoq';
 import * as configService from '../../../../common/framework/config/config';
 import {
-  encodedTestResult,
   sampleToken_12345678,
   testResult,
 } from './handler.spec.data';
 import * as multipleResultService from '../repositories/get-result-repository';
 import { HttpStatus } from '@dvsa/mes-microservice-common/application/api/http-status';
+import { gzipSync } from 'zlib';
 
 describe('getMultipleResults', () => {
   let dummyApigwEvent: APIGatewayEvent;
@@ -71,13 +71,13 @@ describe('getMultipleResults', () => {
       expect(JSON.parse(resp.body)).toEqual('applicationReferences have to be supplied');
     });
 
-    it('should fail with bad request and give an error message - no staffNumber', async () => {
+    it('should return 200 with an encoded payload', async () => {
       dummyApigwEvent.queryStringParameters['staffNumber'] = '123456';
       dummyApigwEvent.queryStringParameters['applicationReferences'] = '123,234';
       spyOn(multipleResultService, 'getMultipleResult').and.resolveTo(testResult);
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toEqual(HttpStatus.OK);
-      expect(JSON.parse(resp.body)).toEqual(encodedTestResult);
+      expect(JSON.parse(resp.body)).toEqual(gzipSync(JSON.stringify(testResult)).toString('base64'));
     });
 
     it('returns internal server error when getMultipleResult throws error', async () => {

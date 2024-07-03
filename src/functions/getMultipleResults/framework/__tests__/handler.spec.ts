@@ -1,112 +1,92 @@
-// import { APIGatewayEvent } from 'aws-lambda';
-// import { handler } from '../handler';
-// const lambdaTestUtils = require('aws-lambda-test-utils');
-// import { Mock, It, Times } from 'typemoq';
-// import * as configSvc from '../../../../common/framework/config/config';
-// import {
-//   sampleToken_12345678,
-//   testResult,
-//   applicationReference,
-//   staffNumber,
-//   noTestResults,
-//   moreThanOneTestResult,
-// } from './handler.spec.data';
-// import * as getMultipleResultSvc from '../repositories/get-result-repository';
-// import { gunzipSync } from 'zlib';
-// import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
-//
-// describe('getResult handler', () => {
-//   let dummyApigwEvent: APIGatewayEvent;
-//   const moqGetResult = Mock.ofInstance(getMultipleResultSvc.getMultipleResult());
-//   const moqBootstrapConfig = Mock.ofInstance(configSvc.bootstrapConfig);
-//
-//   beforeEach(() => {
-//     moqBootstrapConfig.reset();
-//     moqGetResult.reset();
-//
-//     dummyApigwEvent = lambdaTestUtils.mockEventCreator.createAPIGatewayEvent({
-//       headers: {
-//         Authorization: sampleToken_12345678,
-//       },
-//     });
-//
-//     process.env.EMPLOYEE_ID_EXT_KEY = 'extn.employeeId';
-//
-//     spyOn(getMultipleResultSvc, 'getMultipleResult').and.callFake(moqGetResult.object);
-//     spyOn(configSvc, 'bootstrapConfig').and.callFake(moqBootstrapConfig.object);
-//   });
-//
-//   describe('configuration initialisation', () => {
-//     it('should always bootstrap the config', async () => {
-//       await handler(dummyApigwEvent);
-//       moqBootstrapConfig.verify(x => x(), Times.once());
-//     });
-//   });
-//
-//   // describe('handling of invalid application reference', () => {
-//   //   it('should fail with bad request', async () => {
-//   //     dummyApigwEvent.pathParameters['app-ref'] = '@invalidCharacter';
-//   //     const resp = await handler(dummyApigwEvent);
-//   //     expect(resp.statusCode).toBe(400);
-//   //   });
-//   // });
-//   //
-//   // describe('handling of invalid staffNumber reference', () => {
-//   //   it('should fail with bad request', async () => {
-//   //     dummyApigwEvent.pathParameters['staff-number'] = 'invalidStaffNumber';
-//   //     const resp = await handler(dummyApigwEvent);
-//   //     expect(resp.statusCode).toBe(400);
-//   //   });
-//   // });
-//   //
-//   // describe('handling of invalid staffNumber reference', () => {
-//   //   it('should fail with bad request', async () => {
-//   //     dummyApigwEvent.pathParameters['staff-number'] = '1234567890123';
-//   //     const resp = await handler(dummyApigwEvent);
-//   //     expect(resp.statusCode).toBe(400);
-//   //   });
-//   // });
-//   //
-//   // describe('no test results found', () => {
-//   //   it('should fail with bad request', async () => {
-//   //     dummyApigwEvent.pathParameters['app-ref'] = applicationReference.toString();
-//   //     dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
-//   //     moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(noTestResults));
-//   //     const resp = await handler(dummyApigwEvent);
-//   //     expect(resp.statusCode).toBe(400);
-//   //     expect(JSON.parse(resp.body)).toEqual('No records found matching criteria');
-//   //     moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
-//   //   });
-//   // });
-//   //
-//   // // This scenarion should never really happen, since each applicationReference is unique
-//   // // This is put in place as the service is supposed to return only one record at a time
-//   // describe('more than one test result found', () => {
-//   //   it('should fail with bad request', async () => {
-//   //     dummyApigwEvent.pathParameters['app-ref'] = applicationReference.toString();
-//   //     dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
-//   //     moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(moreThanOneTestResult));
-//   //     const resp = await handler(dummyApigwEvent);
-//   //     expect(resp.statusCode).toBe(400);
-//   //     expect(JSON.parse(resp.body)).toEqual('More than one record found, internal error');
-//   //     moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
-//   //   });
-//   // });
-//   //
-//   // describe('correct applicationReference and staffNumber', () => {
-//   //   it('should return a compressed test result matching the URL parameters', async () => {
-//   //     dummyApigwEvent.pathParameters['app-ref'] = applicationReference.toString();
-//   //     dummyApigwEvent.pathParameters['staff-number'] = staffNumber;
-//   //     moqGetResult.setup(x => x(It.isAny())).returns(() => Promise.resolve(testResult));
-//   //     const resp = await handler(dummyApigwEvent);
-//   //     expect(resp.statusCode).toBe(200);
-//   //     // Check that the compressed data matches the original test_result from the DB
-//   //
-//   //     const decompressedData = gunzipSync(Buffer.from(resp.body, 'base64'));
-//   //     const categoryBTest: TestResultSchemasUnion = JSON
-//   //       .parse(decompressedData.toString()) as TestResultSchemasUnion;
-//   //     expect(categoryBTest).toEqual(testResult[0].test_result);
-//   //     moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
-//   //   });
-//   // });
-// });
+import { APIGatewayEvent } from 'aws-lambda';
+import { handler } from '../handler';
+
+const lambdaTestUtils = require('aws-lambda-test-utils');
+import { Mock, Times } from 'typemoq';
+import * as configService from '../../../../common/framework/config/config';
+import {
+  sampleToken_12345678,
+  testResult,
+} from './handler.spec.data';
+import * as multipleResultService from '../repositories/get-result-repository';
+import { HttpStatus } from '@dvsa/mes-microservice-common/application/api/http-status';
+import { gzipSync } from 'zlib';
+
+describe('getMultipleResults', () => {
+  let dummyApigwEvent: APIGatewayEvent;
+  const moqMultipleResults = Mock.ofInstance(multipleResultService.getMultipleResult);
+  const moqBootstrapConfig = Mock.ofInstance(configService.bootstrapConfig);
+
+  beforeEach(() => {
+    moqBootstrapConfig.reset();
+    moqMultipleResults.reset();
+
+    dummyApigwEvent = lambdaTestUtils.mockEventCreator.createAPIGatewayEvent(
+      {
+        headers: {
+          Authorization: sampleToken_12345678,
+        },
+      },
+    );
+
+    process.env.EMPLOYEE_ID_EXT_KEY = 'extn.employeeId';
+
+    spyOn(configService, 'bootstrapConfig').and.callFake(moqBootstrapConfig.object);
+  });
+
+  describe('configuration initialisation', () => {
+    it('should always bootstrap the config', async () => {
+      await handler(dummyApigwEvent);
+      moqBootstrapConfig.verify(x => x(), Times.once());
+    });
+  });
+
+  describe('handler', () => {
+    it('should fail with bad request and give an error message', async () => {
+      dummyApigwEvent.queryStringParameters = null;
+      const resp = await handler(dummyApigwEvent);
+      expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
+      expect(JSON.parse(resp.body)).toEqual('Query parameters have to be supplied');
+    });
+
+    it('should fail with bad request and give an error message - no staffNumber', async () => {
+      dummyApigwEvent.queryStringParameters['whatever'] = 'randomvalue';
+      const resp = await handler(dummyApigwEvent);
+      expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
+      expect(JSON.parse(resp.body)).toEqual('staffNumber has to be supplied');
+    });
+
+    it('should fail with bad request and give an error message - staffNumber, no applicationReferences', async () => {
+      dummyApigwEvent.queryStringParameters['staffNumber'] = '123456';
+      const resp = await handler(dummyApigwEvent);
+      expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
+      expect(JSON.parse(resp.body)).toEqual('applicationReferences have to be supplied');
+    });
+
+    it('should fail with bad request and give an error message - applicationReferences wrong format', async () => {
+      dummyApigwEvent.queryStringParameters['staffNumber'] = '123456';
+      dummyApigwEvent.queryStringParameters['applicationReferences'] = '';
+      const resp = await handler(dummyApigwEvent);
+      expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
+      expect(JSON.parse(resp.body)).toEqual('applicationReferences have to be supplied');
+    });
+
+    it('should return 200 with an encoded payload', async () => {
+      dummyApigwEvent.queryStringParameters['staffNumber'] = '123456';
+      dummyApigwEvent.queryStringParameters['applicationReferences'] = '123,234';
+      spyOn(multipleResultService, 'getMultipleResult').and.resolveTo(testResult);
+      const resp = await handler(dummyApigwEvent);
+      expect(resp.statusCode).toEqual(HttpStatus.OK);
+      expect(JSON.parse(resp.body)).toEqual(gzipSync(JSON.stringify(testResult)).toString('base64'));
+    });
+
+    it('returns internal server error when getMultipleResult throws error', async () => {
+      dummyApigwEvent.queryStringParameters['staffNumber'] = '123456';
+      dummyApigwEvent.queryStringParameters['applicationReferences'] = '123,234';
+      spyOn(multipleResultService, 'getMultipleResult').and.throwError('Test error');
+      const resp = await handler(dummyApigwEvent);
+      expect(resp.statusCode).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
+    });
+
+  });
+});

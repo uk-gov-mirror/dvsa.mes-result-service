@@ -1,10 +1,10 @@
 import * as mysql from 'mysql2';
-import {Mock, It, IMock} from 'typemoq';
+import { Mock, It, IMock } from 'typemoq';
 import * as queryBuilder from '../../database/query-builder';
 import * as database from '../../../../../common/framework/mysql/database';
-import {Connection as PromiseConnection} from 'mysql2/promise';
-import {FieldPacket, RowDataPacket} from 'mysql2';
-import { multipleTestResultsQuery } from '../../database/query-builder';
+import { Connection as PromiseConnection } from 'mysql2/promise';
+import { FieldPacket, RowDataPacket } from 'mysql2';
+import { getMultipleResult } from '../get-result-repository';
 
 describe('GetResultRepository', () => {
   describe('getMultipleResult', () => {
@@ -42,9 +42,9 @@ describe('GetResultRepository', () => {
         .setup(x => x())
         .returns(() => {});
 
-      const result = await multipleTestResultsQuery(staffNumber, appRefs);
+      const result = await getMultipleResult(staffNumber, appRefs);
 
-      expect(result).toEqual('data');
+      expect(result).toEqual(expectedData);
     });
   });
 });

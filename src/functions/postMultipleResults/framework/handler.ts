@@ -8,40 +8,44 @@ import { FullResultQueryParameters } from '../domain/query_parameters';
 import { TestResultRecord } from '../../../common/domain/test-results';
 import { gzipSync } from 'zlib';
 import { getMultipleResult } from './repositories/get-result-repository';
+import { decompressRequestBody } from '../../../common/application/utils/decompression-service';
+import { getStaffNumberFromRequestContext } from '@dvsa/mes-microservice-common/framework/security/authorisation';
 
 export async function handler(event: APIGatewayEvent) {
   try {
-    bootstrapLogging('getMultipleResults', event);
+    bootstrapLogging('postMultipleResults', event);
 
     await bootstrapConfig();
 
     const queryParameters: FullResultQueryParameters = new FullResultQueryParameters();
+    const staffNumber: string = !process.env.IS_OFFLINE ?
+      getStaffNumberFromRequestContext(event.requestContext) : event.requestContext.authorizer.claims.employeeid;
 
-    if (!event.queryStringParameters) {
-      error('No query params supplied');
-      return createResponse('Query parameters have to be supplied', HttpStatus.BAD_REQUEST);
+    if (!event.body) {
+      error('Null or blank request body');
+      return createResponse('Null or blank request body', HttpStatus.BAD_REQUEST);
     }
 
-    if (!event.queryStringParameters.staffNumber) {
+    const parameters = decompressRequestBody(event.body);
+
+    if (!staffNumber) {
       error('No staffNumber supplied');
       return createResponse('staffNumber has to be supplied', HttpStatus.BAD_REQUEST);
     }
-    queryParameters.staffNumber = event.queryStringParameters.staffNumber;
 
-    if (!event.queryStringParameters.applicationReferences) {
+    if (!parameters.applicationReferences) {
       error('No applicationReferences supplied');
       return createResponse('applicationReferences have to be supplied', HttpStatus.BAD_REQUEST);
     }
 
-    queryParameters.applicationReferences = event.queryStringParameters.applicationReferences.split(',');
-    if (queryParameters.applicationReferences.length === 0) {
+    queryParameters.applicationReferences = parameters.applicationReferences;
+    if (parameters.applicationReferences.length === 0) {
       error('applicationReferences is empty or contains an empty string');
       return createResponse('applicationReferences cannot be empty', HttpStatus.BAD_REQUEST);
     }
 
-
     const result: TestResultRecord[] =
-      await getMultipleResult(queryParameters.staffNumber, queryParameters.applicationReferences);
+      await getMultipleResult(staffNumber, queryParameters.applicationReferences);
 
     const compressedPayload = gzipSync(JSON.stringify(result)).toString('base64');
     return createResponse(compressedPayload, HttpStatus.OK);

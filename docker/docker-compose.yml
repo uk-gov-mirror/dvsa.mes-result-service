@@ -12,6 +12,7 @@ services:
       - './results_database/010-database_creation.sql:/docker-entrypoint-initdb.d/010-database_creation.sql'
       - './results_database/020-test_results_table_test-data.sql:/docker-entrypoint-initdb.d/020-test_results_table_test-data.sql'
       - './results_database/021-test_results_table_test-data.sql:/docker-entrypoint-initdb.d/021-test_results_table_test-data.sql'
+      - './results_database/022-test_results_table_test-data_multiple_results.sql:/docker-entrypoint-initdb.d/022-test_results_table_test-data_multiple_results.sql'
       - './results_database/030_audit_email_regen_test_date.sql:/docker-entrypoint-initdb.d/030_audit_email_regen_test_date.sql'
     ports:
       - '3306:3306'

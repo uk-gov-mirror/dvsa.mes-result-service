@@ -51,6 +51,6 @@ export async function handler(event: APIGatewayEvent) {
     return createResponse(compressedPayload, HttpStatus.OK);
   } catch (err) {
     error('Internal server error', err);
-    return createResponse(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    return createResponse('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

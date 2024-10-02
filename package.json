@@ -39,8 +39,8 @@
     "mysql2": "^3.10.1"
   },
   "devDependencies": {
-    "@dvsa/mes-search-schema": "1.3.0",
-    "@dvsa/mes-test-schema": "3.42.5",
+    "@dvsa/mes-search-schema": "1.3.1",
+    "@dvsa/mes-test-schema": "3.43.1",
     "@types/aws-lambda": "^8.10.126",
     "@types/jasmine": "^5.1.2",
     "@types/node": "^20.9.2",

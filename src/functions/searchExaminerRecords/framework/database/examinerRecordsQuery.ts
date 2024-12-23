@@ -1,6 +1,7 @@
 export const examinerRecordsQuery = `SELECT
     application_reference AS 'appRef',
     category AS 'testCategory',
+    activity_code AS 'activityCode',
     JSON_OBJECT(
         'centreId', tc_id,
         'costCode', tc_cc,
@@ -42,6 +43,6 @@ export const examinerRecordsQuery = `SELECT
         WHEN JSON_CONTAINS_PATH(test_result, 'one', '$.testData.vehicleChecks.tellMeQuestions')
         THEN JSON_EXTRACT(test_result, '$.testData.vehicleChecks.tellMeQuestions')
     END AS tellMeQuestions
-FROM TEST_RESULT WHERE test_date >= ? AND test_date <= ? AND staff_number = ? 
+FROM TEST_RESULT WHERE test_date >= ? AND test_date <= ? AND staff_number = ? AND activity_code in (1, 2, 3, 4, 5)
 ORDER BY test_date DESC;
 `;

@@ -39,8 +39,6 @@ describe('postMultipleResults', () => {
       },
     );
 
-    process.env.EMPLOYEE_ID_EXT_KEY = 'extn.employeeId';
-
     spyOn(configService, 'bootstrapConfig').and.callFake(moqBootstrapConfig.object);
   });
 

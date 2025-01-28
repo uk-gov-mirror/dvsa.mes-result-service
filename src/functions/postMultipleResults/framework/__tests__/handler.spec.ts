@@ -39,27 +39,27 @@ describe('postMultipleResults', () => {
       },
     );
 
+    process.env.EMPLOYEE_ID_EXT_KEY = 'extn.employeeId';
+
     spyOn(configService, 'bootstrapConfig').and.callFake(moqBootstrapConfig.object);
   });
 
   describe('configuration initialisation', () => {
-    it('should bootstrap the config once', async () => {
+    it('should always bootstrap the config', async () => {
       await handler(dummyApigwEvent);
       moqBootstrapConfig.verify(x => x(), Times.once());
     });
   });
 
   describe('handler', () => {
-    it('should return bad request when request body is null', async () => {
+    it('should fail with bad request and give an error message', async () => {
       dummyApigwEvent.body = null;
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
       expect(JSON.parse(resp.body)).toEqual('Null or blank request body');
     });
-  });
 
-  describe('handling of invalid staffNumber reference', () => {
-    it('should return bad request when staffNumber is not supplied', async () => {
+    it('should fail with bad request and give an error message - no staffNumber', async () => {
       spyOn(authService, 'getStaffNumberFromRequestContext').and.returnValue(null);
       const bodyObject = { applicationReferences: ['123', '234'] };
       dummyApigwEvent.body = simulateEncodedCompressedBody(bodyObject);
@@ -67,10 +67,8 @@ describe('postMultipleResults', () => {
       expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
       expect(JSON.parse(resp.body)).toEqual('staffNumber has to be supplied');
     });
-  });
 
-  describe('handling of missing applicationReferences', () => {
-    it('should return bad request when applicationReferences are not supplied', async () => {
+    it('should fail with bad request and give an error message - staffNumber, no applicationReferences', async () => {
       spyOn(authService, 'getStaffNumberFromRequestContext').and.returnValue('1234567');
       const bodyObject = { something: null };
       dummyApigwEvent.body = simulateEncodedCompressedBody(bodyObject);
@@ -79,10 +77,8 @@ describe('postMultipleResults', () => {
       expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
       expect(JSON.parse(resp.body)).toEqual('applicationReferences have to be supplied');
     });
-  });
 
-  describe('handling of invalid applicationReferences format', () => {
-    it('should return bad request when applicationReferences are in wrong format', async () => {
+    it('should fail with bad request and give an error message - applicationReferences wrong format', async () => {
       spyOn(authService, 'getStaffNumberFromRequestContext').and.returnValue('1234567');
       const bodyObject = { applicationReferences: '' };
       dummyApigwEvent.body = simulateEncodedCompressedBody(bodyObject);
@@ -91,9 +87,7 @@ describe('postMultipleResults', () => {
       expect(resp.statusCode).toEqual(HttpStatus.BAD_REQUEST);
       expect(JSON.parse(resp.body)).toEqual('applicationReferences have to be supplied');
     });
-  });
 
-  describe('handling of valid parameters', () => {
     it('should return 200 with an encoded payload', async () => {
       spyOn(authService, 'getStaffNumberFromRequestContext').and.returnValue('1234567');
       const bodyObject = { applicationReferences: ['123', '234'] };
@@ -104,10 +98,8 @@ describe('postMultipleResults', () => {
       expect(resp.statusCode).toEqual(HttpStatus.OK);
       expect(JSON.parse(resp.body)).toEqual(gzipSync(JSON.stringify(testResult)).toString('base64'));
     });
-  });
 
-  describe('handling of getMultipleResult function errors', () => {
-    it('should return internal server error when getMultipleResult throws an error', async () => {
+    it('returns internal server error when getMultipleResult throws error', async () => {
       spyOn(authService, 'getStaffNumberFromRequestContext').and.returnValue('1234567');
       const bodyObject = { applicationReferences: ['123', '234'] };
       dummyApigwEvent.body = simulateEncodedCompressedBody(bodyObject);
@@ -116,6 +108,6 @@ describe('postMultipleResults', () => {
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     });
-  });
 
+  });
 });

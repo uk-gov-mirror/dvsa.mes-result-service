@@ -3,7 +3,6 @@ import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/
 
 export const examinerRecord: ExaminerRecordModel[] = [{
   appRef: 1,
-  activityCode: 1,
   testCentre: {centreId: 54321, costCode: 'EXTC1'},
   testCategory: TestCategory.B,
   startDate: '2019-06-26T09:07:00',

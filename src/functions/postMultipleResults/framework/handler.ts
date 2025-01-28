@@ -18,7 +18,8 @@ export async function handler(event: APIGatewayEvent) {
     await bootstrapConfig();
 
     const queryParameters: FullResultQueryParameters = new FullResultQueryParameters();
-    const staffNumber: string = getStaffNumberFromRequestContext(event.requestContext);
+    const staffNumber: string = !process.env.IS_OFFLINE ?
+      getStaffNumberFromRequestContext(event.requestContext) : event.requestContext.authorizer.claims.employeeid;
 
     if (!event.body) {
       error('Null or blank request body');

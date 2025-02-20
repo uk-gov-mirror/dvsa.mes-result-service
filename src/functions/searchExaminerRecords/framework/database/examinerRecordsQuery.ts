@@ -43,6 +43,10 @@ export const examinerRecordsQuery = `SELECT
         WHEN JSON_CONTAINS_PATH(test_result, 'one', '$.testData.vehicleChecks.tellMeQuestions')
         THEN JSON_EXTRACT(test_result, '$.testData.vehicleChecks.tellMeQuestions')
     END AS tellMeQuestions
-FROM TEST_RESULT WHERE test_date >= ? AND test_date <= ? AND staff_number = ? AND activity_code in (1, 2, 3, 4, 5)
+FROM TEST_RESULT 
+WHERE test_date >= ? AND test_date <= ? 
+  AND staff_number = ?
+  AND activity_code in (1, 2, 3, 4, 5)
+  AND JSON_UNQUOTE(JSON_EXTRACT(test_result, '$.journalData.testSlotAttributes.extendedTest')) != true
 ORDER BY test_date DESC;
 `;

@@ -39,7 +39,7 @@ export async function handler(event: APIGatewayEvent) {
     // Set the parameters from the event to the queryParameter holder object
     queryParameters.startDate = event.queryStringParameters.startDate ?
       event.queryStringParameters.startDate :
-      moment().subtract(2, 'years').format('YYYY-MM-DD').toString();
+      moment().subtract(18, 'months').format('YYYY-MM-DD').toString();
     queryParameters.endDate = event.queryStringParameters.endDate ?
       event.queryStringParameters.endDate :
       moment().format('YYYY-MM-DD').toString();

@@ -34,7 +34,9 @@ export const buildTestResultInsert = (
   `;
 
   const { journalData } = test;
-  const applicationReference = formatApplicationReference(journalData.applicationReference);
+  const applicationReference = journalData.applicationReference?.bookingId ?
+    journalData.applicationReference?.bookingId :
+    formatApplicationReference(journalData.applicationReference);
   const { staffNumber } = journalData.examiner;
   const testResult = JSON.stringify(test);
   const testDate = new Date(journalData.testSlotAttributes.start);
@@ -84,7 +86,9 @@ export const buildUploadQueueInsert = (test: TestResultSchemasUnion, integration
     ON DUPLICATE KEY UPDATE
       application_reference = ?
   `;
-  const applicationReference = formatApplicationReference(test.journalData.applicationReference);
+  const applicationReference = test.journalData.applicationReference?.bookingId ?
+    test.journalData.applicationReference?.bookingId :
+    formatApplicationReference(test.journalData.applicationReference);
   const { staffNumber } = test.journalData.examiner;
   const timestamp = new Date();
   const retryCount = 0;

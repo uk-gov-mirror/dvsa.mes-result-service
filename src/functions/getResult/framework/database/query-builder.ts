@@ -1,6 +1,6 @@
 import * as mysql from 'mysql2';
 
-export const buildGetResultQuery = (appRef: number): string => {
+export const buildGetResultQuery = (appRef: string): string => {
   const template = `
   SELECT TR.test_result
   FROM TEST_RESULT TR 

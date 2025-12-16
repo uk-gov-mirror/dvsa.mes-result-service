@@ -75,7 +75,7 @@ describe('getResult handler', () => {
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toBe(400);
       expect(JSON.parse(resp.body)).toEqual('No records found matching criteria');
-      moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetResult.verify(x => x(It.isValue(applicationReference.toString())), Times.once());
     });
   });
 
@@ -89,7 +89,7 @@ describe('getResult handler', () => {
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toBe(400);
       expect(JSON.parse(resp.body)).toEqual('More than one record found, internal error');
-      moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetResult.verify(x => x(It.isValue(applicationReference.toString())), Times.once());
     });
   });
 
@@ -106,7 +106,7 @@ describe('getResult handler', () => {
       const categoryBTest: TestResultSchemasUnion = JSON
         .parse(decompressedData.toString()) as TestResultSchemasUnion;
       expect(categoryBTest).toEqual(testResult[0].test_result);
-      moqGetResult.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetResult.verify(x => x(It.isValue(applicationReference.toString())), Times.once());
     });
   });
 });

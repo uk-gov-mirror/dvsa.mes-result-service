@@ -65,7 +65,7 @@ describe('getRegeneratedEmails handler', () => {
       const response = await handler(dummyApigwEvent);
       expect(response.statusCode).toBe(404);
       expect(JSON.parse(response.body)).toEqual('No records found matching criteria');
-      moqGetRegeneratedEmails.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetRegeneratedEmails.verify(x => x(It.isValue(applicationReference.toString())), Times.once());
     });
   });
 
@@ -80,7 +80,7 @@ describe('getRegeneratedEmails handler', () => {
       expect(response.statusCode).toBe(200);
       expect(singlarMatch.appRef).toEqual(applicationReference);
       expect(singlarMatch.emailRegenerationDetails.length).toEqual(1);
-      moqGetRegeneratedEmails.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetRegeneratedEmails.verify(x => x(It.isValue(applicationReference.toString())), Times.once());
     });
   });
 });

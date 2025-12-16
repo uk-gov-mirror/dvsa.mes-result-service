@@ -5,7 +5,7 @@ import { getConnection } from '../../../../common/framework/mysql/database';
 import { buildGetResultQuery } from '../database/query-builder';
 
 export const getResult = async (
-  appRef: number,
+  appRef: string,
 ): Promise<TestResultRecord[]> => {
   const connection: mysql.Connection = getConnection();
   let batch;

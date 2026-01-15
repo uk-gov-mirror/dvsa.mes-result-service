@@ -20,7 +20,7 @@ export async function handler(event: APIGatewayEvent) {
 
   // Joi schema to handle validation of queryStringParameters
   const batchSizeSchema = joi.object().keys({
-    interfaceTypeParam: joi.string().valid('TARS', 'RSIS', 'NOTIFY').required(),
+    interfaceTypeParam: joi.string().valid('TARS', 'RSIS', 'NOTIFY', 'DSP', 'MI').required(),
     batchSizeParam: joi.number().positive().required(),
   });
 

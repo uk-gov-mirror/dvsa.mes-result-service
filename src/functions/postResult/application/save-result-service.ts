@@ -33,10 +33,19 @@ const trySaveUploadQueueRecords = async (
   isPartialTestResult: boolean,
 ): Promise<void> => {
   if (!hasValidationError) {
-    await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.TARS));
+    const isTestForDSP = testResult.journalData.applicationReference.bookingReference
+      ? IntegrationType.DSP
+      : IntegrationType.TARS;
+
+    await connection.promise().query(buildUploadQueueInsert(testResult, isTestForDSP));
     await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.NOTIFY));
+
     if (!isPartialTestResult) {
-      await connection.promise().query(buildUploadQueueInsert(testResult, IntegrationType.RSIS));
+      const isTestForMI = testResult.journalData.applicationReference.bookingReference
+        ? IntegrationType.MI
+        : IntegrationType.RSIS;
+
+      await connection.promise().query(buildUploadQueueInsert(testResult, isTestForMI));
     }
   }
 };

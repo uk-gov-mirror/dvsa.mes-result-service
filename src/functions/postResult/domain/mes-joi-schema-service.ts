@@ -42,7 +42,7 @@ import { TestCategory } from '@dvsa/mes-test-schema/category-definitions/common/
  * using joi.validate() to determine the data received by /test-result endpoint
  * is valid.
  *
- * @param testResult: any
+ * @param testResult
  */
 export function validateMESJoiSchema(testResult: any): ValidationResult {
   const testResultCategory: string = getTestCategory(testResult);

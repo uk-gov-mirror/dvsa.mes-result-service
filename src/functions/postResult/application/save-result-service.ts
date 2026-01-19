@@ -1,6 +1,6 @@
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
 import * as mysql from 'mysql2';
-import {error, info} from '@dvsa/mes-microservice-common/application/utils/logger';
+import { error } from '@dvsa/mes-microservice-common/application/utils/logger';
 import { IntegrationType } from '../domain/result-integration';
 import { getConnection } from '../../../common/framework/mysql/database';
 import { buildTestResultInsert, buildUploadQueueInsert } from '../framework/database/query-builder';

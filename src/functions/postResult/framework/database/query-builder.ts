@@ -81,15 +81,13 @@ export const buildTestResultInsert = (
 };
 
 export const buildUploadQueueInsert = (test: TestResultSchemasUnion, integration: IntegrationType): string => {
-  const template = `
-        INSERT INTO UPLOAD_QUEUE (application_reference,
+  const template = `INSERT INTO UPLOAD_QUEUE (application_reference,
                                   staff_number,
                                   timestamp,
                                   interface,
                                   upload_status,
                                   retry_count)
-        VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
-        UPDATE
+        VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE
             application_reference = ?
     `;
   const applicationReference = test.journalData?.applicationReference?.bookingReference ?

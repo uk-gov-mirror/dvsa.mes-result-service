@@ -4,56 +4,48 @@ import { IntegrationType } from '../../domain/result-integration';
 import { ProcessingStatus } from '../../../../common/domain/processing-status';
 import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 import { TestResultSchemasUnion } from '@dvsa/mes-test-schema/categories';
-import {error, info} from '@dvsa/mes-microservice-common/application/utils/logger';
+import { error } from '@dvsa/mes-microservice-common/application/utils/logger';
 
 export const buildTestResultInsert = (
   test: TestResultSchemasUnion,
   isError: boolean = false,
   isPartialTest: boolean): string => {
   const template = `
-  INSERT INTO TEST_RESULT (
-    application_reference,
-    booking_reference,
-    staff_number,
-    test_result,
-    test_date,
-    tc_id,
-    tc_cc,
-    driver_number,
-    driver_surname,
-    result_status,
-    autosave,
-    activity_code,
-    category,
-    pass_certificate_number,
-    version,
-    app_version
-  )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  ON DUPLICATE KEY UPDATE
-    test_result = ?,
-    autosave = false
-  `;
+        INSERT INTO TEST_RESULT (application_reference,
+                                 booking_reference,
+                                 staff_number,
+                                 test_result,
+                                 test_date,
+                                 tc_id,
+                                 tc_cc,
+                                 driver_number,
+                                 driver_surname,
+                                 result_status,
+                                 autosave,
+                                 activity_code,
+                                 category,
+                                 pass_certificate_number,
+                                 version,
+                                 app_version)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
+        UPDATE
+            test_result = ?,
+            autosave = false
+    `;
 
   try {
-    info('building query');
-    const { journalData } = test;
-    info('bookingReference ', journalData?.applicationReference?.bookingReference);
-    info('applicationReference ', journalData?.applicationReference);
-    info('slotId ', journalData?.testSlotAttributes?.slotId);
+    const {journalData} = test;
     // If the test came from DSP, utilise the generated slot id as the application reference
     const applicationReference = journalData?.applicationReference?.bookingReference ?
       journalData?.testSlotAttributes?.slotId :
       formatApplicationReference(journalData?.applicationReference);
-    info('appRef ', applicationReference);
     const bookingReference = journalData?.applicationReference?.bookingReference ?? null;
-    info('bookingReference ', bookingReference);
-    const { staffNumber } = journalData.examiner;
+    const {staffNumber} = journalData.examiner;
     const testResult = JSON.stringify(test);
     const testDate = new Date(journalData.testSlotAttributes.start);
     const testCentreId = journalData.testCentre.centreId;
     const testCentreCostCode = journalData.testCentre.costCode;
-    const { driverNumber } = journalData.candidate;
+    const {driverNumber} = journalData.candidate;
     const driverSurname = journalData.candidate.candidateName.lastName;
     const activityCode = test.activityCode;
     const category = test.category;
@@ -90,21 +82,20 @@ export const buildTestResultInsert = (
 
 export const buildUploadQueueInsert = (test: TestResultSchemasUnion, integration: IntegrationType): string => {
   const template = `
-    INSERT INTO UPLOAD_QUEUE (
-      application_reference,
-      staff_number,
-      timestamp,
-      interface,
-      upload_status,
-      retry_count
-    ) VALUES (?, ?, ?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE
-      application_reference = ?
-  `;
+        INSERT INTO UPLOAD_QUEUE (application_reference,
+                                  staff_number,
+                                  timestamp,
+                                  interface,
+                                  upload_status,
+                                  retry_count)
+        VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY
+        UPDATE
+            application_reference = ?
+    `;
   const applicationReference = test.journalData?.applicationReference?.bookingReference ?
     test.journalData?.testSlotAttributes?.slotId :
     formatApplicationReference(test.journalData?.applicationReference);
-  const { staffNumber } = test.journalData.examiner;
+  const {staffNumber} = test.journalData.examiner;
   const timestamp = new Date();
   const retryCount = 0;
 

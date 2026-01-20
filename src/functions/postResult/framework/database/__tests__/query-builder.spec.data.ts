@@ -94,3 +94,95 @@ export const dummyTestResult: TestResultSchemasUnion = {
   examinerConducted: 12345678,
   examinerKeyed: 12345678,
 };
+export const dummyTestResultDSP: TestResultSchemasUnion = {
+  version: '0.0.1',
+  category: 'B',
+  appVersion: '0.0.0.1',
+  journalData: {
+    examiner: {
+      staffNumber: '999',
+    },
+    testCentre: {
+      centreId: 54321,
+      costCode: 'EXTC1',
+    },
+    testSlotAttributes: {
+      welshTest: false,
+      slotId: 999999999,
+      start: '2019-06-05T12:38:00+01:00',
+      vehicleTypeCode: 'C',
+      extendedTest: false,
+      specialNeeds: false,
+    },
+    candidate: {
+      candidateAddress: {
+        addressLine1: 'x Station Street',
+        addressLine2: 'Someplace',
+        addressLine3: 'Somearea',
+        addressLine4: 'Somecity',
+        postcode: 'UBxx xAA',
+      },
+      candidateId: 105,
+      candidateName: {
+        firstName: 'Ali',
+        lastName: 'Campbell',
+        title: 'Mr',
+      },
+      driverNumber: 'CAMPB805220A89HC',
+      mobileTelephone: '07654 123456',
+      primaryTelephone: '01234 567890',
+    },
+    applicationReference: {
+      bookingReference: 'A',
+    },
+  },
+  preTestDeclarations: {
+    insuranceDeclarationAccepted: false,
+    residencyDeclarationAccepted: false,
+    preTestSignature: '',
+  },
+  accompaniment: {},
+  vehicleDetails: {
+    registrationNumber: '',
+  },
+  instructorDetails: {},
+  testData: {
+    dangerousFaults: {},
+    drivingFaults: {},
+    manoeuvres: {},
+    seriousFaults: {},
+    testRequirements: {},
+    ETA: {},
+    eco: {},
+    controlledStop: {},
+    eyesightTest: {},
+    vehicleChecks: {
+      tellMeQuestion: {},
+      showMeQuestion: {},
+    },
+  },
+  passCompletion: {
+    provisionalLicenceProvided: true,
+    passCertificateNumber: 'abc123',
+  },
+  postTestDeclarations: {
+    healthDeclarationAccepted: false,
+    passCertificateNumberReceived: false,
+    postTestSignature: '',
+  },
+  testSummary: {
+    weatherConditions: [],
+    identification: 'Licence',
+  },
+  communicationPreferences: {
+    communicationMethod: 'Email',
+    conductedLanguage: 'English',
+    updatedEmail: '',
+  },
+  activityCode: '51',
+  rekey: false,
+  changeMarker: false,
+  examinerBooked: 12345678,
+  examinerConducted: 12345678,
+  examinerKeyed: 12345678,
+};

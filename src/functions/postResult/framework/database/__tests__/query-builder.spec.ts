@@ -1,5 +1,5 @@
 import {buildTestResultInsert, buildUploadQueueInsert} from '../query-builder';
-import {dummyTestResult} from './query-builder.spec.data';
+import {dummyTestResult, dummyTestResultDSP} from './query-builder.spec.data';
 import {IntegrationType} from '../../../domain/result-integration';
 
 describe('QueryBuilder', () => {
@@ -52,6 +52,10 @@ describe('QueryBuilder', () => {
       const result = buildTestResultInsert(dummyTestResult, false, false);
       expect(result).toMatch(/abc123/);
     });
+    it('should use slot id as the app ref if the test is sourced from dsp', () => {
+      const result = buildTestResultInsert(dummyTestResultDSP, false, false);
+      expect(result).toMatch(/999999999/);
+    });
   });
 
   describe('buildUploadQueueInsert', () => {
@@ -70,6 +74,10 @@ describe('QueryBuilder', () => {
       expect(result).toMatch(/(1234571026, '999', '2023-12-10 00:00:00.000', 0, 0, 0)/);
       expect(result).toMatch(/ON DUPLICATE KEY UPDATE/);
       expect(result).toMatch(/application_reference = 1234571026/);
+    });
+    it('should use slot id as the app ref if the test is sourced from dsp', () => {
+      const result = buildUploadQueueInsert(dummyTestResultDSP, IntegrationType.NOTIFY);
+      expect(result).toMatch(/999999999/);
     });
   });
 });

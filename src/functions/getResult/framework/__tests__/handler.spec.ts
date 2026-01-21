@@ -53,7 +53,7 @@ describe('getResult handler', () => {
 
   describe('handling of invalid staffNumber reference', () => {
     it('should fail with bad request', async () => {
-      dummyApigwEvent.pathParameters['staff-number'] = 'invalidStaffNumber';
+      dummyApigwEvent.pathParameters['staff-number'] = '!!!!!!!!!';
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toBe(400);
     });
@@ -61,7 +61,7 @@ describe('getResult handler', () => {
 
   describe('handling of invalid staffNumber reference', () => {
     it('should fail with bad request', async () => {
-      dummyApigwEvent.pathParameters['staff-number'] = '1234567890123';
+      dummyApigwEvent.pathParameters['staff-number'] = '!!!!!!!!!';
       const resp = await handler(dummyApigwEvent);
       expect(resp.statusCode).toBe(400);
     });

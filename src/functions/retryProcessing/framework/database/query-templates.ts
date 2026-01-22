@@ -63,7 +63,7 @@ export const selectErrorsWhichWillBeAbortedTemplate = `
       OR
       (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'DSP') AND uq.retry_count >= ?)
       OR
-      (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count < ?)
+      (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count >= ?)
     )
 `;
 
@@ -87,7 +87,7 @@ export const updateErrorsToAbortQueryTemplate = `
         OR
         (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'DSP') AND uq.retry_count >= ?)
         OR
-        (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count < ?)
+        (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count >= ?)
       )
   ) abort
     ON tr.application_reference = abort.application_reference

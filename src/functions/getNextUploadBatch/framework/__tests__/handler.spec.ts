@@ -22,6 +22,14 @@ describe('getNextUploadBatch handler', () => {
       const response = convertToInterfaceType('NOTIFY');
       expect(response).toBe(InterfaceTypes.NOTIFY);
     });
+    it('should return DSP', () => {
+      const response = convertToInterfaceType('DSP');
+      expect(response).toBe(InterfaceTypes.DSP);
+    });
+    it('should return MI', () => {
+      const response = convertToInterfaceType('MI');
+      expect(response).toBe(InterfaceTypes.MI);
+    });
     it('should return NO MATCH', () => {
       const response = convertToInterfaceType('NO MATCH');
       expect(response).toBe(InterfaceTypes.NO_MATCH_FOUND);

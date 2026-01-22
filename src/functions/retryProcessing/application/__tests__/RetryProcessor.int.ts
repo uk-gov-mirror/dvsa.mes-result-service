@@ -47,7 +47,7 @@ describe('RetryProcessor database test', () => {
     });
 
     it('should mark UPLOAD_QUEUE for reprocessing when they failed but not exceeded the retry limit', async () => {
-      const changedRowCount = await retryProcessor.processErrorsToRetry(3, 3, 3);
+      const changedRowCount = await retryProcessor.processErrorsToRetry(3, 3, 3, 2, 4);
       const appRefInterfaces = await getAppRefInterfaceCombosWithProcessingStatusAndRetriesOccurred(db);
 
       expect(changedRowCount).toBe(12);
@@ -115,7 +115,7 @@ describe('RetryProcessor database test', () => {
     });
 
     it('should abort TEST_RESULT records that have exceeded the retry count for any interface', async () => {
-      const changedRowCount = await retryProcessor.processErrorsToAbort(3, 3, 3);
+      const changedRowCount = await retryProcessor.processErrorsToAbort(3, 3, 3, 3, 3);
       const erroredTestAppRefs = await getErroredTestAppRefs(db);
 
       expect(changedRowCount).toBe(7);

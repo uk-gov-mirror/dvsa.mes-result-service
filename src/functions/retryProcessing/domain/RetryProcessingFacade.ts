@@ -1,6 +1,6 @@
-import { IRetryProcessingFacade } from './IRetryProcessingFacade';
-import { IRetryProcessor } from '../application/IRetryProcessor';
-import { getRetryConfig, retryConfig } from '../framework/retryConfig';
+import {IRetryProcessingFacade} from './IRetryProcessingFacade';
+import {IRetryProcessor} from '../application/IRetryProcessor';
+import {getRetryConfig, retryConfig} from '../framework/retryConfig';
 
 export class RetryProcessingFacade implements IRetryProcessingFacade {
   private retryProcessingRepository: IRetryProcessor;
@@ -12,21 +12,31 @@ export class RetryProcessingFacade implements IRetryProcessingFacade {
   async processRetries(): Promise<void> {
     await getRetryConfig();
 
+
     await this.retryProcessingRepository.processSuccessful();
+
     await this.retryProcessingRepository.processErrorsToRetry(
       retryConfig().rsisRetryCount,
       retryConfig().notifyRetryCount,
       retryConfig().tarsRetryCount,
+      retryConfig().dspRetryCount,
+      retryConfig().miRetryCount,
     );
+
     await this.retryProcessingRepository.processErrorsToLog(
       retryConfig().rsisRetryCount,
       retryConfig().notifyRetryCount,
       retryConfig().tarsRetryCount,
+      retryConfig().dspRetryCount,
+      retryConfig().miRetryCount,
     );
+
     await this.retryProcessingRepository.processErrorsToAbort(
       retryConfig().rsisRetryCount,
       retryConfig().notifyRetryCount,
       retryConfig().tarsRetryCount,
+      retryConfig().dspRetryCount,
+      retryConfig().miRetryCount,
     );
 
     await this.retryProcessingRepository.processSupportInterventions();

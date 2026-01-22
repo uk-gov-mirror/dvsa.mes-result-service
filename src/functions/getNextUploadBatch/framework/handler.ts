@@ -20,7 +20,7 @@ export async function handler(event: APIGatewayEvent) {
 
   // Joi schema to handle validation of queryStringParameters
   const batchSizeSchema = joi.object().keys({
-    interfaceTypeParam: joi.string().valid('TARS', 'RSIS', 'NOTIFY').required(),
+    interfaceTypeParam: joi.string().valid('TARS', 'RSIS', 'NOTIFY', 'DSP', 'MI').required(),
     batchSizeParam: joi.number().positive().required(),
   });
 
@@ -57,6 +57,8 @@ export function convertToInterfaceType(interfaceType: string) {
   case 'tars': return InterfaceTypes.TARS;
   case 'rsis': return InterfaceTypes.RSIS;
   case 'notify': return InterfaceTypes.NOTIFY;
+  case 'dsp': return InterfaceTypes.DSP;
+  case 'mi': return InterfaceTypes.MI;
   default: return InterfaceTypes.NO_MATCH_FOUND;
   }
 }

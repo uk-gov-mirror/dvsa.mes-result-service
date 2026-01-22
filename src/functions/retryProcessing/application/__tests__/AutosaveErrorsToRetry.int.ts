@@ -50,7 +50,7 @@ describe('AutoSaveErrorsToRetry', () => {
   });
 
   it('should set test_status of record to PROCESSING if  FAILED, should leave ACCEPTED untouched', async () => {
-    await retryProcessor.processErrorsToRetry(5, 5, 5);
+    await retryProcessor.processErrorsToRetry(5, 5, 5, 5, 5);
 
     expect(await getAutosaveQueueRecord(db, InterfaceIds.TARS , ErrorsToRetryTestCases.TarsFailedRsisFailed))
       .toContain(

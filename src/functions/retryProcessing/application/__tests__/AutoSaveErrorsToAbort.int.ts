@@ -56,7 +56,7 @@ describe('AutoSaveErrorsToAbort', () => {
 
   it('should set test_status of record to ERROR if TARS/NOTIFY entry is FAILED', async () => {
 
-    await retryProcessor.processErrorsToAbort(5, 5, 5);
+    await retryProcessor.processErrorsToAbort(5, 5, 5, 5, 5);
 
     // Tests that correct result records are set to ERROR state if ERROR TARS/Notify Record
     expect(await getErroredTestAppRef(db, ErrorsToAbortTestCases.TarsFailedNotifyFailed))

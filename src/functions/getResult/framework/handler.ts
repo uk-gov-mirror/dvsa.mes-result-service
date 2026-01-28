@@ -20,12 +20,12 @@ export async function handler(event: APIGatewayEvent) {
 
     await bootstrapConfig();
 
-    const appRefPathParam = parseInt(getAppRefFromPathParameters(event), 10);
+    const appRefPathParam = getAppRefFromPathParameters(event);
     const staffNumberParam = getStaffNumberFromPathParameters(event);
 
     const parametersSchema = joi.object().keys({
       staffNumber: joi.string().alphanum(),
-      appRef: joi.number().max(1000000000000),
+      appRef: joi.string().alphanum().max(16),
     });
 
     const validationResult = parametersSchema.validate({

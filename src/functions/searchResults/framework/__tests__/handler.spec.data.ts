@@ -72,7 +72,7 @@ export const testResultResponse = [
     costCode: 'EXTC1',
     testDate: '2019-06-26T09:07:00',
     driverNumber: 'DOEXX625220A99HC',
-    applicationReference: 1234569019,
+    applicationReference: '1234569019',
     category: 'B',
     activityCode: '2',
     candidateName: 'candidatename',

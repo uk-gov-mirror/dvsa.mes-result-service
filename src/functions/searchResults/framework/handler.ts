@@ -11,7 +11,7 @@ import { get } from 'lodash';
 import { ExaminerRole } from '@dvsa/mes-microservice-common/domain/examiner-role';
 import { TestResultRecord, TestResultSchemasUnionWithAutosave } from '../../../common/domain/test-results';
 import { getStaffNumberFromRequestContext } from '@dvsa/mes-microservice-common/framework/security/authorisation';
-import { formatApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
+import { getFormattedApplicationReference } from '@dvsa/mes-microservice-common/domain/tars';
 
 export async function handler(event: APIGatewayEvent) {
   try {
@@ -78,7 +78,7 @@ export async function handler(event: APIGatewayEvent) {
       staffNumber: joi.string().alphanum().optional(),
       rekey: joi.boolean().optional(),
       dtcCode: joi.string().alphanum().optional(),
-      appRef: joi.number().max(1000000000000).optional(),
+      appRef: joi.string().alphanum().optional(),
       excludeAutoSavedTests: joi.string().optional(),
       activityCode: joi.string().alphanum().optional(),
       category: joi.string().optional(),
@@ -164,7 +164,7 @@ export async function handler(event: APIGatewayEvent) {
           testDate: testResultRow.journalData.testSlotAttributes.start,
           driverNumber: testResultRow.journalData.candidate.driverNumber,
           candidateName: testResultRow.journalData.candidate.candidateName,
-          applicationReference: formatApplicationReference(appRef),
+          applicationReference: getFormattedApplicationReference(appRef),
           category: testResultRow.category,
           activityCode: testResultRow.activityCode,
           passCertificateNumber: get(testResultRow, 'passCompletion.passCertificateNumber', null),

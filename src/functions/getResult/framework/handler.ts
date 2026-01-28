@@ -25,7 +25,7 @@ export async function handler(event: APIGatewayEvent) {
 
     const parametersSchema = joi.object().keys({
       staffNumber: joi.string().alphanum(),
-      appRef: joi.string().alphanum(),
+      appRef: joi.string().alphanum().max(16),
     });
 
     const validationResult = parametersSchema.validate({

@@ -30,7 +30,7 @@ describe('GetRegeneratedEmailsRepository', () => {
     });
 
     it('should return data on successful execution', async () => {
-      const appRef = 123;
+      const appRef = '123';
       const expectedData = [];
 
       mockQueryFunction

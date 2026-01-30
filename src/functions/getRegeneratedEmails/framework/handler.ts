@@ -16,9 +16,9 @@ export async function handler(event: APIGatewayEvent) {
 
     await bootstrapConfig();
 
-    const appRefPathParam = parseInt(getAppRefFromPathParameters(event), 10);
+    const appRefPathParam = getAppRefFromPathParameters(event);
 
-    const parametersSchema = joi.number().max(1000000000000);
+    const parametersSchema = joi.string().max(50);
     const validationResult = parametersSchema.validate(appRefPathParam);
 
     if (validationResult.error) {

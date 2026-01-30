@@ -1,6 +1,6 @@
 import * as mysql from 'mysql2';
 
-export const buildGetRegeneratedEmailQuery = (appRef: number): string => {
+export const buildGetRegeneratedEmailQuery = (appRef: string): string => {
   const template = `
     SELECT application_reference as appRef,
            JSON_ARRAYAGG(

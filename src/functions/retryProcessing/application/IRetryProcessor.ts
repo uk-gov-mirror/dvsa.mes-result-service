@@ -6,18 +6,24 @@ export interface IRetryProcessor {
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
+    dspRetryCount: number,
+    miRetryCount: number,
   ): Promise<number>;
 
   processErrorsToLog(
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
+    dspRetryCount: number,
+    miRetryCount: number,
   ): Promise<void>;
 
   processErrorsToAbort(
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
+    dspRetryCount: number,
+    miRetryCount: number,
   ): Promise<number>;
 
   processSupportInterventions(): Promise<number>;

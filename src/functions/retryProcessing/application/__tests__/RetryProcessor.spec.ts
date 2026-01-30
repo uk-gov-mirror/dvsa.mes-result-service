@@ -24,14 +24,14 @@ describe('retryProcessor', () => {
     describe('processErrorsToRetry', () => {
       it('should rollback the connection and resolve when any error occurs', async () => {
         connectionSpy.promise().query.and.throwError('query failed');
-        await realRetryProcessor.processErrorsToRetry(5, 5, 5);
+        await realRetryProcessor.processErrorsToRetry(5, 5, 5, 5, 5);
         expect(connectionSpy.rollback).toHaveBeenCalled();
       });
     });
     describe('processErrorsToAbort', () => {
       it('should rollback the connection and resolve when any error occurs', async () => {
         connectionSpy.promise().query.and.throwError('query failed');
-        await realRetryProcessor.processErrorsToAbort(5, 5, 5);
+        await realRetryProcessor.processErrorsToAbort(5, 5, 5, 5, 5);
         expect(connectionSpy.rollback).toHaveBeenCalled();
       });
     });

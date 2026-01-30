@@ -31,6 +31,10 @@ export const updateErrorsToRetryQueryTemplate = `
           (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'NOTIFY') AND uq.retry_count < ?)
           OR
           (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'TARS') AND uq.retry_count < ?)
+          OR
+          (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'DSP') AND uq.retry_count < ?)
+          OR
+          (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count < ?)
         )
   ) uq2
     ON uq1.application_reference = uq2.application_reference
@@ -56,6 +60,10 @@ export const selectErrorsWhichWillBeAbortedTemplate = `
       (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'NOTIFY') AND uq.retry_count >= ?)
       OR
       (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'TARS') AND uq.retry_count >= ?)
+      OR
+      (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'DSP') AND uq.retry_count >= ?)
+      OR
+      (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count >= ?)
     )
 `;
 
@@ -76,6 +84,10 @@ export const updateErrorsToAbortQueryTemplate = `
         (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'NOTIFY') AND uq.retry_count >= ?)
         OR
         (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'TARS') AND uq.retry_count >= ?)
+        OR
+        (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'DSP') AND uq.retry_count >= ?)
+        OR
+        (uq.interface = (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'MI') AND uq.retry_count >= ?)
       )
   ) abort
     ON tr.application_reference = abort.application_reference

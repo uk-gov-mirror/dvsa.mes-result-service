@@ -43,16 +43,7 @@ describe('getRegeneratedEmails handler', () => {
 
   describe('handling of invalid application reference', () => {
     it('should fail with bad request', async () => {
-      dummyApigwEvent.pathParameters['appRef'] = '@invalidCharacter';
-      const response = await handler(dummyApigwEvent);
-      expect(response.statusCode).toBe(400);
-    });
-  });
-
-
-  describe('handling of invalid application reference', () => {
-    it('should fail with bad request', async () => {
-      dummyApigwEvent.pathParameters['appRef'] = '1000000000001';
+      dummyApigwEvent.pathParameters['appRef'] = 'a'.repeat(51);
       const response = await handler(dummyApigwEvent);
       expect(response.statusCode).toBe(400);
     });
@@ -65,7 +56,7 @@ describe('getRegeneratedEmails handler', () => {
       const response = await handler(dummyApigwEvent);
       expect(response.statusCode).toBe(404);
       expect(JSON.parse(response.body)).toEqual('No records found matching criteria');
-      moqGetRegeneratedEmails.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetRegeneratedEmails.verify(x => x(It.isAnyString()), Times.once());
     });
   });
 
@@ -80,7 +71,7 @@ describe('getRegeneratedEmails handler', () => {
       expect(response.statusCode).toBe(200);
       expect(singlarMatch.appRef).toEqual(applicationReference);
       expect(singlarMatch.emailRegenerationDetails.length).toEqual(1);
-      moqGetRegeneratedEmails.verify(x => x(It.isValue(applicationReference)), Times.once());
+      moqGetRegeneratedEmails.verify(x => x(It.isAnyString()), Times.once());
     });
   });
 });

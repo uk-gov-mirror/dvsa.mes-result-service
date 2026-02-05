@@ -20,14 +20,18 @@ export const buildMarkTestProcessedQuery = () => mysql.format(markTestProcessedQ
  * @param rsisRetryCount
  * @param notifyRetryCount
  * @param tarsRetryCount
+ * @param dspRetryCount
+ * @param miRetryCount
  */
 export const buildUpdateErrorsToRetryQuery = (
   rsisRetryCount: number,
   notifyRetryCount: number,
   tarsRetryCount: number,
+  dspRetryCount: number,
+  miRetryCount: number,
 ) => mysql.format(
   updateErrorsToRetryQueryTemplate,
-  [rsisRetryCount, notifyRetryCount, tarsRetryCount],
+  [rsisRetryCount, notifyRetryCount, tarsRetryCount, dspRetryCount, miRetryCount],
 );
 
 /**
@@ -36,14 +40,18 @@ export const buildUpdateErrorsToRetryQuery = (
  * @param rsisRetryCount
  * @param notifyRetryCount
  * @param tarsRetryCount
+ * @param dspRetryCount
+ * @param miRetryCount
  */
 export const buildSelectTestsExceedingRetryQuery = (
   rsisRetryCount: number,
   notifyRetryCount: number,
   tarsRetryCount: number,
+  dspRetryCount: number,
+  miRetryCount: number,
 ) => mysql.format(
   selectErrorsWhichWillBeAbortedTemplate,
-  [rsisRetryCount, notifyRetryCount, tarsRetryCount],
+  [rsisRetryCount, notifyRetryCount, tarsRetryCount, dspRetryCount, miRetryCount],
 );
 
 /**
@@ -52,14 +60,18 @@ export const buildSelectTestsExceedingRetryQuery = (
  * @param rsisRetryCount
  * @param notifyRetryCount
  * @param tarsRetryCount
+ * @param dspRetryCount
+ * @param miRetryCount
  */
 export const buildAbortTestsExceeingRetryQuery = (
   rsisRetryCount: number,
   notifyRetryCount: number,
   tarsRetryCount: number,
+  dspRetryCount: number,
+  miRetryCount: number,
 ) => mysql.format(
   abortTestsExceedingRetryQueryTemplate,
-  [rsisRetryCount, notifyRetryCount, tarsRetryCount],
+  [rsisRetryCount, notifyRetryCount, tarsRetryCount, dspRetryCount, miRetryCount],
 );
 
 export const buildDeleteAcceptedQueueRowsQuery = (cutOffPointInDays: number) => {

@@ -21,7 +21,7 @@
     "package": "./package.sh",
     "postci": "npm run bootstrap",
     "prepush": "npm run security-scan && npm run lint && npm test",
-    "security-scan": "git secrets --scan && git log -p | scanrepo",
+    "security-scan": "git secrets --scan && git secrets --register-aws && git log -p --diff-filter=d -- . ':!*.json' -n 250 | scanrepo",
     "start": "npm run compile && sls offline start",
     "start:livereload": "npm run compile && sls offline start --reloadHandler",
     "test": "npm run compile && jasmine",

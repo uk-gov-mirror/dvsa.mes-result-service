@@ -46,11 +46,13 @@ export class RetryProcessor implements IRetryProcessor {
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
+    dspRetryCount: number,
+    miRetryCount: number,
   ): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().query<mysql.ResultSetHeader>(
-        buildUpdateErrorsToRetryQuery(rsisRetryCount, notifyRetryCount, tarsRetryCount)
+        buildUpdateErrorsToRetryQuery(rsisRetryCount, notifyRetryCount, tarsRetryCount, dspRetryCount, miRetryCount)
       );
       const changedRowCount = rows.affectedRows;
       customMetric(
@@ -69,10 +71,18 @@ export class RetryProcessor implements IRetryProcessor {
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
+    dspRetryCount: number,
+    miRetryCount: number,
   ): Promise<void> {
     try {
       const [rows] = await this.connection.promise().query<mysql.RowDataPacket[]>(
-        buildSelectTestsExceedingRetryQuery(rsisRetryCount, notifyRetryCount, tarsRetryCount),
+        buildSelectTestsExceedingRetryQuery(
+          rsisRetryCount,
+          notifyRetryCount,
+          tarsRetryCount,
+          dspRetryCount,
+          miRetryCount
+        ),
       );
 
       rows.forEach((row) => {
@@ -98,11 +108,13 @@ export class RetryProcessor implements IRetryProcessor {
     rsisRetryCount: number,
     notifyRetryCount: number,
     tarsRetryCount: number,
+    dspRetryCount: number,
+    miRetryCount: number,
   ): Promise<number> {
     try {
       await this.connection.promise().beginTransaction();
       const [rows] = await this.connection.promise().query<mysql.ResultSetHeader>(
-        buildAbortTestsExceeingRetryQuery(rsisRetryCount, notifyRetryCount, tarsRetryCount)
+        buildAbortTestsExceeingRetryQuery(rsisRetryCount, notifyRetryCount, tarsRetryCount, dspRetryCount, miRetryCount)
       );
       const changedRowCount = rows.affectedRows;
       customMetric(

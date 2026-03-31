@@ -35,13 +35,14 @@ export const getConciseSearchResultsFromSearchQuery = (queryParameters: QueryPar
         Uses range query to find appRefs between those numbers
         Most performant way of implementing the 8 digit app ref search
       */
-      queries.push('((booking_reference = ?) ' +
+      queries.push('((UPPER(REPLACE(booking_reference, \' \', \'\')) = UPPER(REPLACE(?, \' \', \'\'))) ' +
           'OR (booking_reference IS NULL and (application_reference >= ? AND application_reference <= ?)))');
       parameterArray.push(queryParameters.applicationReference);
       parameterArray.push(`${queryParameters.applicationReference}000`);
       parameterArray.push(`${queryParameters.applicationReference}999`);
     } else {
-      queries.push('((booking_reference = ?) OR (booking_reference IS NULL and application_reference = ?))');
+      queries.push('((UPPER(REPLACE(booking_reference, \' \', \'\')) = UPPER(REPLACE(?, \' \', \'\'))) ' +
+                     'OR (booking_reference IS NULL and application_reference = ?))');
       parameterArray.push(queryParameters.applicationReference);
       parameterArray.push(queryParameters.applicationReference);
     }

@@ -56,6 +56,10 @@ describe('QueryBuilder', () => {
       const result = buildTestResultInsert(dummyTestResultDSP, false, false);
       expect(result).toMatch(/999999999/);
     });
+    it('should use a default testCentreId of 99999 if the test is sourced from dsp', () => {
+      const result = buildTestResultInsert(dummyTestResultDSP, false, false);
+      expect(result).toMatch(/99999/);
+    });
   });
 
   describe('buildUploadQueueInsert', () => {

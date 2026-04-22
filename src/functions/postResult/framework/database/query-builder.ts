@@ -43,7 +43,9 @@ export const buildTestResultInsert = (
     const {staffNumber} = journalData.examiner;
     const testResult = JSON.stringify(test);
     const testDate = new Date(journalData.testSlotAttributes.start);
-    const testCentreId = journalData.testCentre.centreId;
+    // set default test centre id to 99999 for DSP tests
+    const testCentreId = journalData?.applicationReference?.bookingReference ?
+      99999 : journalData.testCentre.centreId;
     const testCentreCostCode = journalData.testCentre.costCode;
     const {driverNumber} = journalData.candidate;
     const driverSurname = journalData.candidate.candidateName.lastName;

@@ -103,7 +103,7 @@ export const dummyTestResultDSP: TestResultSchemasUnion = {
       staffNumber: '999',
     },
     testCentre: {
-      centreId: 54321,
+      centreId: 0,
       costCode: 'EXTC1',
     },
     testSlotAttributes: {

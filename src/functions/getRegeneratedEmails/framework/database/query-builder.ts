@@ -1,8 +1,11 @@
 import * as mysql from 'mysql2';
 
 export const buildGetRegeneratedEmailQuery = (appRef: string): string => {
+  // Trim spaces and convert to uppercase for consistent comparison
+  const sanitizedAppRef = appRef?.trim().toUpperCase() || '';
+
   const template = `
-    SELECT application_reference as appRef,
+    SELECT COALESCE(application_reference, booking_reference) as appRef,
            JSON_ARRAYAGG(
                 JSON_OBJECT(
                     'newEmail', new_email,
@@ -10,8 +13,9 @@ export const buildGetRegeneratedEmailQuery = (appRef: string): string => {
                     'newLanguage', new_language
                 )
            ) as emailRegenerationDetails
-    FROM AUDIT_EMAIL_REGEN where application_reference = ?;
+    FROM AUDIT_EMAIL_REGEN
+    WHERE application_reference = ? OR UPPER(TRIM(booking_reference)) = ?
  `;
 
-  return mysql.format(template, [appRef]);
+  return mysql.format(template, [appRef, sanitizedAppRef]);
 };

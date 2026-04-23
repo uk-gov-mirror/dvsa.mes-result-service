@@ -31,7 +31,7 @@
     "sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner"
   },
   "dependencies": {
-    "@aws-sdk/rds-signer": "^3.1018.0",
+    "@aws-sdk/rds-signer": "^3.1035.0",
     "@dvsa/mes-microservice-common": "1.2.4",
     "enjoi": "^9.0.1",
     "joi": "^17.13.3",

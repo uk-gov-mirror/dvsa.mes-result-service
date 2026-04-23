@@ -14,7 +14,7 @@ describe('QueryBuilder', () => {
       expect(result).toContain(') as emailRegenerationDetails');
       expect(result).toContain('FROM AUDIT_EMAIL_REGEN');
       expect(result).toContain('WHERE application_reference');
-      expect(result).toContain('OR UPPER(TRIM(booking_reference))');
+      expect(result).toContain('OR UPPER(REPLACE(booking_reference, \' \', \'\'))');
     });
     it('should have the correct applicationReference in the SELECT', () => {
       const result = buildGetRegeneratedEmailQuery(applicationReference);

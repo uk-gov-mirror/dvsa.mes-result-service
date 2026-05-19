@@ -12,7 +12,7 @@ import {
   getAppRefFromPathParameters,
   getStaffNumberFromPathParameters,
 } from '../../../common/application/utils/getPathParms';
-import {bootstrapLogging, error} from '@dvsa/mes-microservice-common/application/utils/logger';
+import { bootstrapLogging, error } from '@dvsa/mes-microservice-common/application/utils/logger';
 
 export async function handler(event: APIGatewayEvent) {
   try {

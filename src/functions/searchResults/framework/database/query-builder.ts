@@ -1,5 +1,6 @@
 import * as mysql from 'mysql2';
 import { QueryParameters } from '../../domain/query_parameters';
+import { isBookingReference, formatBookingReference } from '../../../../common/application/utils/reference-utils';
 
 export const getConciseSearchResultsFromSearchQuery = (queryParameters: QueryParameters): string => {
   const parameterArray: string[] = [];
@@ -29,22 +30,21 @@ export const getConciseSearchResultsFromSearchQuery = (queryParameters: QueryPar
   }
 
   if (queryParameters.applicationReference) {
-    if (queryParameters.applicationReference.length === 8) {
+    if (isBookingReference(queryParameters.applicationReference)) {
+      queries.push('booking_reference = ?');
+      parameterArray.push(formatBookingReference(queryParameters.applicationReference));
+    } else if (queryParameters.applicationReference.length === 8) {
       /*
         Finds appRefs based on 8 digits provided
         Uses range query to find appRefs between those numbers
         Most performant way of implementing the 8 digit app ref search
       */
-      queries.push('((UPPER(REPLACE(booking_reference, \' \', \'\')) = UPPER(REPLACE(?, \' \', \'\'))) ' +
-          'OR (booking_reference IS NULL and (application_reference >= ? AND application_reference <= ?)))');
-      parameterArray.push(queryParameters.applicationReference);
-      parameterArray.push(`${queryParameters.applicationReference}000`);
-      parameterArray.push(`${queryParameters.applicationReference}999`);
+      queries.push('application_reference >= ? AND application_reference <= ?');
+      parameterArray.push(`${queryParameters.applicationReference.toString()}000`);
+      parameterArray.push(`${queryParameters.applicationReference.toString()}999`);
     } else {
-      queries.push('((UPPER(REPLACE(booking_reference, \' \', \'\')) = UPPER(REPLACE(?, \' \', \'\'))) ' +
-                     'OR (booking_reference IS NULL and application_reference = ?))');
-      parameterArray.push(queryParameters.applicationReference);
-      parameterArray.push(queryParameters.applicationReference);
+      queries.push('application_reference = ?');
+      parameterArray.push(queryParameters.applicationReference.toString());
     }
   }
 

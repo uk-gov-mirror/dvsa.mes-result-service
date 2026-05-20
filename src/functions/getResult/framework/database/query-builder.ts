@@ -1,14 +1,9 @@
 import * as mysql from 'mysql2';
-
-const bookingRefRegex = /^D\s?\d{3}\s?\d{3}\s?\d{2}[ABCDEFGHJKLMNPQRTUVWXYZ\d]$/;
+import { isBookingReference, formatBookingReference } from '../../../../common/application/utils/reference-utils';
 
 export const buildGetResultQuery = (appRef: string): string => {
-  if (bookingRefRegex.test(appRef)) {
-    const formattedRef = appRef.replace(
-      /^D\s?(\d{3})\s?(\d{3})\s?(\d{2}[ABCDEFGHJKLMNPQRTUVWXYZ\d])$/,
-      'D $1 $2 $3',
-    );
-    return buildGetResultByBookingRefQuery(formattedRef);
+  if (isBookingReference(appRef)) {
+    return buildGetResultByBookingRefQuery(formatBookingReference(appRef));
   }
   return buildGetResultByApplicationRefQuery(appRef);
 };

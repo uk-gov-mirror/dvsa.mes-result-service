@@ -148,6 +148,41 @@ describe('Joi schema validation service', () => {
     expect(validationResult.error).toBeUndefined();
   });
 
+  it('should not return a validation error if \'testSlotAttributes.vehicleTypeCode\' is not provided', () => {
+    const invalidSchema = {
+      version: '0.0.1',
+      activityCode: '1',
+      category: 'B',
+      journalData: {
+        examiner: { staffNumber: '01234567' },
+        testCentre: {
+          centreId: 1234,
+          costCode: '1234',
+        },
+        testSlotAttributes: {
+          slotId: 1,
+          start: '1'.repeat(19), // start does not exceed max-length (19 characters)
+          specialNeeds: false,
+          welshTest: false,
+          extendedTest: false,
+        },
+        candidate: {},
+        applicationReference: {
+          applicationId: 12,
+          bookingSequence: 222,
+          checkDigit: 1,
+        },
+      },
+      rekey: false,
+      changeMarker: false,
+      examinerBooked: 12345678,
+      examinerConducted: 12345678,
+      examinerKeyed: 12345678,
+    };
+    const validationResult = validateMESJoiSchema(invalidSchema);
+    expect(validationResult.error).toBeUndefined();
+  });
+
   it('should return a validation error if required property is missing from schema', () => {
     const invalidSchema = {
       version: '0.0.1',

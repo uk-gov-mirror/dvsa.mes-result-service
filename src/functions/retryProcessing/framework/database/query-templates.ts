@@ -123,14 +123,24 @@ export const manualInterventionUploadQueueReplacementQuery = `
       (SELECT id FROM PROCESSING_STATUS WHERE processing_status_name = 'PROCESSING') as upload_status,
       0 as retry_count,
       NULL as error_message
-  FROM TEST_RESULT tr, INTERFACE_TYPE it
+  FROM TEST_RESULT tr
+  JOIN INTERFACE_TYPE it
+    ON (
+      tr.booking_reference IS NULL
+      AND (
+        it.interface_type_name IN ('TARS', 'NOTIFY')
+        OR (tr.autosave = false AND it.interface_type_name = 'RSIS')
+      )
+    )
+    OR (
+      tr.booking_reference IS NOT NULL
+      AND (
+        it.interface_type_name IN ('DSP', 'NOTIFY')
+        OR (tr.autosave = false AND it.interface_type_name = 'MI')
+      )
+    )
   WHERE
     tr.result_status = (SELECT id FROM RESULT_STATUS WHERE result_status_name = 'PENDING')
-    AND (
-      (tr.autosave = true AND it.id != (SELECT id FROM INTERFACE_TYPE WHERE interface_type_name = 'RSIS'))
-      OR
-      (tr.autosave = false)
-    )
 ) ON DUPLICATE KEY UPDATE
 	UPLOAD_QUEUE.application_reference = UPLOAD_QUEUE.application_reference
 `;

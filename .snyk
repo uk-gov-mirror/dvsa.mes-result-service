@@ -1,0 +1,21 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+ignore:
+  SNYK-JS-JOI-19498543:
+    - '*':
+        reason: Current issue added to the Snyk ignore file per request; upgrade is pending.
+        created: 2026-09-08T00:00:00.000Z
+  SNYK-JS-JOI-19498547:
+    - '*':
+        reason: Current issue added to the Snyk ignore file per request; upgrade is pending.
+        created: 2026-09-08T00:00:00.000Z
+  SNYK-JS-MYSQL2-19498545:
+    - '*':
+        reason: Current issue added to the Snyk ignore file per request; upgrade is pending.
+        created: 2026-09-08T00:00:00.000Z
+  SNYK-JS-MYSQL2-19512510:
+    - '*':
+        reason: Current issue added to the Snyk ignore file per request; upgrade is pending.
+        created: 2026-09-08T00:00:00.000Z
+patch: {}
+
